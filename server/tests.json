@@ -1,0 +1,38 @@
+[
+	{
+		"version": "2.0",
+		"routeKey": "$default",
+		"rawPath": "/favicon.ico",
+		"rawQueryString": "",
+		"headers": {
+			"content-length": "0",
+			"host": "xzg68i1j84.execute-api.us-east-1.amazonaws.com",
+			"user-agent": "Amazon CloudFront",
+			"via": "2.0 5729f5da693075d8d779907600e93304.cloudfront.net (CloudFront)",
+			"x-amz-cf-id": "Ji4EFx1C004tb1P7sbZFZjq40m2hFONwilJCyN31LqbHcGgB-hSTog==",
+			"x-amzn-trace-id": "Root=1-6327581b-44cb1fd00475218a7a7efceb",
+			"x-forwarded-for": "2600:4040:54d1:9f00:5c0e:5d91:2125:40c5, 70.132.21.99",
+			"x-forwarded-port": "443",
+			"x-forwarded-proto": "https"
+		},
+		"requestContext": {
+			"accountId": "165963248401",
+			"apiId": "xzg68i1j84",
+			"domainName": "xzg68i1j84.execute-api.us-east-1.amazonaws.com",
+			"domainPrefix": "xzg68i1j84",
+			"http": {
+				"method": "GET",
+				"path": "/favicon.ico",
+				"protocol": "HTTP/1.1",
+				"sourceIp": "2600:4040:54d1:9f00:5c0e:5d91:2125:40c5",
+				"userAgent": "Amazon CloudFront"
+			},
+			"requestId": "Yqq0SiVGIAMESfg=",
+			"routeKey": "$default",
+			"stage": "$default",
+			"time": "18/Sep/2022:17:40:43 +0000",
+			"timeEpoch": 1663522843289
+		},
+		"isBase64Encoded": false
+	}
+]

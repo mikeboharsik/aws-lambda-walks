@@ -1,0 +1,10 @@
+{
+  "name": "aws-lambda-walks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.172.0",
+    "node-fetch": "2"
+  }
+}
