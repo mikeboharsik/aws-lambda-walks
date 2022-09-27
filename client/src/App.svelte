@@ -65,8 +65,15 @@
 	}
 
 	onMount(async() => {
-		const res = await fetch('https://walks.mikeboharsik.com/api/yt-data').then(res => res.json());
-		data = JSON.parse(res.data);
+		const options = {};
+		
+		let secret = localStorage.getItem('secret');
+		if (secret) {
+			options.headers = { 'x-custom-key': secret };
+		}
+
+		const res = await fetch('https://walks.mikeboharsik.com/api/yt-data', options).then(res => res.json());
+		({ data } = res);
 
 		currentMonthData = getCurrentMonthData();
 		isLoaded = true;

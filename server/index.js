@@ -7,7 +7,9 @@ const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
 
 exports.handler = async (event) => {
 	try {
-		const { rawPath } = event;
+		const { headers, rawPath } = event;
+		event.isAuthed = headers['x-custom-key'] === process.env['X_CUSTOM_KEY'];
+
 		console.log(rawPath);
 
 		let result;
@@ -31,13 +33,13 @@ exports.handler = async (event) => {
 };
 
 async function handleApiRequest(event) {
-	const { rawPath } = event;
+	const { isAuthed, rawPath } = event;
 
 	console.log(`handle api request for ${rawPath}`);
 
 	switch (rawPath) {
 		case '/api/yt-data': {
-			if (!process.env.YOUTUBE_API_KEY || !process.env.AWS_REGION || !process.env.DYNAMO_TABLE_NAME) {
+			if (!process.env.YOUTUBE_API_KEY || !process.env.AWS_REGION || !process.env.DYNAMO_TABLE_NAME || !process.env.YOUTUBE_PLAYLIST_ID || !process.env.API_KEY_REFERER) {
 				return {
 					body: 'invalid config',
 					statusCode: 500,
@@ -70,7 +72,18 @@ async function handleApiRequest(event) {
 
 				result = Object.entries(result).reduce((acc, [k, v]) => { acc[k] = v.S; return acc; }, {})
 
-				delete result.playlistid;
+				if (!isAuthed) {
+					delete result.playlistid;
+
+					const parsedData = JSON.parse(result.data);
+					parsedData.forEach((cur) => {
+						delete cur.directions;
+						delete cur.videoId;
+					});
+					result.data = parsedData;
+				} else {
+					result.data = JSON.parse(result.data);
+				}
 
 				return {
 					body: result,
@@ -98,13 +111,16 @@ async function handleApiRequest(event) {
 				params.pageToken = res.nextPageToken;
 			} while(params.pageToken);
 
-			const relevantData = items.map(({ snippet: { description, title } }) => {
+			const relevantData = items.map(({ snippet: { description, title }, resourceId: { videoId } = {} }) => {
 				const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1];
 				const distance = description.match(/(\d+\.\d+) miles/)?.[1];
+				const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)\n/)?.[1] ?? undefined;
 
 				return {
 					date,
+					directions,
 					distance,
+					videoId,
 				};
 			});
 
@@ -120,8 +136,15 @@ async function handleApiRequest(event) {
 
 			await client.send(command);
 
+			if (!isAuthed) {
+				relevantData.forEach((cur) => {
+					delete cur.directions;
+					delete cur.videoId;
+				});
+			}
+
 			return {
-				body: JSON.stringify({ data: JSON.stringify(relevantData), datetime: now }),
+				body: JSON.stringify({ data: relevantData, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
 				statusCode: 200,
 				'cache-control': 'no-store',
 			};
