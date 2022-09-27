@@ -110,12 +110,18 @@
 
 				{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
 
+				{@const walkDayContent = d?.distance ? `${d.distance} miles` : 'Unspecified'}
+
 				<div class={classes}>
 					{#if !isEmptyDay && !isFuturePaddingDay}
 						<div class="date-number">{dateNumber}</div>
 					{/if}
 					{#if isWalkDay}
-						{d.distance ? `${d.distance} miles` : 'Unspecified'}
+						{#if d.directions}
+							<a href={d.directions} noreferrer nopener target="_blank">{walkDayContent}</a>
+						{:else}
+							{walkDayContent}
+						{/if}
 					{/if}
 				</div>
 			{/each}

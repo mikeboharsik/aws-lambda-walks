@@ -1,3 +1,5 @@
+// look into using https://www.npmjs.com/package/aws-lambda-router
+
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const { DynamoDBClient, PutItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
