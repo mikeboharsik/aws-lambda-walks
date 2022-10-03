@@ -2,9 +2,37 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	const monthNames = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	];
+
+	const dayNames = [
+		'Su',
+		'Mo',
+		'Tu',
+		'We',
+		'Th',
+		'Fr',
+		'Sa'
+	];
+
 	let now = new Date();
-	const realMonth = '0' + (now.getMonth() + 1);
+	const humanMonthNumber = now.getMonth() + 1;
+	const realMonth = humanMonthNumber < 10 ? '0' + (now.getMonth() + 1) : humanMonthNumber.toString();
 	const currentDate = now.getDate();
+
+	console.log({ currentDate, realMonth });
 
 	let data = [];
 	let currentMonthData = [];
@@ -15,22 +43,28 @@
 	let daysInMonth;
 
 	function getCurrentMonthData() {
-		const toAdd = 42 - (daysInMonth + firstDayOffset);
+		const maxWeeksInDays = 6 * 7; // always make table have the maximum amount of cells so that changing month does not change the layout due to more/less rows existing
+		const toAdd = maxWeeksInDays - (daysInMonth + firstDayOffset);
 		const newCurrentMonthData = Array.from(new Array(daysInMonth + firstDayOffset + toAdd));
+
 		const matches = data.filter(e => e.date.match(new RegExp(`\\d{4}-${currentMonth}-\\d{2}`)));
+
 		newCurrentMonthData.forEach((e, i, a) => {
-			if (i > (firstDayOffset - 1)) {
+			const dayIsInMonth = i > (firstDayOffset - 1);
+			if (dayIsInMonth) {
 				const corresponding = matches.find(e => parseInt(e.date.slice(-2)) === (i - (firstDayOffset - 1)));
 				if (corresponding) {
 					a[i] = corresponding;
 				}
 			}
 		});
+
 		return newCurrentMonthData;
 	}
 
 	$: {
-		currentMonth = '0' + (now.getMonth() + 1);
+		let tempHumanMonthNumber = now.getMonth() + 1;
+		currentMonth = tempHumanMonthNumber < 10 ? '0' + tempHumanMonthNumber : tempHumanMonthNumber.toString();
 		firstDayOffset = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
 		daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
@@ -82,30 +116,40 @@
 
 <div id="container">
 	{#if isLoaded}
-		{@const leftButtonStyle = currentMonth === '07' ? 'visibility: hidden; pointer-events: none;' : null}
-		{@const rightButtonStyle = currentMonth === realMonth ? 'visibility: hidden; pointer-events: none;' : null}
+		{@const isEarliestMonth = currentMonth === '07' && now.getFullYear() === 2022}
+		{@const isRealMonth = currentMonth === realMonth}
 
-		<div style="flex-direction: row">
-			<button style={leftButtonStyle} on:click={subtractMonth}>{'<<'}</button>
-			Month: {currentMonth}
-			<button style={rightButtonStyle} on:click={addMonth}>{'>>'}</button>
+		{@const leftButtonStyle = isEarliestMonth ? 'visibility: hidden; pointer-events: none;' : null}
+		{@const rightButtonStyle = isRealMonth ? 'visibility: hidden; pointer-events: none;' : null}
+
+		<div style="user-select: none">
+			<div>
+				{now.getFullYear()}
+			</div>
+
+			<div style="display: flex; flex-direction: row">
+				<button style={leftButtonStyle} on:click={subtractMonth}>{'<<'}</button>
+				<div style="width: 96px">
+					{monthNames[now.getMonth()]}
+				</div>
+				<button style={rightButtonStyle} on:click={addMonth}>{'>>'}</button>
+			</div>
 		</div>
 
 		<div transition:fade id="wrapper">
-			{#each ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr' , 'Sa'] as day}
-				<h5>{day}</h5>
+			{#each dayNames as day}
+				<h5 style="user-select: none">{day}</h5>
 			{/each}
 
 			{#each currentMonthData as d, idx}
 				{@const dateNumber = idx - firstDayOffset + 1}
-				{@const isRealMonth = currentMonth === realMonth}
 				{@const currentDateIdx = currentDate + firstDayOffset - 1}
 				{@const isCurrentDate = idx === currentDateIdx}
 
 				{@const isEmptyDay = idx < firstDayOffset}
 				{@const isFutureDay = isRealMonth && idx > currentDateIdx}
 				{@const isPendingDay = isRealMonth && isCurrentDate && !d?.date}
-				{@const isWalkDay = d?.date}
+				{@const isWalkDay = !!d?.date}
 				{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
 
 				{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
@@ -132,18 +176,18 @@
 <style>
 	.day {
 		align-items: center;
-		display: flex;
-		justify-content: center;
 		border: 1px solid black;
+		display: flex;
 		height: 96px;
-		width: 96px;
+		justify-content: center;
 		position: relative;
+		width: 96px;
 	}
 
 	.date-number {
+		left: 0.1em;
 		position: absolute;
 		top: 0.1em;
-		left: 0.1em;
 	}
 
 	.non-walk-day {
