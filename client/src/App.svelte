@@ -39,6 +39,7 @@
 	let isLoaded = false;
 
 	let currentMonth;
+	let currentMonthTotalDistance;
 	let firstDayOffset;
 	let daysInMonth;
 
@@ -69,6 +70,7 @@
 		daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
 		currentMonthData = getCurrentMonthData();
+		currentMonthTotalDistance = currentMonthData.reduce((acc, cur) => cur ? parseFloat(cur.distance) + acc : acc, 0).toFixed(1);
 	}
 
 	function subtractMonth() {
@@ -112,6 +114,8 @@
 		currentMonthData = getCurrentMonthData();
 		isLoaded = true;
 	});
+
+	// https://i.ytimg.com/vi/{key}/default.jpg
 </script>
 
 <div id="container">
@@ -134,6 +138,10 @@
 				</div>
 				<button style={rightButtonStyle} on:click={addMonth}>{'>>'}</button>
 			</div>
+		</div>
+
+		<div>
+			{currentMonthTotalDistance} miles
 		</div>
 
 		<div transition:fade id="wrapper">
