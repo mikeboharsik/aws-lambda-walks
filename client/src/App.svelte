@@ -32,10 +32,9 @@
 	const realMonth = humanMonthNumber < 10 ? '0' + (now.getMonth() + 1) : humanMonthNumber.toString();
 	const currentDate = now.getDate();
 
-	console.log({ currentDate, realMonth });
-
 	let data = [];
 	let currentMonthData = [];
+	let sunsetTime;
 	let isLoaded = false;
 
 	let currentMonth;
@@ -108,8 +107,15 @@
 			options.headers = { 'x-custom-key': secret };
 		}
 
-		const res = await fetch('https://walks.mikeboharsik.com/api/yt-data', options).then(res => res.json());
-		({ data } = res);
+		const jobs = [
+			fetch('https://walks.mikeboharsik.com/api/yt-data', options).then(res => res.json()),
+			fetch('https://walks.mikeboharsik.com/api/sunset').then(res => res.text()),
+		];
+
+		const results = await Promise.allSettled(jobs);
+		
+		data = results[0].value.data;
+		sunsetTime = results[1].value;
 
 		currentMonthData = getCurrentMonthData();
 		isLoaded = true;
@@ -126,12 +132,12 @@
 		{@const leftButtonStyle = isEarliestMonth ? 'visibility: hidden; pointer-events: none;' : null}
 		{@const rightButtonStyle = isRealMonth ? 'visibility: hidden; pointer-events: none;' : null}
 
-		<div style="user-select: none">
+		<div transition:fade style="user-select: none">
 			<div>
 				{now.getFullYear()}
 			</div>
 
-			<div style="display: flex; flex-direction: row">
+			<div transition:fade style="display: flex; flex-direction: row">
 				<button style={leftButtonStyle} on:click={subtractMonth}>{'<<'}</button>
 				<div style="width: 96px">
 					{monthNames[now.getMonth()]}
@@ -140,7 +146,7 @@
 			</div>
 		</div>
 
-		<div>
+		<div transition:fade>
 			{currentMonthTotalDistance} miles
 		</div>
 
@@ -174,6 +180,8 @@
 						{:else}
 							{walkDayContent}
 						{/if}
+					{:else if isPendingDay}
+						{`Sun sets at ${sunsetTime}`}
 					{/if}
 				</div>
 			{/each}

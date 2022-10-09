@@ -40,6 +40,17 @@ async function handleApiRequest(event) {
 	console.log(`handle api request for ${rawPath}`);
 
 	switch (rawPath) {
+		case '/api/sunset': {
+			const res = await fetch('https://www.google.com/search?q=sunset+stoneham%2C+ma').then(res => res.text());
+
+			const [time] = res.match(/\d{1,2}:\d{2} [AP]M/g);
+
+			return {
+				body: time,
+				statusCode: 200,
+			}
+		}
+
 		case '/api/yt-data': {
 			if (!process.env.YOUTUBE_API_KEY || !process.env.AWS_REGION || !process.env.DYNAMO_TABLE_NAME || !process.env.YOUTUBE_PLAYLIST_ID || !process.env.API_KEY_REFERER) {
 				return {
