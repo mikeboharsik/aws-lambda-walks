@@ -175,10 +175,9 @@
 						<div class="date-number">{dateNumber}</div>
 					{/if}
 					{#if isWalkDay}
+						{walkDayContent}
 						{#if d.directions}
-							<a href={d.directions} noreferrer nopener target="_blank">{walkDayContent}</a>
-						{:else}
-							{walkDayContent}
+							<a href={d.directions} noreferrer nopener target="_blank" style="text-decoration: none">🗺️</a>
 						{/if}
 					{:else if isPendingDay}
 						{`Sun sets at ${sunsetTime}`}
@@ -194,6 +193,7 @@
 		align-items: center;
 		border: 1px solid black;
 		display: flex;
+		flex-direction: column;
 		height: 96px;
 		justify-content: center;
 		position: relative;
