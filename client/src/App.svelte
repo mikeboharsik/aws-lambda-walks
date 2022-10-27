@@ -107,9 +107,12 @@
 			options.headers = { 'x-custom-key': secret };
 		}
 
+		const now = new Date();
+		const dateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
 		const jobs = [
-			fetch('https://walks.mikeboharsik.com/api/yt-data', options).then(res => res.json()),
-			fetch('https://walks.mikeboharsik.com/api/sunset').then(res => res.text()),
+			fetch(`https://walks.mikeboharsik.com/api/yt-data`, options).then(res => res.json()),
+			fetch(`https://walks.mikeboharsik.com/api/sunset?date=${dateStr}`).then(res => res.text()),
 		];
 
 		const results = await Promise.allSettled(jobs);

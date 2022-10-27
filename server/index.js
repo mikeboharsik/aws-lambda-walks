@@ -31,17 +31,30 @@ exports.handler = async (event) => {
 		return result;
 	} catch (e) {
 		console.error('Unhandled exception:', e);
+
+		return {
+			body: JSON.stringify({ message: e.message }),
+			statusCode: 500,
+		}
 	}
 };
 
 async function handleApiRequest(event) {
-	const { isAuthed, rawPath } = event;
+	const { isAuthed, rawPath, queryStringParameters } = event;
 
 	console.log(`handle api request for ${rawPath}`);
 
 	switch (rawPath) {
 		case '/api/sunset': {
-			const res = await fetch('https://www.google.com/search?q=sunset+stoneham%2C+ma').then(res => res.text());
+			let dateStr;
+			if (queryStringParameters?.date) {
+				dateStr = queryStringParameters.date;
+			} else {
+				throw new Error('A date must be specified');
+			}			
+
+			let url = `https://www.google.com/search?q=sunset+stoneham%2C+ma+${dateStr}`;
+			const res = await fetch(url).then(res => res.text());
 
 			const [time] = res.match(/\d{1,2}:\d{2} [AP]M/g);
 
