@@ -140,7 +140,7 @@ async function handleApiRequest(event) {
 			const relevantData = items.map(({ snippet: { description, title }, resourceId: { videoId } = {} }) => {
 				const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1];
 				const distance = description.match(/(\d+\.\d+) miles/)?.[1];
-				const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)\n/)?.[1] ?? undefined;
+				const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)(\n|$)/)?.[1] ?? undefined;
 
 				return {
 					date,
