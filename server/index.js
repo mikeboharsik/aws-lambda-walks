@@ -103,8 +103,10 @@ async function handleApiRequest(event) {
 
 					const parsedData = JSON.parse(result.data);
 					parsedData.forEach((cur) => {
-						delete cur.directions;
-						delete cur.videoId;
+						cur.walks.forEach(walk => {
+							delete walk.directions;
+							delete walk.videoId;
+						});
 					});
 					result.data = parsedData;
 				} else {
@@ -150,11 +152,22 @@ async function handleApiRequest(event) {
 				};
 			});
 
+			const normalized = relevantData.reduce((acc, { date, directions, distance, videoId }) => {
+				const exists = acc.find(d => d.date === date);
+				if (exists) {
+					exists.walks.push({ directions, distance, videoId });
+				} else {
+					acc.push({ date, walks: [{ directions, distance, videoId }] });
+				}
+
+				return acc;
+			}, []);
+
 			const now = new Date().toISOString()
 			const command = new PutItemCommand({
 				TableName: process.env.DYNAMO_TABLE_NAME,
 				Item: {
-					data: { 'S': JSON.stringify(relevantData) },
+					data: { 'S': JSON.stringify(normalized) },
 					datetime: { 'S': now },
 					playlistid: { 'S': playlistId },
 				}
@@ -163,14 +176,16 @@ async function handleApiRequest(event) {
 			await client.send(command);
 
 			if (!isAuthed) {
-				relevantData.forEach((cur) => {
-					delete cur.directions;
-					delete cur.videoId;
+				normalized.forEach((cur) => {
+					cur.walks.forEach(walk => {
+						delete walk.directions;
+						delete walk.videoId;
+					});
 				});
 			}
 
 			return {
-				body: JSON.stringify({ data: relevantData, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
+				body: JSON.stringify({ data: normalized, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
 				statusCode: 200,
 				'cache-control': 'no-store',
 			};

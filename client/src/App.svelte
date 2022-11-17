@@ -69,7 +69,7 @@
 		daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
 		currentMonthData = getCurrentMonthData();
-		currentMonthTotalDistance = currentMonthData.reduce((acc, cur) => cur ? parseFloat(cur.distance) + acc : acc, 0).toFixed(1);
+		currentMonthTotalDistance = currentMonthData.reduce((acc, cur) => cur ? cur.walks.reduce((acc2, cur2) => acc2 + parseFloat(cur2.distance), 0) + acc : acc, 0).toFixed(1);
 	}
 
 	function subtractMonth() {
@@ -97,6 +97,10 @@
 		}
 
 		return classes.join(' ');
+	}
+
+	function getDateDistanceSum(date) {
+		return currentMonthData.find(d => d?.date === date).walks.reduce((acc, cur) => acc + parseFloat(cur.distance), 0).toFixed(1);
 	}
 
 	onMount(async() => {
@@ -171,7 +175,7 @@
 
 				{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
 
-				{@const walkDayContent = d?.distance ? `${d.distance} miles` : 'Unspecified'}
+				{@const walkDayContent = d?.date && d?.walks.length > 0 ? `${getDateDistanceSum(d.date)} miles` : 'Unspecified'}
 
 				<div class={classes}>
 					{#if !isEmptyDay && !isFuturePaddingDay}
@@ -179,9 +183,22 @@
 					{/if}
 					{#if isWalkDay}
 						{walkDayContent}
-						{#if d.directions}
-							<a href={d.directions} noreferrer nopener target="_blank" style="text-decoration: none">🗺️</a>
-						{/if}
+						<div>
+							{#each d.walks as walk, widx}
+								{#if walk.directions}
+									<a
+										href={walk.directions}
+										noreferrer
+										nopener
+										target="_blank"
+										title={`Walk ${widx + 1}`}
+										style="text-decoration: none"
+									>
+										🗺️
+									</a>
+								{/if}
+							{/each}
+						</div>
 					{:else if isPendingDay}
 						{`Sun sets at ${sunsetTime}`}
 					{/if}
