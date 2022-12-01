@@ -10,7 +10,8 @@ const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
 exports.handler = async (event) => {
 	try {
 		const { headers, rawPath } = event;
-		event.isAuthed = headers['x-custom-key'] === process.env['X_CUSTOM_KEY'];
+		const xCustomKey = process.env['X_CUSTOM_KEY'];
+		event.isAuthed = xCustomKey && headers['x-custom-key'] === xCustomKey;
 
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
 			console.log(rawPath);
