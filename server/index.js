@@ -12,7 +12,9 @@ exports.handler = async (event) => {
 		const { headers, rawPath } = event;
 		event.isAuthed = headers['x-custom-key'] === process.env['X_CUSTOM_KEY'];
 
-		console.log(rawPath);
+		if (Boolean(process.env['LOG_RAW_PATH'])) {
+			console.log(rawPath);
+		}
 
 		let result;
 
@@ -26,7 +28,9 @@ exports.handler = async (event) => {
 			result.body = JSON.stringify(result.body);
 		}
 
-		console.log('Returning result', JSON.stringify(result, null, '  '));
+		if (Boolean(process.env['LOG_RESULT'])) {
+			console.log('Returning result', JSON.stringify(result, null, '  '));
+		}
 
 		return result;
 	} catch (e) {
@@ -65,9 +69,25 @@ async function handleApiRequest(event) {
 		}
 
 		case '/api/yt-data': {
-			if (!process.env.YOUTUBE_API_KEY || !process.env.AWS_REGION || !process.env.DYNAMO_TABLE_NAME || !process.env.YOUTUBE_PLAYLIST_ID || !process.env.API_KEY_REFERER) {
+			const expectedConfigs = [
+				'API_KEY_REFERER',
+				'AWS_REGION',
+				'DYNAMO_TABLE_NAME',
+				'YOUTUBE_API_KEY',
+				'YOUTUBE_PLAYLIST_ID',
+			];
+
+			const missingConfigs = [];
+
+			expectedConfigs.forEach((key) => {
+				if (!process.env[key]) {
+					missingConfigs.push(key);
+				}
+			});
+
+			if (missingConfigs.length > 0) {
 				return {
-					body: 'invalid config',
+					body: `invalid config: [${missingConfigs.join(', ')}]`,
 					statusCode: 500,
 					'cache-control': 'no-store',
 				};
@@ -139,7 +159,9 @@ async function handleApiRequest(event) {
 				params.pageToken = res.nextPageToken;
 			} while(params.pageToken);
 
-			const relevantData = items.map(({ snippet: { description, title }, resourceId: { videoId } = {} }) => {
+			const relevantData = items.map((item) => {
+				const { snippet: { description, resourceId: { videoId }, title } } = item;
+
 				const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1];
 				const distance = description.match(/(\d+\.\d+) miles/)?.[1];
 				const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)(\n|$)/)?.[1] ?? undefined;
