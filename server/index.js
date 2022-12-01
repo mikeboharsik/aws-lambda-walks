@@ -43,6 +43,27 @@ exports.handler = async (event) => {
 	}
 };
 
+function formatYouTubeDataResponse(result, isAuthed = false) {
+	if (!isAuthed) {
+		delete result.playlistid;
+
+		const parsedData = JSON.parse(result.data);
+		parsedData.forEach((cur) => {
+			cur.walks.forEach(walk => {
+				delete walk.directions;
+				delete walk.videoId;
+			});
+		});
+		result.data = parsedData;
+	}
+
+	if (typeof result.data === 'string') {
+		result.data = JSON.parse(result.data);
+	}
+
+	return result;
+}
+
 async function handleApiRequest(event) {
 	const { isAuthed, rawPath, queryStringParameters } = event;
 
@@ -118,23 +139,8 @@ async function handleApiRequest(event) {
 
 				result = Object.entries(result).reduce((acc, [k, v]) => { acc[k] = v.S; return acc; }, {})
 
-				if (!isAuthed) {
-					delete result.playlistid;
-
-					const parsedData = JSON.parse(result.data);
-					parsedData.forEach((cur) => {
-						cur.walks.forEach(walk => {
-							delete walk.directions;
-							delete walk.videoId;
-						});
-					});
-					result.data = parsedData;
-				} else {
-					result.data = JSON.parse(result.data);
-				}
-
 				return {
-					body: result,
+					body: formatYouTubeDataResponse(result, isAuthed),
 					statusCode: 200,
 					'cache-control': 'no-store',
 				};
@@ -197,17 +203,8 @@ async function handleApiRequest(event) {
 
 			await client.send(command);
 
-			if (!isAuthed) {
-				normalized.forEach((cur) => {
-					cur.walks.forEach(walk => {
-						delete walk.directions;
-						delete walk.videoId;
-					});
-				});
-			}
-
 			return {
-				body: JSON.stringify({ data: normalized, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
+				body: formatYouTubeDataResponse({ data: normalized, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
 				statusCode: 200,
 				'cache-control': 'no-store',
 			};
