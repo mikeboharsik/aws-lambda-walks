@@ -213,21 +213,43 @@
 </div>
 
 <style>
+	@media (max-width: 1000px) {
+		.day {
+			height: 96px;
+			width: 96px;
+		}
+
+		.date-number {
+			left: 0.1em;
+			top: 0.1em;
+		}
+	}
+
+	@media (min-width: 1001px) {
+		.day {
+			height: 96px;
+			width: 96px;
+		}
+
+		.date-number {
+			left: 0.1em;
+			top: 0.1em;
+		}
+	}
+
 	.day {
 		align-items: center;
 		border: 1px solid black;
 		display: flex;
 		flex-direction: column;
-		height: 96px;
+		font-size: 1rem;
 		justify-content: center;
 		position: relative;
-		width: 96px;
 	}
 
 	.date-number {
-		left: 0.1em;
+		font-size: 0.75rem;
 		position: absolute;
-		top: 0.1em;
 	}
 
 	.non-walk-day {
@@ -248,13 +270,14 @@
 		background-color: #ffffaa;
 	}
 
-	#container {	
+	#container {
 		align-items: center;
 		display: flex;
 		flex-direction: column;
-		height: 100%;
 		justify-content: center;
 		text-align: center;
+
+		height: 100%;
 		width: 100%;
 	}
 
@@ -263,4 +286,5 @@
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-gap: 1px;
 	}
+
 </style>

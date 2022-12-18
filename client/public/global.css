@@ -1,4 +1,4 @@
-html, body {
+html {
 	font-family: 'Open Sans', sans-serif;
 	height: 100%;
 	margin: 0;
@@ -6,4 +6,12 @@ html, body {
 	padding: 0;
 	position: relative;
 	width: 100%;
+}
+
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	position: relative;
 }
