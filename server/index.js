@@ -71,25 +71,6 @@ async function handleApiRequest(event) {
 	console.log(`handle api request for ${rawPath}`);
 
 	switch (rawPath) {
-		case '/api/sunset': {
-			let dateStr;
-			if (queryStringParameters?.date) {
-				dateStr = queryStringParameters.date;
-			} else {
-				throw new Error('A date must be specified');
-			}			
-
-			let url = `https://www.google.com/search?q=sunset+stoneham%2C+ma+${dateStr}`;
-			const res = await fetch(url).then(res => res.text());
-
-			const [time] = res.match(/\d{1,2}:\d{2} [AP]M/g);
-
-			return {
-				body: time,
-				statusCode: 200,
-			}
-		}
-
 		case '/api/yt-data': {
 			const expectedConfigs = [
 				'API_KEY_REFERER',
