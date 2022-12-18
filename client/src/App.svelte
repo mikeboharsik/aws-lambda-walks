@@ -104,6 +104,8 @@
 	}
 
 	onMount(async() => {
+		// 'https://api.sunrise-sunset.org/json?lat=42.49940760476378&lng=-71.09927545831746&formatted=0&date=2022-12-18'
+
 		const options = {};
 		
 		let secret = localStorage.getItem('secret');
@@ -116,13 +118,15 @@
 
 		const jobs = [
 			fetch(`https://walks.mikeboharsik.com/api/yt-data`, options).then(res => res.json()),
-			fetch(`https://walks.mikeboharsik.com/api/sunset?date=${dateStr}`).then(res => res.text()),
+			fetch(`https://api.sunrise-sunset.org/json?lat=42.49940760476378&lng=-71.09927545831746&formatted=0&date=${dateStr}`).then(res => res.json()),
 		];
 
 		const results = await Promise.allSettled(jobs);
 		
 		data = results[0].value.data;
-		sunsetTime = results[1].value;
+
+		const rawSunset = new Date(results[1].value.results.sunset);
+		sunsetTime = `${rawSunset.getHours().toString().padStart(2, '0')}:${rawSunset.getMinutes().toString().padStart(2, '0')}:${rawSunset.getSeconds().toString().padStart(2, '0')}`;
 
 		currentMonthData = getCurrentMonthData();
 		isLoaded = true;
