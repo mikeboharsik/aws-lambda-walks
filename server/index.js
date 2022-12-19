@@ -174,19 +174,30 @@ async function handleApiRequest(event) {
 			}, []);
 
 			const now = new Date().toISOString()
+			const body = {
+				data: JSON.stringify(normalized),
+				datetime: now,
+				playlistId: isAuthed ? playlistId : undefined
+			};
+			
 			const command = new PutItemCommand({
 				TableName: process.env.DYNAMO_TABLE_NAME,
 				Item: {
-					data: { 'S': JSON.stringify(normalized) },
+					data: { 'S': body.data },
 					datetime: { 'S': now },
-					playlistid: { 'S': playlistId },
+					playlistid: { 'S': body.playlistId },
 				}
 			});
 
-			await client.send(command);
+			if (!Boolean(process.env.READONLY)) {
+				console.log(`Storing update in DynamoDB using command:\n${JSON.stringify(command)}`)
+				await client.send(command);
+			} else {
+				console.log(`process.env.READONLY is [${process.env.READONLY}], skipping DyanmoDB update`);
+			}
 
 			return {
-				body: formatYouTubeDataResponse({ data: normalized, datetime: now, playlistId: isAuthed ? playlistId : undefined }),
+				body: formatYouTubeDataResponse(body),
 				statusCode: 200,
 				'cache-control': 'no-store',
 			};
