@@ -103,9 +103,11 @@
 		return currentMonthData.find(d => d?.date === date).walks.reduce((acc, cur) => acc + parseFloat(cur.distance), 0).toFixed(1);
 	}
 
-	onMount(async() => {
-		// 'https://api.sunrise-sunset.org/json?lat=42.49940760476378&lng=-71.09927545831746&formatted=0&date=2022-12-18'
+	function padNumber(n) {
+		return n.toString().padStart(2, '0');
+	}
 
+	onMount(async() => {
 		const options = {};
 		
 		let secret = localStorage.getItem('secret');
@@ -114,11 +116,11 @@
 		}
 
 		const now = new Date();
-		const dateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+		const dateStr = `${padNumber(now.getFullYear())}-${padNumber(now.getMonth() + 1)}-${padNumber(now.getDate())}`;
 
 		const jobs = [
 			fetch(`https://walks.mikeboharsik.com/api/yt-data`, options).then(res => res.json()),
-			fetch(`https://api.sunrise-sunset.org/json?lat=42.49940760476378&lng=-71.09927545831746&formatted=0&date=${dateStr}`).then(res => res.json()),
+			fetch(`https://walks.mikeboharsik.com/api/sunset?date=${dateStr}`).then(res => res.json()),
 		];
 
 		const results = await Promise.allSettled(jobs);
@@ -126,7 +128,7 @@
 		data = results[0].value.data;
 
 		const rawSunset = new Date(results[1].value.results.sunset);
-		sunsetTime = `${rawSunset.getHours().toString().padStart(2, '0')}:${rawSunset.getMinutes().toString().padStart(2, '0')}:${rawSunset.getSeconds().toString().padStart(2, '0')}`;
+		sunsetTime = `${padNumber(rawSunset.getHours())}:${padNumber(rawSunset.getMinutes())}:${padNumber(rawSunset.getSeconds())}`;
 
 		currentMonthData = getCurrentMonthData();
 		isLoaded = true;
