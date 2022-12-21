@@ -177,7 +177,7 @@ async function handleApiRequest(event) {
 			const body = {
 				data: JSON.stringify(normalized),
 				datetime: now,
-				playlistId: isAuthed ? playlistId : undefined
+				playlistId // whether this is included in the response will be handled by the formatter function below
 			};
 			
 			const command = new PutItemCommand({
