@@ -146,7 +146,7 @@
 		{@const rightButtonStyle = isRealMonth ? 'visibility: hidden; pointer-events: none;' : null}
 
 		<div transition:fade style="user-select: none">
-			<div>
+			<div transition:fade>
 				{now.getFullYear()}
 			</div>
 
@@ -210,6 +210,10 @@
 					{/if}
 				</div>
 			{/each}
+		</div>
+
+		<div transition:fade style="font-size: 0.66em">
+			Sunset data provided by <a target="_blank" href="https://api.sunrise-sunset.org">api.sunrise-sunset.org</a>
 		</div>
 	{/if}
 </div>
