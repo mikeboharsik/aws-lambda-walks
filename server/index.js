@@ -241,11 +241,13 @@ async function handleYouTubeDataRequest(event) {
 	});
 
 	const normalized = relevantData.reduce((acc, { date, directions, distance, videoId }) => {
-		const exists = acc.find(d => d.date === date);
-		if (exists) {
-			exists.walks.push({ directions, distance, videoId });
-		} else {
-			acc.push({ date, walks: [{ directions, distance, videoId }] });
+		if (date) {
+			const exists = acc.find(d => d.date === date);
+			if (exists) {
+				exists.walks.push({ directions, distance, videoId });
+			} else {
+				acc.push({ date, walks: [{ directions, distance, videoId }] });
+			}
 		}
 
 		return acc;
