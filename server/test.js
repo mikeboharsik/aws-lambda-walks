@@ -2,25 +2,37 @@ const handler = require('./index').handler;
 const tests = require('./tests.json');
 
 const [test] = tests;
-const [ , , rawPathOverride, queryStringParametersOverride] = process.argv;
-if (rawPathOverride) {
-	test.rawPath = rawPathOverride;
-	console.log(`rawPath overridden with [${rawPathOverride}]`);
-}
 
-if (queryStringParametersOverride) {
-	const processedParameters = queryStringParametersOverride
-		.split('&')
-		.reduce((acc, keyval) => {
-			const [key, val] = keyval.split('=');
-			acc[key] = val;
-			return acc;
-		}, {});
+process.argv.forEach((key, idx, arr) => {
+	const val = arr[idx+1];
 
-	test.queryStringParameters = processedParameters;
-	
-	console.log(`queryStringParameters overridden with [${JSON.stringify(processedParameters)}]`);
-}
+	switch (key.toLowerCase()) {
+		case '-path': {
+			test.rawPath = val;
+			break;
+		}
+
+		case '-query': {
+			const processedParameters = val
+				.replace('?', '')
+				.split('&')
+				.reduce((acc, keyval) => {
+					const [k, v] = keyval.split('=');
+					acc[k] = v;
+					return acc;
+				}, {});
+
+			test.rawQueryString = val;
+			test.queryStringParameters = processedParameters;
+			break;
+		}
+
+		case '-x-custom-key': {
+			test.headers['x-custom-key'] = val;
+			break;
+		}
+	}
+});
 
 (async () => {
 	console.log('Handler result:', await handler(test));
