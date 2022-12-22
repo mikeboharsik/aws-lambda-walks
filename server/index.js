@@ -275,7 +275,7 @@ async function handleYouTubeDataRequest(event) {
 	}
 
 	return setJsonContentType({
-		body: formatYouTubeDataResponse(body),
+		body: formatYouTubeDataResponse(body, isAuthed),
 		statusCode: 200
 	});
 }
