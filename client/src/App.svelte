@@ -189,20 +189,34 @@
 					{/if}
 					{#if isWalkDay}
 						{walkDayContent}
-						<div>
-							{#each d.walks as walk, widx}
-								{#if walk.directions}
-									<a
-										href={walk.directions}
-										noreferrer
-										nopener
-										target="_blank"
-										title={`Walk ${widx + 1}`}
-										style="text-decoration: none"
-									>
-										🗺️
-									</a>
-								{/if}
+						<div style="display: flex">
+							{#each d.walks as { directions, videoId }, widx}
+								<div style="display: flex; font-size: 0.8em; flex-direction: column">
+									{#if directions}
+										<a
+											href={directions}
+											noreferrer
+											noopener
+											style="text-decoration: none"
+											target="_blank"
+											title={`Walk ${widx + 1} Route`}
+										>
+											🗺️
+										</a>
+									{/if}
+									{#if videoId}
+										<a
+											href={`https://youtu.be/${videoId}`}
+											noreferrer
+											noopener
+											style="text-decoration: none"
+											target="_blank"
+											title={`Walk ${widx + 1} Video`}
+										>
+											🎥
+										</a>
+									{/if}
+								</div>
 							{/each}
 						</div>
 					{:else if isPendingDay}
