@@ -55,7 +55,7 @@ function formatYouTubeDataResponse(result, isAuthed = false) {
 		parsedData.forEach((cur) => {
 			cur.walks.forEach(walk => {
 				delete walk.directions;
-				delete walk.videoId;
+				// delete walk.videoId;
 			});
 		});
 		result.data = parsedData;
