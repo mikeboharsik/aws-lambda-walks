@@ -3,9 +3,12 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const { DynamoDBClient, PutItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
+const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
+
+const awsConfig = { region: process.env.AWS_REGION };
 
 exports.handler = async (event) => {
 	try {
@@ -154,6 +157,7 @@ async function handleYouTubeDataRequest(event) {
 	const expectedConfigs = [
 		'API_KEY_REFERER',
 		'AWS_REGION',
+		'CLOUDFRONT_DISTRIBUTION_ID',
 		'DYNAMO_TABLE_NAME',
 		'YOUTUBE_API_KEY',
 		'YOUTUBE_PLAYLIST_ID',
@@ -178,7 +182,7 @@ async function handleYouTubeDataRequest(event) {
 	const oneHourAgo = new Date();
 	oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
-	const client = new DynamoDBClient({ region: process.env.AWS_REGION });
+	const client = new DynamoDBClient(awsConfig);
 	const query = new QueryCommand({
 		TableName: process.env.DYNAMO_TABLE_NAME,
 		ExpressionAttributeNames: {
@@ -269,11 +273,31 @@ async function handleYouTubeDataRequest(event) {
 		}
 	});
 
-	if (!Boolean(process.env.READONLY)) {
-		console.log(`Storing update in DynamoDB using command:\n${JSON.stringify(command)}`)
-		await client.send(command);
-	} else {
-		console.log(`process.env.READONLY is [${process.env.READONLY}], skipping DyanmoDB update`);
+	try {
+		if (!Boolean(process.env.READONLY)) {
+			console.log(`Storing update in DynamoDB using command:\n${JSON.stringify(command)}`)
+			await client.send(command);
+
+			const cfInput = {
+				DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+				InvalidationBatch: {
+					CallerReference: new Date().getTime().toString(),
+					Paths: {
+						Items: ['/api/yt-data'],
+						Quantity: 1,
+					}
+				}
+			};
+			const cfClient = new CloudFrontClient(awsConfig);
+			const cfCommand = new CreateInvalidationCommand(cfInput);
+
+			console.log(`Invaldating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
+			await cfClient.send(cfCommand);
+		} else {
+			console.log(`process.env.READONLY is [${process.env.READONLY}], skipping DynamoDB and CloudFront updates`);
+		}
+	} catch (e) {
+		console.error(e);
 	}
 
 	return setJsonContentType({
