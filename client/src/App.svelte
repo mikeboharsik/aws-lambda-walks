@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { Circle } from 'svelte-loading-spinners';
 
 	const monthNames = [
 		'January',
@@ -229,6 +230,8 @@
 		<div transition:fade style="font-size: 0.66em">
 			Sunset data provided by <a target="_blank" href="https://api.sunrise-sunset.org">api.sunrise-sunset.org</a>
 		</div>
+	{:else}
+		<Circle />
 	{/if}
 </div>
 
