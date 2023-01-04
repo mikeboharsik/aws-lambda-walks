@@ -78,6 +78,10 @@ async function handleApiRequest(event) {
 			return await handleYouTubeDataRequest(event);
 		}
 
+		case '/api/yt-thumbnail': {
+			return await handleYouTubeThumbnailRequest(event);
+		}
+
 		case '/api/sunset': {
 			return await handleSunsetDataRequest(event);
 		}
@@ -304,6 +308,23 @@ async function handleYouTubeDataRequest(event) {
 		body: formatYouTubeDataResponse(body, isAuthed),
 		statusCode: 200
 	});
+}
+
+async function handleYouTubeThumbnailRequest(event) {
+	const { queryStringParameters: { videoId } = {} } = event;
+
+	if (!videoId) {
+		throw new Error("Missing query parameter videoId");
+	}
+
+	const buffer = await fetch(`https://i.ytimg.com/vi/${videoId}/default.jpg`).then(res => res.arrayBuffer());
+
+	return {
+		body: Buffer.from(buffer).toString('base64'),
+		headers: { 'content-type': 'image/jpg' },
+		isBase64Encoded: true,
+		statusCode: 200
+	};
 }
 
 async function handleSunsetDataRequest(event) {
