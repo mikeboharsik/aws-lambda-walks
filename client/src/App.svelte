@@ -37,6 +37,7 @@
 	let currentMonthData = [];
 	let sunsetTime;
 	let isLoaded = false;
+	let isErrorDuringLoad = false;
 
 	let currentMonth;
 	let currentMonthTotalDistance;
@@ -124,112 +125,123 @@
 			fetch(`https://walks.mikeboharsik.com/api/sunset?date=${dateStr}`).then(res => res.json()),
 		];
 
-		const results = await Promise.allSettled(jobs);
-		
-		data = results[0].value.data;
+		try {
+			const results = await Promise.allSettled(jobs);
+			
+			data = results[0].value.data;
 
-		const rawSunset = new Date(results[1].value.results.sunset);
-		sunsetTime = `${padNumber(rawSunset.getHours())}:${padNumber(rawSunset.getMinutes())}:${padNumber(rawSunset.getSeconds())}`;
+			const rawSunset = new Date(results[1].value.results.sunset);
+			sunsetTime = `${padNumber(rawSunset.getHours())}:${padNumber(rawSunset.getMinutes())}:${padNumber(rawSunset.getSeconds())}`;
 
-		currentMonthData = getCurrentMonthData();
-		isLoaded = true;
+			currentMonthData = getCurrentMonthData();
+		} catch(e) {
+			isErrorDuringLoad = true;
+		}	finally {
+			isLoaded = true;
+		}
 	});
-
-	// https://i.ytimg.com/vi/{key}/default.jpg
 </script>
 
 <div id="container">
 	{#if isLoaded}
-		{@const isEarliestMonth = currentMonth === '07' && now.getFullYear() === 2022}
-		{@const isRealMonth = currentMonth === realMonth}
+		{#if isErrorDuringLoad}
+			<div>
+				There was a problem. Try refreshing to see if that fixes it.
+			</div>
+			<br>
+			<button on:click={() => window.location.reload()}>Refresh</button>
+		{:else}
+			{@const isEarliestMonth = currentMonth === '07' && now.getFullYear() === 2022}
+			{@const isRealMonth = currentMonth === realMonth}
 
-		{@const leftButtonStyle = isEarliestMonth ? 'visibility: hidden; pointer-events: none;' : null}
-		{@const rightButtonStyle = isRealMonth ? 'visibility: hidden; pointer-events: none;' : null}
+			{@const leftButtonStyle = isEarliestMonth ? 'visibility: hidden; pointer-events: none;' : null}
+			{@const rightButtonStyle = isRealMonth ? 'visibility: hidden; pointer-events: none;' : null}
 
-		<div transition:fade style="user-select: none">
+			<div transition:fade style="user-select: none">
+				<div transition:fade>
+					{now.getFullYear()}
+				</div>
+
+				<div transition:fade style="display: flex; flex-direction: row">
+					<button style={leftButtonStyle} on:click={subtractMonth}>{'<<'}</button>
+					<div style="width: 96px">
+						{monthNames[now.getMonth()]}
+					</div>
+					<button style={rightButtonStyle} on:click={addMonth}>{'>>'}</button>
+				</div>
+			</div>
+
 			<div transition:fade>
-				{now.getFullYear()}
+				{currentMonthTotalDistance} miles
 			</div>
 
-			<div transition:fade style="display: flex; flex-direction: row">
-				<button style={leftButtonStyle} on:click={subtractMonth}>{'<<'}</button>
-				<div style="width: 96px">
-					{monthNames[now.getMonth()]}
-				</div>
-				<button style={rightButtonStyle} on:click={addMonth}>{'>>'}</button>
+			<div transition:fade id="wrapper">
+				{#each dayNames as day}
+					<h5 style="user-select: none">{day}</h5>
+				{/each}
+
+				{#each currentMonthData as d, idx}
+					{@const dateNumber = idx - firstDayOffset + 1}
+					{@const currentDateIdx = currentDate + firstDayOffset - 1}
+					{@const isCurrentDate = idx === currentDateIdx}
+
+					{@const isEmptyDay = idx < firstDayOffset}
+					{@const isFutureDay = isRealMonth && idx > currentDateIdx}
+					{@const isPendingDay = isRealMonth && isCurrentDate && !d?.date}
+					{@const isWalkDay = !!d?.date}
+					{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
+
+					{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
+
+					{@const walkDayContent = d?.date && d?.walks.length > 0 ? `${getDateDistanceSum(d.date)} miles` : 'Unspecified'}
+
+					<div class={classes}>
+						{#if !isEmptyDay && !isFuturePaddingDay}
+							<div class="date-number">{dateNumber}</div>
+						{/if}
+						{#if isWalkDay}
+							{walkDayContent}
+							<div style="display: flex">
+								{#each d.walks as { directions, videoId }, widx}
+									<div style="display: flex; font-size: 0.8em; flex-direction: column">
+										{#if directions}
+											<a
+												href={directions}
+												noreferrer
+												noopener
+												style="text-decoration: none"
+												target="_blank"
+												title={`Walk ${widx + 1} Route`}
+											>
+												🗺️
+											</a>
+										{/if}
+										{#if videoId}
+											<a
+												href={`https://youtu.be/${videoId}`}
+												noreferrer
+												noopener
+												style="text-decoration: none"
+												target="_blank"
+												title={`Walk ${widx + 1} Video`}
+											>
+												🎥
+											</a>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						{:else if isPendingDay}
+							{`Sun sets at ${sunsetTime}`}
+						{/if}
+					</div>
+				{/each}
 			</div>
-		</div>
 
-		<div transition:fade>
-			{currentMonthTotalDistance} miles
-		</div>
-
-		<div transition:fade id="wrapper">
-			{#each dayNames as day}
-				<h5 style="user-select: none">{day}</h5>
-			{/each}
-
-			{#each currentMonthData as d, idx}
-				{@const dateNumber = idx - firstDayOffset + 1}
-				{@const currentDateIdx = currentDate + firstDayOffset - 1}
-				{@const isCurrentDate = idx === currentDateIdx}
-
-				{@const isEmptyDay = idx < firstDayOffset}
-				{@const isFutureDay = isRealMonth && idx > currentDateIdx}
-				{@const isPendingDay = isRealMonth && isCurrentDate && !d?.date}
-				{@const isWalkDay = !!d?.date}
-				{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
-
-				{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
-
-				{@const walkDayContent = d?.date && d?.walks.length > 0 ? `${getDateDistanceSum(d.date)} miles` : 'Unspecified'}
-
-				<div class={classes}>
-					{#if !isEmptyDay && !isFuturePaddingDay}
-						<div class="date-number">{dateNumber}</div>
-					{/if}
-					{#if isWalkDay}
-						{walkDayContent}
-						<div style="display: flex">
-							{#each d.walks as { directions, videoId }, widx}
-								<div style="display: flex; font-size: 0.8em; flex-direction: column">
-									{#if directions}
-										<a
-											href={directions}
-											noreferrer
-											noopener
-											style="text-decoration: none"
-											target="_blank"
-											title={`Walk ${widx + 1} Route`}
-										>
-											🗺️
-										</a>
-									{/if}
-									{#if videoId}
-										<a
-											href={`https://youtu.be/${videoId}`}
-											noreferrer
-											noopener
-											style="text-decoration: none"
-											target="_blank"
-											title={`Walk ${widx + 1} Video`}
-										>
-											🎥
-										</a>
-									{/if}
-								</div>
-							{/each}
-						</div>
-					{:else if isPendingDay}
-						{`Sun sets at ${sunsetTime}`}
-					{/if}
-				</div>
-			{/each}
-		</div>
-
-		<div transition:fade style="font-size: 0.66em">
-			Sunset data provided by <a target="_blank" href="https://api.sunrise-sunset.org">api.sunrise-sunset.org</a>
-		</div>
+			<div transition:fade style="font-size: 0.66em">
+				Sunset data provided by <a target="_blank" href="https://api.sunrise-sunset.org">api.sunrise-sunset.org</a>
+			</div>
+		{/if}
 	{:else}
 		<Circle />
 	{/if}
