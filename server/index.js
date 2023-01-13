@@ -295,8 +295,8 @@ async function handleYouTubeDataRequest(event) {
 			const cfClient = new CloudFrontClient(awsConfig);
 			const cfCommand = new CreateInvalidationCommand(cfInput);
 
-			console.log(`Invaldating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
-			await cfClient.send(cfCommand);
+			console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
+			cfClient.send(cfCommand); // do not await to prevent lambda from timing out
 		} else {
 			console.log(`process.env.READONLY is [${process.env.READONLY}], skipping DynamoDB and CloudFront updates`);
 		}
