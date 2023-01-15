@@ -2,13 +2,13 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 
+	import { baseUrl } from './stores/api';
+
 	import ErrorMessage from './components/ErrorMessage.svelte';
 	import StatusBar from './components/StatusBar.svelte';
 	import SunsetApiSourceAttribution from './components/SunsetApiSourceAttribution.svelte';
 	import ThumbnailGrid from './components/ThumbnailGrid.svelte';
 	import WalkCalendar from './components/WalkCalendar.svelte';
-
-	const apiBaseUrl = 'https://walks.mikeboharsik.com/api';
 
 	const monthNames = [
 		'January',
@@ -24,6 +24,9 @@
 		'November',
 		'December'
 	];
+
+	let apiBaseUrl;
+	baseUrl.subscribe(val => apiBaseUrl = val);
 
 	let now = new Date();
 	const humanMonthNumber = now.getMonth() + 1;
@@ -114,11 +117,11 @@
 	});
 </script>
 
-{#if false}
+{#if !navigator.userAgentData.mobile}
 	<ThumbnailGrid {data} />
 {/if}
 
-<div id="container">
+<div id="container-app">
 	{#if isLoaded}
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
@@ -138,20 +141,18 @@
 
 <style>
 	@media (prefers-color-scheme: dark) {
-			#container {
-				background-color: rgb(calc(32), calc(32), calc(32));
+			#container-app {
 				color: white;
 			}
 	}
 
 	@media (prefers-color-scheme: light) {
-			#container {
-				background-color: rgb(calc(256 - 32), calc(256 - 32), calc(256 - 32));
+			#container-app {
 				color: black;
 			}
 	}
 
-	#container {
+	#container-app {
 		align-items: center;
 		display: flex;
 		flex-direction: column;

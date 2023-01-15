@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 </script>
 
-<div transition:fade id="container">
+<div transition:fade id="container-sunsetapisourceattribution">
 	Sunset data provided by <a target="_blank" href="https://api.sunrise-sunset.org">api.sunrise-sunset.org</a>
 </div>
 
@@ -16,7 +16,7 @@
 			color: #66f;
 		}
 
-		#container {
+		#container-sunsetapisourceattribution {
 			text-shadow: black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px;
 		}
 	}
@@ -30,7 +30,7 @@
 			color: navy;
 		}
 
-		#container {
+		#container-sunsetapisourceattribution {
 			text-shadow: white 0px 0px 4px, white 0px 0px 4px, white 0px 0px 4px, white 0px 0px 4px;
 		}
 	}

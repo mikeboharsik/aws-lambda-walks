@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div transition:fade id="wrapper">
+<div transition:fade id="container-walkcalendar">
 	{#each dayNames as day}
 		<h5>{day}</h5>
 	{/each}
@@ -108,6 +108,7 @@
 <style>
 	@media (prefers-color-scheme: dark) {
 		h5 {
+			color: white;
 			text-shadow: black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px; user-select: none
 		}
 
@@ -173,7 +174,7 @@
 		}
 	}
 
-	#wrapper {
+	#container-walkcalendar {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-gap: 1px;
@@ -200,7 +201,5 @@
 
 	.future-padding-day {
 		visibility: hidden;
-	}
-
-	
+	}	
 </style>
