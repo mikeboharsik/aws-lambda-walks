@@ -41,7 +41,7 @@
 	}
 </script>
 
-<div transition:fade id="container">
+<div transition:fade id="container-statusbar">
 	<div transition:fade>
 		{now.getFullYear()}
 	</div>
@@ -96,7 +96,7 @@
 			color: #fff;
 		}
 
-		#container {
+		#container-statusbar {
 			text-shadow: black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px, black 0px 0px 4px; user-select: none
 		}
 	}
@@ -107,7 +107,7 @@
 			color: #000;
 		}
 
-		#container {
+		#container-statusbar {
 			text-shadow: white 0px 0px 4px, white 0px 0px 4px, white 0px 0px 4px, white 0px 0px 4px; user-select: none;
 		}
 	}
@@ -116,7 +116,7 @@
 		border-radius: 4px;
 	}
 
-	#container {
+	#container-statusbar {
 		backdrop-filter: blur(8px);
 		border-radius: 4px;
 		padding: 8px;

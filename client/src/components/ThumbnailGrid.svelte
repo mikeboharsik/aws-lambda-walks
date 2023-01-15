@@ -1,15 +1,23 @@
 <script>
 	import { fade } from 'svelte/transition';
 
+	import { baseUrl } from '../stores/api';
+
 	export let data;
 
 	const thumbnailWidth = 120;
 	const thumbnailHeight = 90;
+
 	const marginX = 4;
 	const marginY = 4;
 	const paddingX = 2;
 	const paddingY = 2;
-	const newImageInterval = 5000;
+
+	const imageFadeTime = 30000;
+	const newImageInterval = parseInt((1/3) * imageFadeTime);
+
+	let apiBaseUrl;
+	baseUrl.subscribe(val => apiBaseUrl = val);
 
 	let imageCountX = 0;
 	let imageCountY = 0;
@@ -44,12 +52,14 @@
 			return cached;
 		}
 
-		return await fetch(`https://walks.mikeboharsik.com/api/yt-thumbnail?videoId=${videoId}`)
+		return await fetch(`${apiBaseUrl}/yt-thumbnail?videoId=${videoId}`)
 			.then(res => res.blob())
 			.then(imgData => createImageBitmap(imgData));
 	}
 
 	function populateImageArray() {
+		const calendarBoundingRect = document.querySelector('#container-walkcalendar').getBoundingClientRect();
+
 		const initImageCountX = imageCountX;
 		const initImageCountY = imageCountY;
 
@@ -61,15 +71,41 @@
 		}
 
 		imageCells = new Array(imageCountX);
-		for (let i = 0; i < imageCountX; i++) {
-			imageCells[i] = new Array(imageCountY);
-			for (let j = 0; j < imageCountY; j++) {
-				imageCells[i][j] = {};
+		for (let x = 0; x < imageCountX; x++) {
+			imageCells[x] = new Array(imageCountY);
+			for (let y = 0; y < imageCountY; y++) {
+				const posX = marginX + x * thumbnailWidth + x;
+				const posY = marginY + y * thumbnailHeight + y;
+
+				const isHidden = posX + thumbnailWidth >= calendarBoundingRect.left && posX <= calendarBoundingRect.right;
+
+				imageCells[x][y] = {
+					isPointInside: function(inX, inY) {
+						let withinXBounds = inX > posX && inX < posX + thumbnailWidth;
+						let withinYBounds = inY > posY && inY < posY + thumbnailHeight;
+
+						return withinXBounds && withinYBounds;
+					},
+					isHidden,
+					posX,
+					posY,
+				};
 			}
 		}
 	}
 
+	function handleCanvasClick(e) {
+		const { x, y } = e;
+
+		const hit = imageCells.flat().find(({ isHidden, isPointInside, videoId }) => !isHidden && videoId && isPointInside(x, y));
+		if (hit) {
+			window.open(`https://youtu.be/${hit.videoId}`, '_blank', 'noopener');
+		}
+	}
+
 	function draw(ts) {
+		const dt = parseInt(ts - lastFrameTime);
+
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
 
@@ -81,17 +117,25 @@
 		for (let x = 0; x < imageCountX; x++) {
 			for (let y = 0; y < imageCountY; y++) {
 				try {
-					const { image, start } = imageCells[x][y];
+					const curCell = imageCells[x][y];
+					const { image, posX, posY, timeLeft } = curCell;
 
-					if (image && start) {
-						const imageX = marginX + x * thumbnailWidth + x;
-						const imageY = marginY + y * thumbnailHeight + y;
+					if (image && timeLeft) {
+						ctx.drawImage(image, posX, posY);
 
-						ctx.drawImage(image, imageX, imageY);
-						
-						const alpha = Math.abs(Math.sin((ts - start) / 10000));
+						ctx.save();
+						const alpha = (imageFadeTime - timeLeft) / imageFadeTime;
 						ctx.fillStyle = `rgba(${backgroundColor}, ${alpha})`;
-						ctx.fillRect(imageX, imageY, thumbnailWidth, thumbnailHeight);
+						ctx.fillRect(posX, posY, thumbnailWidth, thumbnailHeight);
+						ctx.restore();
+
+						curCell.timeLeft -= dt;
+
+						if (curCell.timeLeft <= 0) {
+							curCell.image = null;
+							curCell.timeLeft = null;
+							curCell.videoId = null;
+						}
 					}
 				} catch(e) {
 					console.error(e, x, y, imageCountX * x + y);
@@ -137,7 +181,7 @@
 				return;
 			}
 
-			const candidates = imageCells.flat().filter(cell => !cell.start);
+			const candidates = imageCells.flat().filter(({ isHidden, timeLeft }) => !isHidden && !timeLeft);
 			// TODO: what if there are no remaining candidates?
 
 			const cell = candidates[getRandomWithMax(candidates.length)];
@@ -153,7 +197,8 @@
 				const vidId = availableVideoIds[vidIdx];
 
 				cell.image = await getBitmapForThumbnail(vidId);
-				cell.start = performance.now();
+				cell.timeLeft = imageFadeTime;
+				cell.videoId = vidId;
 
 				thumbnailCache[vidId] = cell.image;
 			} else {
@@ -172,10 +217,10 @@
 </script>
 
 <canvas
-	style="position: absolute; z-index: -1000;"
+	style="position: absolute; z-index: -1"
 	transition:fade
 	id="canvas"
-	on:click={(e) => console.log(e)}
+	on:click={handleCanvasClick}
 >
 </canvas>
 
