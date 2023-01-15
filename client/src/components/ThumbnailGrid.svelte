@@ -110,7 +110,7 @@
 		const ctx = canvas.getContext('2d');
 
 		ctx.save();
-		ctx.fillStyle = `rgb(${backgroundColor})`;
+		ctx.fillStyle = `rgba(0, 0, 0, 0)`;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 		ctx.restore();
 
@@ -217,7 +217,7 @@
 </script>
 
 <canvas
-	style="position: absolute; z-index: -1"
+	style="position: absolute; z-index: 1"
 	transition:fade
 	id="canvas"
 	on:click={handleCanvasClick}
