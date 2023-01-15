@@ -117,11 +117,11 @@
 	});
 </script>
 
-{#if !navigator.userAgentData.mobile}
-	<ThumbnailGrid {data} />
-{/if}
-
 <div id="container-app">
+	{#if !navigator.userAgentData.mobile}
+		<ThumbnailGrid {data} />
+	{/if}
+
 	{#if isLoaded}
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
@@ -165,6 +165,5 @@
 		width: 100%;
 
 		position: relative;
-		z-index: 0;
 	}
 </style>
