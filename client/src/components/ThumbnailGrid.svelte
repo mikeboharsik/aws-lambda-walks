@@ -29,6 +29,7 @@
 	let thumbnailCache = {};
 
 	let isTabInFocus = true;
+	let lastPausedTime = null;
 
 	const offset = 32;
 	const darkModeColor = `${offset}, ${offset}, ${offset}`;
@@ -44,8 +45,8 @@
 			}
 		});
 
-	window.addEventListener('blur', () => isTabInFocus = false);
-	window.addEventListener('focus', () => isTabInFocus = true);
+	window.addEventListener('blur', () => { isTabInFocus = false; lastPausedTime = performance.now(); });
+	window.addEventListener('focus', () => { isTabInFocus = true; });
 
 	async function getBitmapForThumbnail(videoId) {
 		if (!videoId) {
@@ -100,6 +101,8 @@
 	}
 
 	function handleCanvasClick(e) {
+		e.prev
+
 		const { x, y } = e;
 
 		const hit = imageCells.flat().find(({ isHidden, isPointInside, videoId }) => !isHidden && videoId && isPointInside(x, y));
@@ -114,7 +117,15 @@
 			return window.requestAnimationFrame(draw);
 		}
 
-		const dt = parseInt(ts - lastFrameTime);
+		let dt;
+		if (lastPausedTime) {
+			const timePaused = ts - lastPausedTime;
+			dt = parseInt(ts - lastFrameTime - timePaused);
+			lastPausedTime = null;
+			console.log(`Set dt to ${dt} based on lastPausedTime`);
+		} else {
+			dt = parseInt(ts - lastFrameTime);
+		}
 
 		const canvas = document.getElementById('canvas');
 		const ctx = canvas.getContext('2d');
@@ -237,7 +248,7 @@
 </script>
 
 <canvas
-	style="position: absolute; z-index: 1"
+	style="position: absolute; top: 0; left: 0;"
 	transition:fade
 	id="canvas"
 	on:click={handleCanvasClick}
