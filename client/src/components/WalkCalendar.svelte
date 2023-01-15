@@ -113,8 +113,8 @@
 
 		.day {
 			background-color: #777;
-			border: 1px solid #666;
-			color: #222;
+			border: 1px solid #aaa;
+			color: #333;
 		}
 
 		.non-walk-day {
