@@ -28,6 +28,8 @@
 	let allVideoIds = [];
 	let thumbnailCache = {};
 
+	let isTabInFocus = true;
+
 	const offset = 32;
 	const darkModeColor = `${offset}, ${offset}, ${offset}`;
 	const lightModeColor = `${256 - offset}, ${256 - offset}, ${256 - offset}`;
@@ -41,6 +43,9 @@
 				backgroundColor = lightModeColor;
 			}
 		});
+
+	window.addEventListener('blur', () => isTabInFocus = false);
+	window.addEventListener('focus', () => isTabInFocus = true);
 
 	async function getBitmapForThumbnail(videoId) {
 		if (!videoId) {
@@ -104,6 +109,11 @@
 	}
 
 	function draw(ts) {
+		if (!isTabInFocus) {
+			console.log('Skipping draw as tab is not in focus');
+			return window.requestAnimationFrame(draw);
+		}
+
 		const dt = parseInt(ts - lastFrameTime);
 
 		const canvas = document.getElementById('canvas');
@@ -149,6 +159,48 @@
 		window.requestAnimationFrame(draw);
 	}
 
+	function getRandomWithMax(max) {
+		return Math.floor(Math.random() * max);
+	}
+
+	async function populateImageGridCell() {
+		if (!isTabInFocus) {
+			console.log('Skipping populateImageGridCell as tab is not in focus');
+			return;
+		}
+
+		if (allVideoIds.length <= 0) {
+			console.log('All videos have been fetched!');
+			return;
+		}
+
+		const candidates = imageCells.flat().filter(({ isHidden, timeLeft }) => !isHidden && !timeLeft);
+		// TODO: what if there are no remaining candidates?
+
+		const cell = candidates[getRandomWithMax(candidates.length)];
+
+		if (cell) {
+			let availableVideoIds = allVideoIds.filter(videoId => !Object.keys(thumbnailCache).includes(videoId));
+			if (availableVideoIds.length <= 0) {
+				console.log('Ran out of thumbnails to fetch, falling back to cached images');
+				availableVideoIds = Object.keys(thumbnailCache);
+			}
+
+			const vidIdx = getRandomWithMax(availableVideoIds.length);
+			const vidId = availableVideoIds[vidIdx];
+
+			cell.image = await getBitmapForThumbnail(vidId);
+			cell.timeLeft = imageFadeTime;
+			cell.videoId = vidId;
+
+			thumbnailCache[vidId] = cell.image;
+		} else {
+			console.log('it fucked up with index', cell, imageCells);
+		}
+
+		console.log('Called populateImageGridCell');
+	}
+
 	async function setupCanvas() {
 		const canvas = document.getElementById('canvas');
 		canvas.height = window.innerHeight;
@@ -168,45 +220,13 @@
 			draw();
 
 			clearInterval(intervalRef);
-			intervalRef = setInterval(startRandomImage, newImageInterval);
+			intervalRef = setInterval(populateImageGridCell, newImageInterval);
 		});
-		
-		function getRandomWithMax(max) {
-			return Math.floor(Math.random() * max);
-		}
 
-		async function startRandomImage() {
-			if (allVideoIds.length <= 0) {
-				console.log('All videos have been fetched!');
-				return;
-			}
+		clearInterval(intervalRef);
+		intervalRef = setInterval(populateImageGridCell, newImageInterval);
 
-			const candidates = imageCells.flat().filter(({ isHidden, timeLeft }) => !isHidden && !timeLeft);
-			// TODO: what if there are no remaining candidates?
-
-			const cell = candidates[getRandomWithMax(candidates.length)];
-
-			if (cell) {
-				let availableVideoIds = allVideoIds.filter(videoId => !Object.keys(thumbnailCache).includes(videoId));
-				if (availableVideoIds.length <= 0) {
-					console.log('Ran out of thumbnails to fetch, falling back to cached images');
-					availableVideoIds = Object.keys(thumbnailCache);
-				}
-
-				const vidIdx = getRandomWithMax(availableVideoIds.length);
-				const vidId = availableVideoIds[vidIdx];
-
-				cell.image = await getBitmapForThumbnail(vidId);
-				cell.timeLeft = imageFadeTime;
-				cell.videoId = vidId;
-
-				thumbnailCache[vidId] = cell.image;
-			} else {
-				console.log('it fucked up with index', cell, imageCells);
-			}
-		}
-
-		intervalRef = setInterval(startRandomImage, newImageInterval);
+		console.log('Called setupCanvas');
 	}
 
 	$: {
