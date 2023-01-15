@@ -13,8 +13,8 @@
 	const paddingX = 2;
 	const paddingY = 2;
 
-	const imageFadeTime = 30000;
-	const newImageInterval = parseInt((1/3) * imageFadeTime);
+	const imageFadeTime = 60000;
+	const newImageInterval = parseInt((1/12) * imageFadeTime);
 
 	let apiBaseUrl;
 	baseUrl.subscribe(val => apiBaseUrl = val);
