@@ -8,8 +8,12 @@
 
 <style>
 	@media (prefers-color-scheme: dark) {
+		a {
+			color: #66f;
+		}
+
 		a:visited {
-			color: magenta;
+			color: #66f;
 		}
 
 		#container {
@@ -18,8 +22,12 @@
 	}
 
 	@media (prefers-color-scheme: light) {
+		a {
+			color: navy;
+		}
+
 		a:visited {
-			color: purple;
+			color: navy;
 		}
 
 		#container {
