@@ -142,12 +142,14 @@
 <style>
 	@media (prefers-color-scheme: dark) {
 			#container-app {
+				background-color: rgb(32, 32, 32);
 				color: white;
 			}
 	}
 
 	@media (prefers-color-scheme: light) {
 			#container-app {
+				background-color: rgb(224, 244, 244);
 				color: black;
 			}
 	}
@@ -161,5 +163,8 @@
 
 		height: 100%;
 		width: 100%;
+
+		position: relative;
+		z-index: 0;
 	}
 </style>
