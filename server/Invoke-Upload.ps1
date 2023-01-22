@@ -25,6 +25,7 @@ if (!$SkipUpload) {
 	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://./build/deployable.zip"
 
 	if ($DistributionId) {
-		aws cloudfront create-invalidation --distribution-id $DistributionId --paths "/*"
+		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths "/*"
+		Write-Host $result
 	}
 }
