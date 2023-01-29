@@ -97,7 +97,7 @@
 
 		const jobs = [
 			fetch(`${apiBaseUrl}/yt-data`, options).then(res => res.json()),
-			fetch(`${apiBaseUrl}/sunset?date=${dateStr}`).then(res => res.json()),
+			fetch(`${apiBaseUrl}/sunx?date=${dateStr}`).then(res => res.json()),
 		];
 
 		try {
