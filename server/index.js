@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const fsPromises = require('fs/promises');
-const { DynamoDBClient, PutItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
+const zlib = require('zlib');
+const { DynamoDBClient, PutItemCommand, QueryCommand, ScanCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
 const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 const fetch = require('node-fetch');
 
@@ -73,25 +74,16 @@ async function handleApiRequest(event) {
 
 	console.log(`handle api request for ${rawPath}`);
 
-	switch (rawPath) {
-		case '/api/yt-data': {
-			return await handleYouTubeDataRequest(event);
-		}
+	const routeMap = {
+		'/api/yt-data': handleYouTubeDataRequest,
+		'/api/routes': handleWalkRoutesRequest,
+		'/api/sunx': handleSunxDataRequest,
+		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
+	};
 
-		case '/api/yt-thumbnail': {
-			return await handleYouTubeThumbnailRequest(event);
-		}
+	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
 
-		case '/api/sunset': {
-			return await handleSunsetDataRequest(event);
-		}
-
-		default: {
-			return {
-				statusCode: 404
-			};
-		}
-	}	
+	return await func(event);
 }
 
 async function handleContentRequest(event) {
@@ -155,21 +147,10 @@ function setJsonContentType(response) {
 	return response;
 }
 
-async function handleYouTubeDataRequest(event) {
-	const { isAuthed } = event;
-
-	const expectedConfigs = [
-		'API_KEY_REFERER',
-		'AWS_REGION',
-		'CLOUDFRONT_DISTRIBUTION_ID',
-		'DYNAMO_TABLE_NAME',
-		'YOUTUBE_API_KEY',
-		'YOUTUBE_PLAYLIST_ID',
-	];
-
+function getMissingConfigs(expected) {
 	const missingConfigs = [];
 
-	expectedConfigs.forEach((key) => {
+	expected.forEach((key) => {
 		if (!process.env[key]) {
 			missingConfigs.push(key);
 		}
@@ -182,13 +163,31 @@ async function handleYouTubeDataRequest(event) {
 			'cache-control': 'no-store',
 		};
 	}
+}
+
+async function handleYouTubeDataRequest(event) {
+	const { isAuthed } = event;
+
+	const expectedConfigs = [
+		'API_KEY_REFERER',
+		'AWS_REGION',
+		'CLOUDFRONT_DISTRIBUTION_ID',
+		'DYNAMO_WALKS_TABLE_NAME',
+		'YOUTUBE_API_KEY',
+		'YOUTUBE_PLAYLIST_ID',
+	];
+
+	const missingConfigsResponse = getMissingConfigs(expectedConfigs);
+	if (missingConfigsResponse) {
+		return missingConfigsResponse;
+	}
 
 	const oneHourAgo = new Date();
 	oneHourAgo.setHours(oneHourAgo.getHours() - 1);
 
 	const client = new DynamoDBClient(awsConfig);
 	const query = new QueryCommand({
-		TableName: process.env.DYNAMO_TABLE_NAME,
+		TableName: process.env.DYNAMO_WALKS_TABLE_NAME,
 		ExpressionAttributeNames: {
 			'#datetime': 'datetime'
 		},
@@ -269,7 +268,7 @@ async function handleYouTubeDataRequest(event) {
 	};
 	
 	const command = new PutItemCommand({
-		TableName: process.env.DYNAMO_TABLE_NAME,
+		TableName: process.env.DYNAMO_WALKS_TABLE_NAME,
 		Item: {
 			data: { 'S': body.data },
 			datetime: { 'S': now },
@@ -327,7 +326,60 @@ async function handleYouTubeThumbnailRequest(event) {
 	};
 }
 
-async function handleSunsetDataRequest(event) {
+async function handleWalkRoutesRequest(event) {
+	const expectedConfigs = [
+		'DYNAMO_ROUTES_TABLE_NAME'
+	];
+
+	const missingConfigsResponse = getMissingConfigs(expectedConfigs);
+	if (missingConfigsResponse) {
+		return missingConfigsResponse;
+	}
+
+	const { isAuthed } = event;
+
+	const client = new DynamoDBClient(awsConfig);
+
+	const commandAttributes = { TableName: process.env.DYNAMO_ROUTES_TABLE_NAME };
+
+	if (!isAuthed) {
+		commandAttributes.ExpressionAttributeNames = { '#name': 'name' },
+		commandAttributes.ProjectionExpression = 'id, #name, realmiles';
+	}
+
+	const command = new ScanCommand(commandAttributes);
+
+	console.log('Using command', JSON.stringify(command));
+
+	const { Items } = await client.send(command);
+
+	const result = Items.reduce((acc, cur) => {
+		const item = {};
+
+		Object.keys(cur).forEach((key) => {
+			const type = Object.keys(cur[key])[0];
+			const rawValue = cur[key][type];
+
+			if (key === 'geojson') {
+				if (isAuthed) {
+					item[key] = JSON.parse(zlib.inflateSync(Buffer.from(rawValue, 'base64')).toString());
+				}
+			} else {
+				item[key] = type === 'N' ? parseFloat(rawValue) : rawValue;
+			}
+		});
+
+		acc.push(item);
+		return acc;
+	}, []);
+
+	return setJsonContentType({
+		body: JSON.stringify(result),
+		statusCode: 200,
+	})
+}
+
+async function handleSunxDataRequest(event) {
 	const { queryStringParameters: { date } = {} } = event;
 
 	if (!date) {
