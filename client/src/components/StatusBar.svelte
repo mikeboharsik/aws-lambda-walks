@@ -1,8 +1,11 @@
 <script>
 	import { fade } from 'svelte/transition';
 
+	import { toFixedDefault } from '../constants/config';
+
 	export let currentMonth;
 	export let currentMonthData;
+	export let routesData;
 	export let monthNames;
 	export let now;
 	export let realMonth;
@@ -37,7 +40,12 @@
 		// TODO: FIX: we need to check the absolute Date rather than just the number of month
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
-		currentMonthTotalDistance = currentMonthData.reduce((acc, cur) => cur ? cur.walks.reduce((acc2, cur2) => acc2 + parseFloat(cur2.distance), 0) + acc : acc, 0).toFixed(1);
+		currentMonthTotalDistance = currentMonthData.reduce((monthTotal, { walks } = {}) => {
+			return (walks?.reduce((dayTotal, { routeId }) => {
+				const routeDistance = routesData.find(r => r.id === routeId)?.realmiles;
+				return (routeDistance ?? 0) + dayTotal;
+			}, 0) ?? 0) + monthTotal;
+		}, 0).toFixed(toFixedDefault);
 	}
 </script>
 
@@ -93,6 +101,7 @@
 	@media (prefers-color-scheme: dark) {
 		button {
 			background-color: #111;
+			border: 2px solid #666;
 			color: #fff;
 		}
 
@@ -114,6 +123,8 @@
 
 	button {
 		border-radius: 4px;
+		font-family: monospace;
+		padding-bottom: 3px;
 	}
 
 	#container-statusbar {

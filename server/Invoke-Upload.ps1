@@ -26,6 +26,6 @@ if (!$SkipUpload) {
 
 	if ($DistributionId) {
 		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths "/*"
-		Write-Host $result
+		Write-Host ($result | ConvertFrom-Json | ConvertTo-Json -Depth 10)
 	}
 }

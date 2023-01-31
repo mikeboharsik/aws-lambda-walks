@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 
-	import { baseUrl } from './stores/api';
+	import { baseUrl } from './constants/api';
 
 	import ErrorMessage from './components/ErrorMessage.svelte';
 	import StatusBar from './components/StatusBar.svelte';
@@ -25,15 +25,13 @@
 		'December'
 	];
 
-	let apiBaseUrl;
-	baseUrl.subscribe(val => apiBaseUrl = val);
-
 	let now = new Date();
 	const humanMonthNumber = now.getMonth() + 1;
 	const realMonth = humanMonthNumber < 10 ? '0' + (now.getMonth() + 1) : humanMonthNumber.toString();
 	const currentDate = now.getDate();
 
-	let data = [];
+	let youtubeData = [];
+	let routesData = [];
 	let currentMonthData = [];
 	let sunsetTime;
 	let isLoaded = false;
@@ -49,7 +47,7 @@
 		const toAdd = maxWeeksInDays - (daysInMonth + firstDayOffset);
 		const newCurrentMonthData = Array.from(new Array(daysInMonth + firstDayOffset + toAdd));
 
-		const matches = data.filter(e => e.date.match(new RegExp(`\\d{4}-${currentMonth}-\\d{2}`)));
+		const matches = youtubeData.filter(e => e.date.match(new RegExp(`\\d{4}-${currentMonth}-\\d{2}`)));
 
 		newCurrentMonthData.forEach((e, i, a) => {
 			const dayIsInMonth = i > (firstDayOffset - 1);
@@ -78,6 +76,10 @@
 		return n.toString().padStart(2, '0');
 	}
 
+	function getPaddedDateString(date) {
+		return `${padNumber(date.getFullYear())}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())}`;
+	}
+
 	function getApiOptions() {
 		let options = {};
 
@@ -92,21 +94,27 @@
 	onMount(async() => {
 		const options = getApiOptions();
 
-		const now = new Date();
-		const dateStr = `${padNumber(now.getFullYear())}-${padNumber(now.getMonth() + 1)}-${padNumber(now.getDate())}`;
+		const dateStr = getPaddedDateString(new Date());
 
-		const jobs = [
-			fetch(`${apiBaseUrl}/yt-data`, options).then(res => res.json()),
-			fetch(`${apiBaseUrl}/sunx?date=${dateStr}`).then(res => res.json()),
+		const initialDataJobs = [
+			fetch(`${baseUrl}/yt-data`, options).then(res => res.json()),
+			fetch(`${baseUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
+			fetch(`${baseUrl}/routes`, options).then(res => res.json()),
 		];
 
 		try {
-			const results = await Promise.allSettled(jobs);
+			const results = await Promise.allSettled(initialDataJobs);
 			
-			data = results[0].value.data;
+			const [
+				{ value: { data: youtubeDataResult } },
+				{ value: { results: { sunset: sunsetDataResult } } },
+				{ value: routesDataResult }
+			] = results;
 
-			const rawSunset = new Date(results[1].value.results.sunset);
-			sunsetTime = `${padNumber(rawSunset.getHours())}:${padNumber(rawSunset.getMinutes())}:${padNumber(rawSunset.getSeconds())}`;
+			youtubeData = youtubeDataResult;
+			routesData = routesDataResult;
+
+			sunsetTime = getPaddedDateString(new Date(sunsetDataResult));
 
 			currentMonthData = getCurrentMonthData();
 		} catch(e) {
@@ -119,16 +127,16 @@
 
 <div id="container-app">
 	{#if !navigator.userAgentData.mobile}
-		<ThumbnailGrid {data} />
+		<ThumbnailGrid data={youtubeData} />
 	{/if}
 
 	{#if isLoaded}
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
 		{:else}
-			<StatusBar bind:now {currentMonthData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
+			<StatusBar bind:now {currentMonthData} {routesData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
 
-			<WalkCalendar {currentMonthData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunsetTime} />
+			<WalkCalendar {currentMonthData} {routesData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunsetTime} />
 
 			<SunsetApiSourceAttribution />
 		{/if}

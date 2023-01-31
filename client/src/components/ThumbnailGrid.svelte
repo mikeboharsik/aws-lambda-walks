@@ -1,7 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 
-	import { baseUrl } from '../stores/api';
+	import { baseUrl } from '../constants/api';
 
 	export let data;
 
@@ -15,9 +15,6 @@
 
 	const imageFadeTime = 60000;
 	const newImageInterval = parseInt((1/12) * imageFadeTime);
-
-	let apiBaseUrl;
-	baseUrl.subscribe(val => apiBaseUrl = val);
 
 	let imageCountX = 0;
 	let imageCountY = 0;
@@ -58,7 +55,7 @@
 			return cached;
 		}
 
-		return await fetch(`${apiBaseUrl}/yt-thumbnail?videoId=${videoId}`)
+		return await fetch(`${baseUrl}/yt-thumbnail?videoId=${videoId}`)
 			.then(res => res.blob())
 			.then(imgData => createImageBitmap(imgData));
 	}

@@ -1,7 +1,10 @@
 <script>
 	import { fade } from 'svelte/transition';
 
+	import { toFixedDefault } from '../constants/config';
+
 	export let currentMonthData = [];
+	export let routesData = [];
 	export let currentDate;
 	export let firstDayOffset;
 	export let isRealMonth;
@@ -38,7 +41,18 @@
 	}
 
 	function getDateDistanceSum(date) {
-		return currentMonthData.find(d => d?.date === date).walks.reduce((acc, cur) => acc + parseFloat(cur.distance), 0).toFixed(1);
+		try {
+			const routeIds = currentMonthData.find(d => d?.date === date)
+				.walks
+				.reduce((acc, { routeId }) => { routeId && acc.push(routeId); return acc }, []);
+
+			return routeIds.reduce((acc, routeId) => {
+				const { realmiles } = routesData.find(r => r.id === routeId);
+				return realmiles + acc;
+			}, 0)?.toFixed(toFixedDefault);
+		}	catch {
+			return null;
+		}
 	}
 </script>
 
@@ -60,7 +74,8 @@
 
 		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
 
-		{@const walkDayContent = d?.date && d?.walks.length > 0 ? `${getDateDistanceSum(d.date)} miles` : 'Unspecified'}
+		{@const dateDistanceSum = d?.date && d?.walks.length ? getDateDistanceSum(d.date) : null}
+		{@const walkDayContent = dateDistanceSum === null ? 'Unspecified' : `${dateDistanceSum} miles`}
 
 		<div class={classes}>
 			{#if !isEmptyDay && !isFuturePaddingDay}
@@ -69,11 +84,14 @@
 			{#if isWalkDay}
 				{walkDayContent}
 				<div style="display: flex">
-					{#each d.walks as { directions, videoId }, widx}
+					{#each d.walks as { directions, routeId, videoId }, widx}
+						{@const route = routesData?.find(r => r.id === routeId)}
+						{@const routeJson = route?.geojson}
+
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
-							{#if directions}
+							{#if routeJson}
 								<a
-									href={directions}
+									href={`https://geojson.io/#data=data:application/json,${encodeURIComponent(JSON.stringify(routeJson))}`}
 									noreferrer
 									noopener
 									style="text-decoration: none"
@@ -83,6 +101,7 @@
 									🗺️
 								</a>
 							{/if}
+
 							{#if videoId}
 								<a
 									href={`https://youtu.be/${videoId}`}
