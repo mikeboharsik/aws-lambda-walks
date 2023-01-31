@@ -56,7 +56,7 @@ function formatYouTubeDataResponse(result, isAuthed = false) {
 		parsedData.forEach((cur) => {
 			cur.walks.forEach(walk => {
 				delete walk.directions;
-				// delete walk.videoId;
+				delete walk.route;
 			});
 		});
 		result.data = parsedData;
@@ -235,25 +235,27 @@ async function handleYouTubeDataRequest(event) {
 	const relevantData = items.map((item) => {
 		const { snippet: { description, resourceId: { videoId }, title } } = item;
 
-		const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1];
-		const distance = description.match(/(\d+\.\d+) miles/)?.[1];
-		const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)(\n|$)/)?.[1] ?? undefined;
+		const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1] ?? null;
+		const distance = description.match(/(\d+\.\d+) miles/)?.[1] ?? null;
+		const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)(\n|$)/)?.[1] ?? null;
+		const routeId = description.match(/Route: (.*)/)?.[1] ?? null;
 
 		return {
 			date,
 			directions,
 			distance,
+			routeId,
 			videoId,
 		};
 	});
 
-	const normalized = relevantData.reduce((acc, { date, directions, distance, videoId }) => {
+	const normalized = relevantData.reduce((acc, { date, directions, distance, routeId, videoId }) => {
 		if (date) {
 			const exists = acc.find(d => d.date === date);
 			if (exists) {
-				exists.walks.push({ directions, distance, videoId });
+				exists.walks.push({ directions, distance, routeId, videoId });
 			} else {
-				acc.push({ date, walks: [{ directions, distance, videoId }] });
+				acc.push({ date, walks: [{ directions, distance, routeId, videoId }] });
 			}
 		}
 
@@ -343,8 +345,7 @@ async function handleWalkRoutesRequest(event) {
 	const commandAttributes = { TableName: process.env.DYNAMO_ROUTES_TABLE_NAME };
 
 	if (!isAuthed) {
-		commandAttributes.ExpressionAttributeNames = { '#name': 'name' },
-		commandAttributes.ProjectionExpression = 'id, #name, realmiles';
+		commandAttributes.ProjectionExpression = 'id, realmiles';
 	}
 
 	const command = new ScanCommand(commandAttributes);
