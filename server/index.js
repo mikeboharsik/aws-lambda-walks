@@ -3,8 +3,7 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const zlib = require('zlib');
-const { DynamoDBClient, PutItemCommand, QueryCommand, ScanCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
-const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
+const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
 const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
@@ -170,9 +169,6 @@ async function handleYouTubeDataRequest(event) {
 
 	const expectedConfigs = [
 		'API_KEY_REFERER',
-		'AWS_REGION',
-		'CLOUDFRONT_DISTRIBUTION_ID',
-		'DYNAMO_WALKS_TABLE_NAME',
 		'YOUTUBE_API_KEY',
 		'YOUTUBE_PLAYLIST_ID',
 	];
@@ -180,37 +176,6 @@ async function handleYouTubeDataRequest(event) {
 	const missingConfigsResponse = getMissingConfigs(expectedConfigs);
 	if (missingConfigsResponse) {
 		return missingConfigsResponse;
-	}
-
-	const oneHourAgo = new Date();
-	oneHourAgo.setHours(oneHourAgo.getHours() - 1);
-
-	const client = new DynamoDBClient(awsConfig);
-	const query = new QueryCommand({
-		TableName: process.env.DYNAMO_WALKS_TABLE_NAME,
-		ExpressionAttributeNames: {
-			'#datetime': 'datetime'
-		},
-		ExpressionAttributeValues: {
-			':playlistid': { 'S': playlistId },
-			':datetime': { 'S': oneHourAgo.toISOString() }
-		},
-		KeyConditionExpression: 'playlistid = :playlistid and #datetime >= :datetime'
-	});
-
-	const { Count, Items } = await client.send(query);
-
-	if (Count > 0) {
-		console.log('returning cached data');
-
-		let [result] = Items;
-
-		result = Object.entries(result).reduce((acc, [k, v]) => { acc[k] = v.S; return acc; }, {})
-
-		return setJsonContentType({
-			body: formatYouTubeDataResponse(result, isAuthed),
-			statusCode: 200
-		});
 	}
 
 	const baseUri = 'https://www.googleapis.com/youtube/v3/playlistItems';
@@ -268,42 +233,6 @@ async function handleYouTubeDataRequest(event) {
 		datetime: now,
 		playlistId // whether this is included in the response will be handled by the formatter function below
 	};
-	
-	const command = new PutItemCommand({
-		TableName: process.env.DYNAMO_WALKS_TABLE_NAME,
-		Item: {
-			data: { 'S': body.data },
-			datetime: { 'S': now },
-			playlistid: { 'S': body.playlistId },
-		}
-	});
-
-	try {
-		if (!Boolean(process.env.READONLY)) {
-			console.log(`Storing update in DynamoDB using command:\n${JSON.stringify(command)}`)
-			await client.send(command);
-
-			const cfInput = {
-				DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-				InvalidationBatch: {
-					CallerReference: new Date().getTime().toString(),
-					Paths: {
-						Items: ['/api/yt-data'],
-						Quantity: 1,
-					}
-				}
-			};
-			const cfClient = new CloudFrontClient(awsConfig);
-			const cfCommand = new CreateInvalidationCommand(cfInput);
-
-			console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
-			cfClient.send(cfCommand); // do not await to prevent lambda from timing out
-		} else {
-			console.log(`process.env.READONLY is [${process.env.READONLY}], skipping DynamoDB and CloudFront updates`);
-		}
-	} catch (e) {
-		console.error(e);
-	}
 
 	return setJsonContentType({
 		body: formatYouTubeDataResponse(body, isAuthed),
