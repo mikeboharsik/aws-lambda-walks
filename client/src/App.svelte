@@ -4,6 +4,8 @@
 
 	import { baseUrl } from './constants/api';
 
+	import { getPaddedDateString } from './util/date';
+
 	import ErrorMessage from './components/ErrorMessage.svelte';
 	import StatusBar from './components/StatusBar.svelte';
 	import SunsetApiSourceAttribution from './components/SunsetApiSourceAttribution.svelte';
@@ -33,7 +35,7 @@
 	let youtubeData = [];
 	let routesData = [];
 	let currentMonthData = [];
-	let sunsetTime;
+	let sunxData = null;
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
 	
@@ -72,14 +74,6 @@
 		isRealMonth = currentMonth === realMonth;
 	}
 
-	function padNumber(n) {
-		return n.toString().padStart(2, '0');
-	}
-
-	function getPaddedDateString(date) {
-		return `${padNumber(date.getFullYear())}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())}`;
-	}
-
 	function getApiOptions() {
 		let options = {};
 
@@ -96,9 +90,14 @@
 
 		const dateStr = getPaddedDateString(new Date());
 
+		const tomorrowDate = new Date();
+		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+		const tomorrowDateStr = getPaddedDateString(tomorrowDate);
+
 		const initialDataJobs = [
 			fetch(`${baseUrl}/yt-data`, options).then(res => res.json()),
 			fetch(`${baseUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
+			fetch(`${baseUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
 			fetch(`${baseUrl}/routes`, options).then(res => res.json()),
 		];
 
@@ -107,14 +106,15 @@
 			
 			const [
 				{ value: { data: youtubeDataResult } },
-				{ value: { results: { sunset: sunsetDataResult } } },
+				{ value: { results: sunxTodayResult } },
+				{ value: { results: sunxTomorrowResult } },
 				{ value: routesDataResult }
 			] = results;
 
 			youtubeData = youtubeDataResult;
 			routesData = routesDataResult;
 
-			sunsetTime = getPaddedDateString(new Date(sunsetDataResult));
+			sunxData = { today: sunxTodayResult, tomorrow: sunxTomorrowResult };
 
 			currentMonthData = getCurrentMonthData();
 		} catch(e) {
@@ -136,7 +136,7 @@
 		{:else}
 			<StatusBar bind:now {currentMonthData} {routesData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
 
-			<WalkCalendar {currentMonthData} {routesData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunsetTime} />
+			<WalkCalendar {currentMonthData} {routesData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunxData} />
 
 			<SunsetApiSourceAttribution />
 		{/if}
