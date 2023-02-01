@@ -3,13 +3,24 @@
 
 	import { toFixedDefault } from '../constants/config';
 
+	import { getPaddedTimeString } from '../util/date';
+
 	export let currentMonthData = [];
 	export let routesData = [];
 	export let currentDate;
 	export let firstDayOffset;
 	export let isRealMonth;
 	export let daysInMonth;
-	export let sunsetTime;
+
+	export let sunxData;
+
+	const now = new Date();
+	const todaySunrise = new Date(sunxData.today.sunrise);
+	const todaySunset = new Date(sunxData.today.sunset);
+	const tomorrowSunrise = new Date(sunxData.tomorrow.sunrise);
+
+	const isPastTodaySunrise = now > todaySunrise;
+	const isPastTodaySunset = now > todaySunset;
 
 	const dayNames = [
 		'Su',
@@ -68,6 +79,7 @@
 
 		{@const isEmptyDay = idx < firstDayOffset}
 		{@const isFutureDay = isRealMonth && idx > currentDateIdx}
+		{@const isTomorrow = isRealMonth && idx === currentDateIdx + 1}
 		{@const isPendingDay = isRealMonth && isCurrentDate && !d?.date}
 		{@const isWalkDay = !!d?.date}
 		{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
@@ -117,8 +129,12 @@
 						</div>
 					{/each}
 				</div>
-			{:else if isPendingDay}
-				{`Sun sets at ${sunsetTime}`}
+			{:else if isPendingDay && !isPastTodaySunrise}
+				{`Sun rises at ${getPaddedTimeString(todaySunrise)}`}
+			{:else if isPendingDay && !isPastTodaySunset}
+				{`Sun sets at ${getPaddedTimeString(todaySunset)}`}
+			{:else if isTomorrow && isPastTodaySunset}
+				{`Sun rises at ${getPaddedTimeString(tomorrowSunrise)}`}
 			{/if}
 		</div>
 	{/each}
