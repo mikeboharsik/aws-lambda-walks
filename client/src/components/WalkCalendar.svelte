@@ -3,7 +3,7 @@
 
 	import { toFixedDefault } from '../constants/config';
 
-	import { getPaddedTimeString } from '../util/date';
+	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
 
 	export let currentMonthData = [];
 	export let routesData = [];
@@ -22,6 +22,8 @@
 	const isPastTodaySunrise = now > todaySunrise;
 	const isPastTodaySunset = now > todaySunset;
 
+	const didWalkToday = !!currentMonthData.find((d) => d?.date === getPaddedDateString(now));
+
 	const dayNames = [
 		'Su',
 		'Mo',
@@ -32,10 +34,10 @@
 		'Sa'
 	];
 
-	function getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay }) {
+	function getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay }) {
 		let classes = ['day'];
 
-		if (isPendingDay) {
+		if (isPendingDay || didWalkToday && isTomorrow) {
 			classes.push('pending-day');
 		}
 		else if (isWalkDay) {
@@ -84,7 +86,7 @@
 		{@const isWalkDay = !!d?.date}
 		{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
 
-		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isWalkDay })}
+		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay })}
 
 		{@const dateDistanceSum = d?.date && d?.walks.length ? getDateDistanceSum(d.date) : null}
 		{@const walkDayContent = dateDistanceSum === null ? 'Unspecified' : `${dateDistanceSum} miles`}
@@ -133,7 +135,7 @@
 				{`Sun rises at ${getPaddedTimeString(todaySunrise)}`}
 			{:else if isPendingDay && !isPastTodaySunset}
 				{`Sun sets at ${getPaddedTimeString(todaySunset)}`}
-			{:else if isTomorrow && isPastTodaySunset}
+			{:else if didWalkToday && isTomorrow}
 				{`Sun rises at ${getPaddedTimeString(tomorrowSunrise)}`}
 			{/if}
 		</div>
