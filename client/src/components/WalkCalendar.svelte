@@ -133,7 +133,7 @@
 				</div>
 			{:else if isPendingDay && !isPastTodaySunrise}
 				{`Sun rises at ${getPaddedTimeString(todaySunrise)}`}
-			{:else if isPendingDay && !isPastTodaySunset}
+			{:else if isPendingDay}
 				{`Sun sets at ${getPaddedTimeString(todaySunset)}`}
 			{:else if didWalkToday && isTomorrow}
 				{`Sun rises at ${getPaddedTimeString(tomorrowSunrise)}`}
