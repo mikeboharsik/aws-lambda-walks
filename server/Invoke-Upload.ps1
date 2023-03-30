@@ -1,5 +1,6 @@
 Param(
 	[string] $DistributionId,
+	[string] $GeoJsonFilePath = "../../walk-routes/geo.json",
 
 	[switch] $DeployClient,
 	[switch] $SkipUpload
@@ -18,6 +19,9 @@ Copy-Item -Path @("./index.js", "./node_modules") -Recurse -Destination "./build
 if ($DeployClient) {
 	Copy-Item -Path "../client/public" -Recurse -Destination "./build/public" -Force | Out-Null
 }
+
+$geojson = Get-Content $GeoJsonFilePath | ConvertFrom-Json | ConvertTo-Json -Depth 10 -Compress
+Set-Content "./build/public/geo.json" $geojson -Force
 
 Compress-Archive -Path "./build/**" -DestinationPath "./build/deployable.zip" -Force
 

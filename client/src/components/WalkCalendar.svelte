@@ -59,13 +59,48 @@
 				.walks
 				.reduce((acc, { routeId }) => { routeId && acc.push(routeId); return acc }, []);
 
-			return routeIds.reduce((acc, routeId) => {
-				const { realmiles } = routesData.find(r => r.id === routeId);
-				return realmiles + acc;
-			}, 0)?.toFixed(toFixedDefault);
+			return (routeIds.reduce((acc, routeId) => {
+				const routeData = routesData.find(r => r.properties.id === routeId);
+
+				let { properties: { distance, startFeatureId, endFeatureId } } = routeData;
+
+				if (startFeatureId) {
+					const startFeature = routesData.find(r => r.properties.id === startFeatureId);
+					distance += startFeature.properties.distance;
+				}
+				if (endFeatureId) {
+					const endFeature = routesData.find(r => r.properties.id === endFeatureId);
+					distance += endFeature.properties.distance;
+				}
+
+				return distance + acc;
+			}, 0) / 1609).toFixed(toFixedDefault);
 		}	catch {
 			return null;
 		}
+	}
+
+	function getGeojsonIoUrlForRoute(route) {
+		const updatedRouteData = {
+			type: "FeatureCollection",
+			features: [route],
+		};
+
+		if (route.properties.startFeatureId) {
+			const startFeature = routesData.find(r => r.properties.id === route.properties.startFeatureId);
+			if (startFeature.geometry) {
+				updatedRouteData.features.push(startFeature);
+			}
+		}
+		if (route.properties.endFeatureId) {
+			const endFeature = routesData.find(r => r.properties.id === route.properties.endFeatureId);
+			if (endFeature.geometry) {
+				updatedRouteData.features.push(endFeature);
+			}
+		}
+
+		const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
+		return `https://geojson.io/#data=data:application/json,${encodedRouteData}`;
 	}
 </script>
 
@@ -99,13 +134,12 @@
 				{walkDayContent}
 				<div style="display: flex">
 					{#each d.walks as { directions, routeId, videoId }, widx}
-						{@const route = routesData?.find(r => r.id === routeId)}
-						{@const routeJson = route?.geojson}
+						{@const route = routesData?.find(r => r.properties.id === routeId)}
 
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
-							{#if routeJson}
+							{#if route}
 								<a
-									href={`https://geojson.io/#data=data:application/json,${encodeURIComponent(JSON.stringify(routeJson))}`}
+									href={getGeojsonIoUrlForRoute(route)}
 									noreferrer
 									noopener
 									style="text-decoration: none"
