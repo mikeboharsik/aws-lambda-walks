@@ -86,7 +86,7 @@ async function handleApiRequest(event) {
 }
 
 async function handleContentRequest(event) {
-	const { rawPath } = event;
+	const { isAuthed, rawPath } = event;
 
 	console.log('handle content request', rawPath);
 
@@ -96,26 +96,36 @@ async function handleContentRequest(event) {
 	}
 
 	if (fs.existsSync(target)) {
-		const ext = target.match(/\.(\w+)/)?.[1];
+		const ext = target.match(/\.(\w+)$/)?.[1];
 
-		let body;
+		let body = await fsPromises.readFile(target, { encoding: 'utf8' });
 		let contentType = 'text/plain';
 
 		switch (ext) {
 			case 'html':
-				body = await fsPromises.readFile(target, { encoding: 'utf8' });
 				contentType = 'text/html';
 				break;
 			case 'json':
-				body = await fsPromises.readFile(target, { encoding: 'utf8' });
 				contentType = 'application/json';
+
+				if (rawPath.endsWith('geo.json') && !isAuthed) {
+					const parsed = JSON.parse(body);
+					parsed.features.forEach((feature) => {
+						if (feature.properties.isPrivate) {
+							delete feature.geometry;
+						}
+
+						delete feature.properties.isPrivate;
+						delete feature.properties.name;
+						delete feature.properties.path;
+					});
+					body = JSON.stringify(parsed);
+				}
 				break;
 			case 'js':
-				body = await fsPromises.readFile(target, { encoding: 'utf8' });
 				contentType = 'text/javascript';
 				break;
 			case 'css':
-				body = await fsPromises.readFile(target, { encoding: 'utf8' });
 				contentType = 'text/css';
 				break;
 		}
