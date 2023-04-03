@@ -98,7 +98,7 @@
 			fetch(`${baseUrl}/yt-data`, options).then(res => res.json()),
 			fetch(`${baseUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
-			fetch('/build/geo.json', options).then(res => res.json()),
+			fetch('/geo.json', options).then(res => res.json()),
 		];
 
 		try {
