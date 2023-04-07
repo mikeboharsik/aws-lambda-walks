@@ -3,6 +3,7 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const zlib = require('zlib');
+
 const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
 const fetch = require('node-fetch');
 
