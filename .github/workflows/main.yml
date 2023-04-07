@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -22,7 +23,7 @@ jobs:
         path: walk-routes
         token: ${{ secrets.WALK_ROUTES_PAT }}
     - name: Setup Node.js environment
-      uses: actions/setup-node@v2.5.2
+      uses: actions/setup-node@v3.6.0
       with:
         node-version: 16.19.1
     - name: Configure AWS Credentials
