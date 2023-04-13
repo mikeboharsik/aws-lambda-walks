@@ -338,7 +338,7 @@ async function handleSunxDataRequest(event) {
 	}
 
 	try {
-		const response = await fetch(`https://api.sunrise-sunset.org/json?lat=42.49940760476378&lng=-71.09927545831746&formatted=0&date=${date}`);
+		const response = await fetch(`https://api.sunrise-sunset.org/json?lat=${process.env.SUNX_LATITUDE}&lng=${process.env.SUNX_LONGITUDE}&formatted=0&date=${date}`);
 		const responseJson = await response.json();
 
 		if (!response.ok) {
