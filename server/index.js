@@ -2,9 +2,7 @@
 
 const fs = require('fs');
 const fsPromises = require('fs/promises');
-const zlib = require('zlib');
 
-const { DynamoDBClient, ScanCommand } = require('@aws-sdk/client-dynamodb'); // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html
 const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
@@ -76,7 +74,6 @@ async function handleApiRequest(event) {
 
 	const routeMap = {
 		'/api/yt-data': handleYouTubeDataRequest,
-		'/api/routes': handleWalkRoutesRequest,
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 	};
@@ -266,58 +263,6 @@ async function handleYouTubeThumbnailRequest(event) {
 		isBase64Encoded: true,
 		statusCode: 200
 	};
-}
-
-async function handleWalkRoutesRequest(event) {
-	const expectedConfigs = [
-		'DYNAMO_ROUTES_TABLE_NAME'
-	];
-
-	const missingConfigsResponse = getMissingConfigs(expectedConfigs);
-	if (missingConfigsResponse) {
-		return missingConfigsResponse;
-	}
-
-	const { isAuthed } = event;
-
-	const client = new DynamoDBClient(awsConfig);
-
-	const commandAttributes = { TableName: process.env.DYNAMO_ROUTES_TABLE_NAME };
-
-	if (!isAuthed) {
-		commandAttributes.ProjectionExpression = 'id, realmiles';
-	}
-
-	const command = new ScanCommand(commandAttributes);
-
-	console.log('Using command', JSON.stringify(command));
-
-	const { Items } = await client.send(command);
-
-	const result = Items.reduce((acc, cur) => {
-		const item = {};
-
-		Object.keys(cur).forEach((key) => {
-			const type = Object.keys(cur[key])[0];
-			const rawValue = cur[key][type];
-
-			if (key === 'geojson') {
-				if (isAuthed) {
-					item[key] = JSON.parse(zlib.inflateSync(Buffer.from(rawValue, 'base64')).toString());
-				}
-			} else {
-				item[key] = type === 'N' ? parseFloat(rawValue) : rawValue;
-			}
-		});
-
-		acc.push(item);
-		return acc;
-	}, []);
-
-	return setJsonContentType({
-		body: JSON.stringify(result),
-		statusCode: 200,
-	})
 }
 
 async function handleSunxDataRequest(event) {
