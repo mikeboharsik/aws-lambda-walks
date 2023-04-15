@@ -62,16 +62,14 @@
 			return (routeIds.reduce((acc, routeId) => {
 				const routeData = routesData.find(r => r.properties.id === routeId);
 
-				let { properties: { distance, startFeatureId, endFeatureId } } = routeData;
+				let { properties: { distance, privateFeatureIds } } = routeData;
 
-				if (startFeatureId) {
-					const startFeature = routesData.find(r => r.properties.id === startFeatureId);
-					distance += startFeature.properties.distance;
-				}
-				if (endFeatureId) {
-					const endFeature = routesData.find(r => r.properties.id === endFeatureId);
-					distance += endFeature.properties.distance;
-				}
+				privateFeatureIds?.forEach((id) => {
+					const feature = routesData.find(r => r.properties.id === id);
+					if (feature.properties.distance) {
+						distance += feature.properties.distance;
+					}
+				});
 
 				return distance + acc;
 			}, 0) / 1609).toFixed(toFixedDefault);
@@ -86,18 +84,12 @@
 			features: [route],
 		};
 
-		if (route.properties.startFeatureId) {
-			const startFeature = routesData.find(r => r.properties.id === route.properties.startFeatureId);
-			if (startFeature.geometry) {
-				updatedRouteData.features.push(startFeature);
+		route.properties.privateFeatureIds?.forEach((id) => {
+			const feature = routesData.find(r => r.properties.id === id);
+			if (feature?.geometry) {
+				updatedRouteData.features.push(feature);
 			}
-		}
-		if (route.properties.endFeatureId) {
-			const endFeature = routesData.find(r => r.properties.id === route.properties.endFeatureId);
-			if (endFeature.geometry) {
-				updatedRouteData.features.push(endFeature);
-			}
-		}
+		});
 
 		const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
 		return `https://geojson.io/#data=data:application/json,${encodedRouteData}`;
