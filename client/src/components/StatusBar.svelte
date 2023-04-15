@@ -45,6 +45,11 @@
 				if (!routeId) return dayTotal;
 
 				const routeData = routesData.find(r => r.properties.id === routeId);
+				if (!routeData) {
+					console.warn(`Failed to load data for route [${routeId}], current month total distance data will probably be inaccurate`)
+					return dayTotal;
+				}
+
 				const { properties: { distance, startFeatureId, endFeatureId } } = routeData;
 				let routeDistance = distance;
 

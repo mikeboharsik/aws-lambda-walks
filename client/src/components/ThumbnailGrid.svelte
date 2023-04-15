@@ -110,7 +110,7 @@
 
 	function draw(ts) {
 		if (!isTabInFocus) {
-			console.log('Skipping draw as tab is not in focus');
+			console.debug('Skipping draw as tab is not in focus');
 			return window.requestAnimationFrame(draw);
 		}
 
@@ -119,7 +119,7 @@
 			const timePaused = ts - lastPausedTime;
 			dt = parseInt(ts - lastFrameTime - timePaused);
 			lastPausedTime = null;
-			console.log(`Set dt to ${dt} based on lastPausedTime`);
+			console.debug(`Set dt to ${dt} based on lastPausedTime`);
 		} else {
 			dt = parseInt(ts - lastFrameTime);
 		}
@@ -173,12 +173,12 @@
 
 	async function populateImageGridCell() {
 		if (!isTabInFocus) {
-			console.log('Skipping populateImageGridCell as tab is not in focus');
+			console.debug('Skipping populateImageGridCell as tab is not in focus');
 			return;
 		}
 
 		if (allVideoIds.length <= 0) {
-			console.log('All videos have been fetched!');
+			console.debug('All videos have been fetched!');
 			return;
 		}
 
@@ -190,7 +190,7 @@
 		if (cell) {
 			let availableVideoIds = allVideoIds.filter(videoId => !Object.keys(thumbnailCache).includes(videoId));
 			if (availableVideoIds.length <= 0) {
-				console.log('Ran out of thumbnails to fetch, falling back to cached images');
+				console.debug('Ran out of thumbnails to fetch, falling back to cached images');
 				availableVideoIds = Object.keys(thumbnailCache);
 			}
 
@@ -203,10 +203,10 @@
 
 			thumbnailCache[vidId] = cell.image;
 		} else {
-			console.log('it fucked up with index', cell, imageCells);
+			console.debug('bad index', cell, imageCells);
 		}
 
-		console.log('Called populateImageGridCell');
+		console.debug('Called populateImageGridCell');
 	}
 
 	async function setupCanvas() {
@@ -234,7 +234,7 @@
 		clearInterval(intervalRef);
 		intervalRef = setInterval(populateImageGridCell, newImageInterval);
 
-		console.log('Called setupCanvas');
+		console.debug('Called setupCanvas');
 	}
 
 	$: {
