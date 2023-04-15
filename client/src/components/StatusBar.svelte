@@ -50,17 +50,15 @@
 					return dayTotal;
 				}
 
-				const { properties: { distance, startFeatureId, endFeatureId } } = routeData;
+				const { properties: { distance, privateFeatureIds } } = routeData;
 				let routeDistance = distance;
 
-				if (startFeatureId) {
-					const startFeature = routesData.find(r => r.properties.id === startFeatureId);
-					routeDistance += startFeature.properties.distance;
-				}
-				if (endFeatureId) {
-					const endFeature = routesData.find(r => r.properties.id === endFeatureId)
-					routeDistance += endFeature.properties.distance;
-				}
+				privateFeatureIds?.forEach((id) => {
+					const feature = routesData.find(r => r.properties.id === id);
+					if (feature) {
+						routeDistance += feature.properties.distance;
+					}
+				});
 
 				return (routeDistance ?? 0) + dayTotal;
 			}, 0) ?? 0) + monthTotal;
