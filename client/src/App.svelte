@@ -33,6 +33,7 @@
 	const currentDate = now.getDate();
 
 	let youtubeData = [];
+	let originalRoutesData = null;
 	let routesData = [];
 	let currentMonthData = [];
 	let sunxData = null;
@@ -112,6 +113,7 @@
 			] = results;
 
 			youtubeData = youtubeDataResult;
+			originalRoutesData = routesDataResult;
 			routesData = routesDataResult.features;
 
 			sunxData = { today: sunxTodayResult, tomorrow: sunxTomorrowResult };
@@ -124,6 +126,13 @@
 		}
 	});
 </script>
+
+<svelte:window on:keydown={({ altKey, code, shiftKey }) => {
+	if (localStorage.getItem('secret') && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
+		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
+		window.open(`https://geojson.io/#data=data:application/json,${encodedRouteData}`, '_blank', 'noopener');
+	}
+}} />
 
 <div id="container-app">
 	{#if !navigator.userAgentData.mobile}
