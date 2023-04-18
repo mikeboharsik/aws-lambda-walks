@@ -50,10 +50,10 @@
 					return dayTotal;
 				}
 
-				const { properties: { distance, privateFeatureIds } } = routeData;
+				const { properties: { distance, commonFeatureIds } } = routeData;
 				let routeDistance = distance;
 
-				privateFeatureIds?.forEach((id) => {
+				commonFeatureIds?.forEach((id) => {
 					const feature = routesData.find(r => r.properties.id === id);
 					if (feature) {
 						routeDistance += feature.properties.distance;

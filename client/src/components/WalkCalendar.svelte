@@ -62,9 +62,9 @@
 			return (routeIds.reduce((acc, routeId) => {
 				const routeData = routesData.find(r => r.properties.id === routeId);
 
-				let { properties: { distance, privateFeatureIds } } = routeData;
+				let { properties: { distance, commonFeatureIds } } = routeData;
 
-				privateFeatureIds?.forEach((id) => {
+				commonFeatureIds?.forEach((id) => {
 					const feature = routesData.find(r => r.properties.id === id);
 					if (feature.properties.distance) {
 						distance += feature.properties.distance;
@@ -84,7 +84,7 @@
 			features: [route],
 		};
 
-		route.properties.privateFeatureIds?.forEach((id) => {
+		route.properties.commonFeatureIds?.forEach((id) => {
 			const feature = routesData.find(r => r.properties.id === id);
 			if (feature?.geometry) {
 				updatedRouteData.features.push(feature);
