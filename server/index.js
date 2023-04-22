@@ -7,33 +7,62 @@ const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
 
-const awsConfig = { region: process.env.AWS_REGION };
+const minuteInSeconds = 60;
+const hourInSeconds = minuteInSeconds * 60;
+const dayInSeconds = hourInSeconds * 24;
+const yearInSeconds = dayInSeconds * 365;
+
+const routeCacheValues = {
+	'/api/yt-data': `max-age=${hourInSeconds}`,
+};
+
+function authenticate(event) {
+	const { headers } = event;
+	const xCustomKey = process.env['X_CUSTOM_KEY'];
+	event.isAuthed = xCustomKey && headers['x-custom-key'] === xCustomKey;
+}
+
+function verifyBodyIsString(result) {
+	if (result.body && typeof result.body !== 'string') {
+		result.body = JSON.stringify(result.body);
+	}
+}
+
+function verifyCacheValue(result, rawPath) {
+	if (!result['cache-control']) {
+		if (routeCacheValues[rawPath]) {
+			const cacheValue = routeCacheValues[rawPath];
+			result['cache-control'] = cacheValue;
+		} else {
+			result['cache-control'] = `max-age=${yearInSeconds}`;
+		}
+		console.log(`Set cache-control header to [${result['cache-control']}]`);
+	}
+}
+
+function logResult(result) {
+	if (Boolean(process.env['LOG_RESULT'])) {
+		console.log('Returning result', JSON.stringify(result, null, '  '));
+	}
+}
 
 exports.handler = async (event) => {
 	try {
-		const { headers, rawPath } = event;
-		const xCustomKey = process.env['X_CUSTOM_KEY'];
-		event.isAuthed = xCustomKey && headers['x-custom-key'] === xCustomKey;
-
+		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
 			console.log(rawPath);
 		}
 
-		let result;
+		authenticate(event);
 
-		if (rawPath.startsWith('/api')) {
-			result = await handleApiRequest(event);
-		} else {
-			result = await handleContentRequest(event);
-		}
+		const isApiRequest = rawPath.startsWith('/api');
+		const handlerFunction = isApiRequest ? handleApiRequest : handleContentRequest;
 
-		if (result.body && typeof result.body !== 'string') {
-			result.body = JSON.stringify(result.body);
-		}
+		const result = await handlerFunction(event);
 
-		if (Boolean(process.env['LOG_RESULT'])) {
-			console.log('Returning result', JSON.stringify(result, null, '  '));
-		}
+		verifyBodyIsString(result);
+		verifyCacheValue(result, rawPath);
+		logResult(result);
 
 		return result;
 	} catch (e) {
