@@ -7,6 +7,10 @@ on:
       - 'client/**'
       - 'server/**'
   workflow_dispatch:
+    inputs:
+      invalidationPaths:
+        description: 'Paths to invalidate'
+        required: false
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -53,8 +57,27 @@ jobs:
           npm install
           Write-Host "Installed server packages"
           
+          $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
+          if ($invalidationPaths) {
+            $invalidationPaths = $invalidationPaths -Split " "
+          }
+          Write-Host "`$invalidationPaths = [$invalidationPaths]"
+
           Write-Host "Invoking upload script"
-          .\Invoke-Upload.ps1 -DeployClient -DistributionId $distId -GeoJsonFilePath "../walk-routes/geo.json"
-          Write-Host "Upload script finished [$($?)]"
+
+          $scriptArgs = @{
+            DeployClient = $true
+            DistributionId = $distId
+            GeoJsonFilePath = "../walk-routes/geo.json"
+          }
+
+          if ($invalidationPaths) {
+            $scriptArgs["InvalidationPaths"] = $invalidationPaths
+          }
+
+          Write-Host "Running Invoke-Upload.ps1 with args [$(ConvertTo-Json -Depth 10 $scriptArgs)]"
+
+          .\Invoke-Upload.ps1 @scriptArgs
+
+          Write-Host "Invoke-Upload.ps1 completed with result [$?]"
         azPSVersion: latest
-    
