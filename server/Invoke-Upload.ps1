@@ -2,6 +2,8 @@ Param(
 	[string] $DistributionId,
 	[string] $GeoJsonFilePath = "../../walk-routes/geo.json",
 
+	[string[]] $InvalidationPaths = @("/build/*", "/global.css"),
+
 	[switch] $DeployClient,
 	[switch] $SkipUpload
 )
@@ -29,7 +31,7 @@ if (!$SkipUpload) {
 	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://./build/deployable.zip"
 
 	if ($DistributionId) {
-		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths "/*"
+		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths
 		Write-Host ($result | ConvertFrom-Json | ConvertTo-Json -Depth 10)
 	}
 }
