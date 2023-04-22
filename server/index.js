@@ -105,6 +105,7 @@ async function handleApiRequest(event) {
 		'/api/yt-data': handleYouTubeDataRequest,
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
+		'/api/webhooks/video': handleWebhookVideo,
 	};
 
 	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
@@ -329,4 +330,44 @@ async function handleSunxDataRequest(event) {
 			statusCode: 400,
 		});
 	}
+}
+
+async function handleWebhookVideo(event) {
+	const {
+		body,
+		queryStringParameters: {
+			'hub.topic': topic,
+			'hub.challenge': challenge,
+			'hub.mode': mode,
+			'hub.lease_seconds': lease_seconds
+		} = {}
+	} = event;
+
+	if (mode) {
+		console.log(`Received webhook ${mode} request`, JSON.stringify({ topic, challenge, mode, lease_seconds }));
+	} else if (body) {
+		console.log('Webhook body', event.body);
+
+		let shouldInvalidateYouTubeDataAfter = new Date();
+		shouldInvalidateYouTubeDataAfter.setHours(shouldInvalidateYouTubeDataAfter.getHours() - 1);
+
+		let [,videoPublishedAt] = body.match(/<published>(.*?)<\/published>/);
+		if (videoPublishedAt) {
+			videoPublishedAt = new Date(videoPublishedAt);
+
+			if (videoPublishedAt >= shouldInvalidateYouTubeDataAfter) {
+				console.log('Invalidate cached YouTube data here');
+			} else {
+				console.log('Updated an old video, no reason to invalidate the cache');
+			}
+		}
+	} else {
+		console.error('Did not find expected data in the webhook request payload', JSON.stringify(event));
+	}
+
+	return {
+		body: challenge,
+		statusCode: 200,
+		'cache-control': 'no-store,max-age=0',
+	};
 }
