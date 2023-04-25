@@ -3,6 +3,8 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 
+const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
+
 const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
@@ -357,6 +359,21 @@ async function handleWebhookVideo(event) {
 			videoPublishedAt = new Date(videoPublishedAt);
 
 			if (videoPublishedAt >= shouldInvalidateYouTubeDataAfter) {
+				const cfInput = {
+					DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+					InvalidationBatch: {
+						CallerReference: new Date().getTime().toString(),
+						Paths: {
+							Items: ['/api/yt-data'],
+							Quantity: 1,
+						}
+					}
+				};
+				const cfClient = new CloudFrontClient({ region: process.env.AWS_REGION });
+				const cfCommand = new CreateInvalidationCommand(cfInput);
+	
+				console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
+				cfClient.send(cfCommand); // do not await to prevent lambda from timing out
 				console.log('Invalidate cached YouTube data here');
 			} else {
 				console.log('Updated an old video, no reason to invalidate the cache');
