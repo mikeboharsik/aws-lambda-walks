@@ -14,9 +14,7 @@ const hourInSeconds = minuteInSeconds * 60;
 const dayInSeconds = hourInSeconds * 24;
 const yearInSeconds = dayInSeconds * 365;
 
-const routeCacheValues = {
-	'/api/yt-data': `max-age=${hourInSeconds}`,
-};
+const routeCacheValues = {};
 
 function authenticate(event) {
 	const { headers } = event;
