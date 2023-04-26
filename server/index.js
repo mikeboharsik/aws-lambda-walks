@@ -371,10 +371,22 @@ async function handleWebhookVideo(event) {
 				const cfCommand = new CreateInvalidationCommand(cfInput);
 	
 				console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
-				cfClient.send(cfCommand); // do not await to prevent lambda from timing out
-				console.log('Invalidate cached YouTube data here');
+				const result = await cfClient.send(cfCommand);
+				console.log('Invalidation result', JSON.stringify(result));
+
+				return {
+					body: 'did update',
+					statusCode: 200,
+					'cache-control': 'no-store,max-age=0',
+				};
 			} else {
 				console.log('Updated an old video, no reason to invalidate the cache');
+
+				return {
+					body: 'no update',
+					statusCode: 200,
+					'cache-control': 'no-store,max-age=0',
+				};
 			}
 		}
 	} else {
