@@ -17,9 +17,10 @@ const yearInSeconds = dayInSeconds * 365;
 const routeCacheValues = {};
 
 function authenticate(event) {
-	const { headers } = event;
+	const { headers, queryStringParameters: { 'x-custom-key': qsk } = {} } = event;
 	const xCustomKey = process.env['X_CUSTOM_KEY'];
-	event.isAuthed = xCustomKey && headers['x-custom-key'] === xCustomKey;
+	const keyToCheck = headers['x-custom-key'] ?? qsk;
+	event.isAuthed = xCustomKey && keyToCheck === xCustomKey;
 }
 
 function verifyBodyIsString(result) {
