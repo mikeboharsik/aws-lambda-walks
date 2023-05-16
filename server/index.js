@@ -106,11 +106,56 @@ async function handleApiRequest(event) {
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/webhooks/video': handleWebhookVideo,
+		'/api/route': handleWalkRouteRequest,
 	};
 
 	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
 
 	return await func(event);
+}
+
+async function handleWalkRouteRequest(event) {
+	const { isAuthed, queryStringParameters: { id } } = event;
+
+	if (!id) {
+		return {
+			statusCode: 400,
+		};
+	}
+
+	if (!isAuthed) {
+		return {
+			statusCode: 401,
+		};
+	}
+
+	const json = JSON.parse(await fsPromises.readFile('./public/geo.json', { encoding: 'utf8' }));
+	const route = json.features.find(f => f.properties.id === id);
+	if (!route) {
+		return {
+			statusCode: 404,
+		};
+	}
+
+	const updatedRouteData = {
+		type: "FeatureCollection",
+		features: [route],
+	};
+	route.properties.commonFeatureIds?.forEach((fid) => {
+		const feature = json.features.find(r => r.properties.id === fid);
+		if (feature?.geometry) {
+			updatedRouteData.features.push(feature);
+		}
+	});
+
+	const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
+
+	return {
+		statusCode: 301,
+		headers: {
+			Location: `https://geojson.io/#data=data:application/json,${encodedRouteData}`,
+		}
+	};
 }
 
 async function handleContentRequest(event) {
