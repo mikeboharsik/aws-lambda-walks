@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 
-	import { baseUrl } from './constants/api';
+	import { baseApiUrl, baseUrl } from './constants/api';
 
 	import { getPaddedDateString } from './util/date';
 
@@ -96,10 +96,10 @@
 		const tomorrowDateStr = getPaddedDateString(tomorrowDate);
 
 		const initialDataJobs = [
-			fetch(`${baseUrl}/yt-data`, options).then(res => res.json()),
-			fetch(`${baseUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
-			fetch(`${baseUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
-			fetch('/geo.json', options).then(res => res.json()),
+			fetch(`${baseApiUrl}/yt-data`, options).then(res => res.json()),
+			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
+			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
+			fetch(`${baseUrl}/geo.json`, options).then(res => res.json()),
 		];
 
 		try {
