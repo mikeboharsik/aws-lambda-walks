@@ -116,7 +116,7 @@
 		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay })}
 
 		{@const dateDistanceSum = d?.date && d?.walks.length ? getDateDistanceSum(d.date) : null}
-		{@const walkDayContent = dateDistanceSum === null ? 'Unspecified' : `${dateDistanceSum} miles`}
+		{@const walkDayContent = dateDistanceSum === null ? 'Unspecified' : dateDistanceSum === '0.00' ? '' : `${dateDistanceSum} miles`}
 
 		<div class={classes}>
 			{#if !isEmptyDay && !isFuturePaddingDay}
@@ -140,6 +140,8 @@
 								>
 									🗺️
 								</a>
+							{:else}
+								<span>No Route</span>
 							{/if}
 
 							{#if videoId}

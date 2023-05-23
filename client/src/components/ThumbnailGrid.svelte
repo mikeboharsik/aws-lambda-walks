@@ -1,7 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 
-	import { baseUrl } from '../constants/api';
+	import { baseApiUrl } from '../constants/api';
 
 	export let data;
 
@@ -55,7 +55,7 @@
 			return cached;
 		}
 
-		return await fetch(`${baseUrl}/yt-thumbnail?videoId=${videoId}`)
+		return await fetch(`${baseApiUrl}/yt-thumbnail?videoId=${videoId}`)
 			.then(res => res.blob())
 			.then(imgData => createImageBitmap(imgData));
 	}
