@@ -45,13 +45,19 @@ jobs:
           $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
           Write-Host "Deploying to CF distribution $($distId)"
           
+          Write-Host "Generating geo.json from geo.jsonc"
+          Push-Location ./walk-routes
+          ./Invoke-GenerateJson.ps1
+          Pop-Location
+          Write-Host "Finished generating geo.json"
+
           Write-Host "Building client"          
           Push-Location ./client
           npm install
           npm run build
           Pop-Location
           Write-Host "Finished building client"
-          
+
           Push-Location ./server
           Write-Host "Installing server packages"
           npm install
