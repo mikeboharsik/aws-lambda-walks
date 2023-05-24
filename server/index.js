@@ -81,12 +81,6 @@ function formatYouTubeDataResponse(result, isAuthed = false) {
 		delete result.playlistid;
 
 		const parsedData = JSON.parse(result.data);
-		parsedData.forEach((cur) => {
-			cur.walks.forEach(walk => {
-				delete walk.directions;
-				delete walk.route;
-			});
-		});
 		result.data = parsedData;
 	}
 
@@ -285,26 +279,22 @@ async function handleYouTubeDataRequest(event) {
 		const { snippet: { description, resourceId: { videoId }, title } } = item;
 
 		const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1] ?? null;
-		const distance = description.match(/(\d+\.\d+) miles/)?.[1] ?? null;
-		const directions = description.match(/(https:\/\/www\.google\.com\/maps\/.*?)(\n|$)/)?.[1] ?? null;
 		const routeId = description.match(/Route: (.*)/)?.[1] ?? null;
 
 		return {
 			date,
-			directions,
-			distance,
 			routeId,
 			videoId,
 		};
 	});
 
-	const normalized = relevantData.reduce((acc, { date, directions, distance, routeId, videoId }) => {
+	const normalized = relevantData.reduce((acc, { date, routeId, videoId }) => {
 		if (date) {
 			const exists = acc.find(d => d.date === date);
 			if (exists) {
-				exists.walks.push({ directions, distance, routeId, videoId });
+				exists.walks.push({ routeId, videoId });
 			} else {
-				acc.push({ date, walks: [{ directions, distance, routeId, videoId }] });
+				acc.push({ date, walks: [{ routeId, videoId }] });
 			}
 		}
 
