@@ -116,16 +116,16 @@
 		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay })}
 
 		{@const dateDistanceSum = d?.date && d?.walks.length ? getDateDistanceSum(d.date) : null}
-		{@const walkDayContent = dateDistanceSum === null ? 'Unspecified' : dateDistanceSum === '0.00' ? '' : `${dateDistanceSum} miles`}
+		{@const walkDayContent = dateDistanceSum === null ? null : dateDistanceSum === '0.00' ? '' : `${dateDistanceSum} miles`}
 
 		<div class={classes}>
 			{#if !isEmptyDay && !isFuturePaddingDay}
 				<div class="date-number">{dateNumber}</div>
 			{/if}
 			{#if isWalkDay}
-				{walkDayContent}
+				<div style={`opacity: ${walkDayContent ? 1 : 0}`}>{walkDayContent}</div>
 				<div style="display: flex">
-					{#each d.walks as { directions, routeId, videoId }, widx}
+					{#each d.walks as { routeId, videoId }, widx}
 						{@const route = routesData?.find(r => r.properties.id === routeId)}
 
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
