@@ -78,7 +78,7 @@ exports.handler = async (event) => {
 
 function formatYouTubeDataResponse(result, isAuthed = false) {
 	if (!isAuthed) {
-		delete result.playlistid;
+		delete result.playlistId;
 
 		const parsedData = JSON.parse(result.data);
 		result.data = parsedData;
