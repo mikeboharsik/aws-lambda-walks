@@ -1,7 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 
-	import { toFixedDefault } from '../constants/config';
+	import { firstMonth, toFixedDefault } from '../constants/config';
 
 	export let currentMonth;
 	export let currentMonthData;
@@ -27,7 +27,7 @@
 	}
 
 	function setFirstMonth() {
-		now = new Date(2022, 6, 1);
+		now = firstMonth;
 	}
 
 	function setLastMonth() {

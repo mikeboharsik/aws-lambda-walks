@@ -61,7 +61,13 @@
 	}
 
 	function populateImageArray() {
-		const calendarBoundingRect = document.querySelector('#container-walkcalendar').getBoundingClientRect();
+		const calendarContainer = document.querySelector('#container-walkcalendar');
+		if (!calendarContainer) {
+			console.warn('Failed to find the calendar container');
+			return;
+		}
+
+		const calendarBoundingRect = calendarContainer.getBoundingClientRect();
 
 		const initImageCountX = imageCountX;
 		const initImageCountY = imageCountY;
