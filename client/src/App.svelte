@@ -50,7 +50,8 @@
 		const toAdd = maxWeeksInDays - (daysInMonth + firstDayOffset);
 		const newCurrentMonthData = Array.from(new Array(daysInMonth + firstDayOffset + toAdd));
 
-		const matches = youtubeData.filter(e => e.date.match(new RegExp(`\\d{4}-${currentMonth}-\\d{2}`)));
+		const searchPattern = new RegExp(`${now.getFullYear()}-${currentMonth}-\\d{2}`);
+		const matches = youtubeData.filter(e => e.date.match(searchPattern));
 
 		newCurrentMonthData.forEach((e, i, a) => {
 			const dayIsInMonth = i > (firstDayOffset - 1);
@@ -72,7 +73,7 @@
 		daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
 		currentMonthData = getCurrentMonthData();
-		isRealMonth = currentMonth === realMonth;
+		isRealMonth = new Date().getFullYear() === now.getFullYear() && currentMonth === realMonth;
 	}
 
 	function getApiOptions() {
