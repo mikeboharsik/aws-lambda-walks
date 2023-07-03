@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { baseApiUrl } from '../constants/api';
@@ -217,6 +218,11 @@
 
 	async function setupCanvas() {
 		const canvas = document.getElementById('canvas');
+		if (!canvas) {
+			console.warn('Failed to get canvas');
+			return;
+		}
+
 		canvas.height = window.innerHeight;
 		canvas.width = window.innerWidth;
 
@@ -243,11 +249,9 @@
 		console.debug('Called setupCanvas');
 	}
 
-	$: {
-		if (data?.length) {
-			setupCanvas();
-		}
-	}
+	onMount(() => {
+		setupCanvas();
+	});
 </script>
 
 <canvas
@@ -259,5 +263,4 @@
 </canvas>
 
 <style>
-
 </style>

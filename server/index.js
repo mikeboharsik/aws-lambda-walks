@@ -159,7 +159,7 @@ async function handleContentRequest(event) {
 	console.log('handle content request', rawPath);
 
 	let target = `./public/${rawPath}`;
-	if (rawPath === '/') {
+	if (['/', '/routes'].includes(rawPath)) {
 		target = './public/index.html';
 	}
 
