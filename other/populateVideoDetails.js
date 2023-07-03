@@ -22,9 +22,10 @@ function getTitleContent() {
 		if (towns.length === 1) {
 			townsContent = `${towns}, ${curState}`;
 		} else if (towns.length === 2) {
-			townsContent = `not implemented`;
+			([first, second] = towns);
+			townsContent = `${first} & ${second}, ${curState}`;
 		} else {
-			townsContent = `not implemented`;
+			townsContent = `${towns.slice(0, -1).join(', ')}, & ${towns.slice(-1)}`;
 		}
 	} else {
 		throw "not implemented";
