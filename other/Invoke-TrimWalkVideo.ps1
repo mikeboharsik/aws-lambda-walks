@@ -74,7 +74,7 @@ if (!$Towns) {
 if (!$Route) {
 	$Route = Read-Host 'Route'
 	if ($Route.ToUpper() -eq 'NEW') {
-		$Route = [System.Guid]::NewGuid().ToUpper().ToString()
+		$Route = [System.Guid]::NewGuid().ToString().ToUpper()
 	}
 }
 
