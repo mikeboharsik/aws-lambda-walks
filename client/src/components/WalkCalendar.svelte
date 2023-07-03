@@ -4,6 +4,7 @@
 	import { toFixedDefault } from '../constants/config';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
+	import { getGeojsonIoUrlForRoute } from '../util/geojson';
 
 	export let currentMonthData = [];
 	export let routesData = [];
@@ -77,23 +78,6 @@
 			return null;
 		}
 	}
-
-	function getGeojsonIoUrlForRoute(route) {
-		const updatedRouteData = {
-			type: "FeatureCollection",
-			features: [route],
-		};
-
-		route.properties.commonFeatureIds?.forEach((id) => {
-			const feature = routesData.find(r => r.properties.id === id);
-			if (feature?.geometry) {
-				updatedRouteData.features.push(feature);
-			}
-		});
-
-		const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
-		return `https://geojson.io/#data=data:application/json,${encodedRouteData}`;
-	}
 </script>
 
 <div transition:fade id="container-walkcalendar">
@@ -131,7 +115,7 @@
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
 							{#if route}
 								<a
-									href={getGeojsonIoUrlForRoute(route)}
+									href={getGeojsonIoUrlForRoute(route.properties.id, routesData)}
 									noreferrer
 									noopener
 									style="text-decoration: none"
