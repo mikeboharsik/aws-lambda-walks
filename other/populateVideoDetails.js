@@ -39,10 +39,20 @@ function getDescriptionContent() {
 
 	listeningToContent = Object.keys(videos).map((videoId) => {
 		([vidStart, walkVidStart] = videos[videoId] ?? []);
+		([vHours, vMinutes, vSeconds] = vidStart.split(':').map(e => parseInt(e)));
+		
+		([wHours, wMinutes, wSeconds] = walkVidStart.split(':').map(e => parseInt(e)));
+		([sHours, sMinutes, sSeconds] = start.split(':').map(e => parseInt(e)));
+
+		vidStartSeconds = (vHours * 60 * 60) + (vMinutes * 60) + vSeconds;
+		walkVidStartSeconds = (wHours * 60 * 60) + (wMinutes * 60) + parseInt(wSeconds);
+		startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
+		finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
+
 		if (videoId === 'hasanabi') {
-			return `https://twitch.tv/hasanabi`;
+			return `https://twitch.tv/hasanabi?t=${finalVideoStartSeconds}`;
 		} else {
-			return `https://youtu.be/${videoId}`;
+			return `https://youtu.be/${videoId}?t=${finalVideoStartSeconds}`;
 		}
 	}).join('\n');
 
