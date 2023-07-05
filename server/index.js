@@ -54,6 +54,14 @@ exports.handler = async (event) => {
 			console.log(rawPath);
 		}
 
+		try {
+			if (event.body) {
+				event.body = JSON.parse(atob(event.body));
+			}
+		} catch (e) {
+			console.warn('Body seems to exist but it failed to parse', e);
+		}
+
 		authenticate(event);
 
 		const isApiRequest = rawPath.startsWith('/api');
@@ -102,11 +110,53 @@ async function handleApiRequest(event) {
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/webhooks/video': handleWebhookVideo,
 		'/api/route': handleWalkRouteRequest,
+		'/api/invalidateCache': handleCacheInvalidate,
 	};
 
 	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
 
 	return await func(event);
+}
+
+async function handleCacheInvalidate(event) {
+	const { body: { paths = null } = {}, isAuthed } = event;
+
+	if (!isAuthed) {
+		return {
+			statusCode: 401,
+		}
+	}
+
+	if (!paths) {
+		return {
+			statusCode: 400,
+			body: 'paths is missing from the request body'
+		};
+	}
+
+	const cfInput = {
+		DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+		InvalidationBatch: {
+			CallerReference: new Date().getTime().toString(),
+			Paths: {
+				Items: paths,
+				Quantity: paths.length,
+			}
+		}
+	};
+
+	const cfClient = new CloudFrontClient({ region: process.env.AWS_REGION });
+	const cfCommand = new CreateInvalidationCommand(cfInput);
+
+	console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
+	const result = JSON.stringify(await cfClient.send(cfCommand));
+	console.log('Invalidation result', result);
+
+	return {
+		statusCode: 200,
+		body: result,
+		'content-type': 'application/json',
+	};
 }
 
 async function handleWalkRouteRequest(event) {
