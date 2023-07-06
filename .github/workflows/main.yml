@@ -47,7 +47,13 @@ jobs:
           
           Write-Host "Generating geo.json from geo.jsonc"
           Push-Location ./walk-routes
-          ./Invoke-GenerateJson.ps1
+          
+          if (Test-Path "./utility") {
+            ./utility/Invoke-GenerateJson.ps1
+          } else {
+            ./Invoke-GenerateJson.ps1
+          }
+          
           Pop-Location
           Write-Host "Finished generating geo.json"
 
