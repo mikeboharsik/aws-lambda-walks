@@ -6,6 +6,7 @@ Param(
 	[string] $Route,
 
 	[switch] $SkipVideoLaunch,
+	[switch] $UseShortFilename,
 	[switch] $WhatIf
 )
 
@@ -98,7 +99,11 @@ $json = ConvertTo-Json $data -Compress
 
 $encoded = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
 
-$outputName = $encoded + ".mp4"
+if ($UseShortFilename) {
+	$outputName = "$($dateStr)_trimmed.mp4"
+} else {
+	$outputName = $encoded + ".mp4"
+}
 
 $ffmpegArgs = @(
 	'-ss', $Start
@@ -106,6 +111,7 @@ $ffmpegArgs = @(
 	'-i', $items[0].FullName
 	'-c', 'copy'
 	(Get-Location).Path + "\" + $outputName
+	'-y'
 )
 
 Write-Host "ffmpeg arguments: [$ffmpegArgs]"
@@ -116,4 +122,8 @@ if (!$WhatIf) {
 
 if (!$SkipVideoLaunch) {
 	Start-Process $outputName
+}
+
+if ($UseShortFilename) {
+	Write-Host "Encoded data = [$encoded]"
 }
