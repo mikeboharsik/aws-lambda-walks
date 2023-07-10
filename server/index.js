@@ -371,7 +371,7 @@ async function handleYouTubeThumbnailRequest(event) {
 		throw new Error("Missing query parameter videoId");
 	}
 
-	const buffer = await fetch(`https://i.ytimg.com/vi/${videoId}/default.jpg`).then(res => res.arrayBuffer());
+	const buffer = await fetch(`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`).then(res => res.arrayBuffer());
 
 	return {
 		body: Buffer.from(buffer).toString('base64'),
