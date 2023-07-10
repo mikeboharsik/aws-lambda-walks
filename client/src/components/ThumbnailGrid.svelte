@@ -6,8 +6,8 @@
 
 	export let data;
 
-	const thumbnailWidth = 120;
-	const thumbnailHeight = 90;
+	const thumbnailWidth = 320 / 2;
+	const thumbnailHeight = 180 / 2;
 
 	const marginX = 4;
 	const marginY = 4;
@@ -146,7 +146,7 @@
 					const { image, posX, posY, timeLeft } = curCell;
 
 					if (image && timeLeft) {
-						ctx.drawImage(image, posX, posY);
+						ctx.drawImage(image, posX, posY, thumbnailWidth, thumbnailHeight, posX, posY, thumbnailWidth, thumbnailHeight);
 
 						ctx.save();
 						const alpha = (imageFadeTime - timeLeft) / imageFadeTime;
