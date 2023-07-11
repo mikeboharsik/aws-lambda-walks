@@ -6,16 +6,16 @@
 
 	export let data;
 
-	const thumbnailWidth = 320 / 2;
-	const thumbnailHeight = 180 / 2;
+	const thumbnailWidth = 160;
+	const thumbnailHeight = 90;
 
 	const marginX = 4;
 	const marginY = 4;
 	const paddingX = 2;
 	const paddingY = 2;
 
-	const imageFadeTime = 60000;
-	const newImageInterval = parseInt((1/12) * imageFadeTime);
+	const imageFadeTime = 15000;
+	const newImageInterval = parseInt((1/9) * imageFadeTime);
 
 	let imageCountX = 0;
 	let imageCountY = 0;
@@ -72,6 +72,8 @@
 
 		const initImageCountX = imageCountX;
 		const initImageCountY = imageCountY;
+
+		console.log({ initImageCountX, initImageCountY });
 
 		imageCountX = Math.floor((window.innerWidth - (marginX * 2)) / (thumbnailWidth + paddingX));
 		imageCountY = Math.floor((window.innerHeight - (marginY * 2)) / (thumbnailHeight + paddingY));
@@ -146,7 +148,8 @@
 					const { image, posX, posY, timeLeft } = curCell;
 
 					if (image && timeLeft) {
-						ctx.drawImage(image, posX, posY, thumbnailWidth, thumbnailHeight, posX, posY, thumbnailWidth, thumbnailHeight);
+						// multiply by 2 since we want to use the entire loaded image but scale it to half its size, which is the thumbnail width and height
+						ctx.drawImage(image, 0, 0, thumbnailWidth * 2, thumbnailHeight * 2, posX, posY, thumbnailWidth, thumbnailHeight);
 
 						ctx.save();
 						const alpha = (imageFadeTime - timeLeft) / imageFadeTime;
