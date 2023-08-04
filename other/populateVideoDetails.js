@@ -38,17 +38,17 @@ function getDescriptionContent() {
 	listeningToContent = 'not implemented';
 
 	listeningToContent = Object.keys(videos).map((videoId) => {
+        finalVideoStartSeconds = 0;
 		([vidStart, walkVidStart] = videos[videoId] ?? []);
-		([vHours, vMinutes, vSeconds] = vidStart.split(':').map(e => parseInt(e)));
-		
-		([wHours, wMinutes, wSeconds] = walkVidStart.split(':').map(e => parseInt(e)));
-		([sHours, sMinutes, sSeconds] = start.split(':').map(e => parseInt(e)));
-
-		vidStartSeconds = (vHours * 60 * 60) + (vMinutes * 60) + vSeconds;
-		walkVidStartSeconds = (wHours * 60 * 60) + (wMinutes * 60) + parseInt(wSeconds);
-		startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
-		finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
-
+        if (vidStart && walkVidStart && start) {
+            ([vHours = 0, vMinutes = 0, vSeconds = 0] = vidStart.split(':').map(e => parseInt(e)));
+            ([wHours = 0, wMinutes = 0, wSeconds = 0] = walkVidStart.split(':').map(e => parseInt(e)));
+            ([sHours = 0, sMinutes = 0, sSeconds = 0] = start.split(':').map(e => parseInt(e)));
+            vidStartSeconds = (vHours * 60 * 60) + (vMinutes * 60) + vSeconds;
+            walkVidStartSeconds = (wHours * 60 * 60) + (wMinutes * 60) + parseInt(wSeconds);
+            startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
+            finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
+        }
 		if (videoId === 'hasanabi') {
 			return `https://twitch.tv/hasanabi?t=${finalVideoStartSeconds}`;
 		} else {
