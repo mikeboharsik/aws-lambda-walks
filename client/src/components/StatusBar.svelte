@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { firstMonth, toFixedDefault } from '../constants/config';
+	import { getRouteDistanceRecursively } from '../util/geojson';
 
 	export let currentMonth;
 	export let currentMonthData;
@@ -40,28 +41,9 @@
 		// TODO: FIX: we need to check the absolute Date rather than just the number of month
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
-		currentMonthTotalDistance = (currentMonthData.reduce((monthTotal, { walks } = {}) => {
-			return (walks?.reduce((dayTotal, { routeId }) => {
-				if (!routeId) return dayTotal;
-
-				const routeData = routesData.find(r => r.properties.id === routeId);
-				if (!routeData) {
-					console.warn(`Failed to load data for route [${routeId}], current month total distance data will probably be inaccurate`)
-					return dayTotal;
-				}
-
-				const { properties: { distance, commonFeatureIds } } = routeData;
-				let routeDistance = distance;
-
-				commonFeatureIds?.forEach((id) => {
-					const feature = routesData.find(r => r.properties.id === id);
-					if (feature) {
-						routeDistance += feature.properties.distance;
-					}
-				});
-
-				return (routeDistance ?? 0) + dayTotal;
-			}, 0) ?? 0) + monthTotal;
+		currentMonthTotalDistance = (currentMonthData.reduce((monthTotal, curDay) => {
+			const distance = curDay?.walks.reduce((acc, cur) => acc + getRouteDistanceRecursively(routesData, routesData.find(r => r.properties.id === cur.routeId)) ?? 0, 0) ?? 0;
+			return monthTotal + distance;
 		}, 0) / 1609).toFixed(toFixedDefault);
 	}
 </script>
