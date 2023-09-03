@@ -4,7 +4,7 @@
 	import { toFixedDefault } from '../constants/config';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
-	import { getGeojsonIoUrlForRoute } from '../util/geojson';
+	import { getGeojsonIoUrlForRoute, getRouteDistanceRecursively } from '../util/geojson';
 
 	export let currentMonthData = [];
 	export let routesData = [];
@@ -63,18 +63,12 @@
 			return (routeIds.reduce((acc, routeId) => {
 				const routeData = routesData.find(r => r.properties.id === routeId);
 
-				let { properties: { distance, commonFeatureIds } } = routeData;
-
-				commonFeatureIds?.forEach((id) => {
-					const feature = routesData.find(r => r.properties.id === id);
-					if (feature.properties.distance) {
-						distance += feature.properties.distance;
-					}
-				});
+				const distance = getRouteDistanceRecursively(routesData, routeData);
 
 				return distance + acc;
 			}, 0) / 1609).toFixed(toFixedDefault);
-		}	catch {
+		}	catch(e) {
+			console.error(e);
 			return null;
 		}
 	}
