@@ -6,7 +6,7 @@ data = JSON.parse(
 
 console.log(data);
 
-const [titleInput, descriptionInput] = Array.from(document.querySelectorAll('#textbox'));
+const [, titleInput, descriptionInput] = Array.from(document.querySelectorAll("div[aria-label]"));
 
 console.log({ titleInput, descriptionInput });
 
@@ -62,10 +62,8 @@ function getDescriptionContent() {
 titleContent = getTitleContent();
 descriptionContent = getDescriptionContent();
 
-titleInput.innerHTML = titleContent;
 titleInput.textContent = titleContent;
 titleInput.value = titleContent;
 
-descriptionInput.innerHTML = descriptionContent;
 descriptionInput.textContent = descriptionContent;
 descriptionInput.value = descriptionContent;
