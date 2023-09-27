@@ -230,7 +230,19 @@ async function handleContentRequest(event) {
 					const parsed = JSON.parse(body);
 					parsed.features.forEach((feature) => {
 						if (feature.properties.isPrivate) {
-							delete feature.geometry;
+							feature.geometry = {
+								type: "LineString",
+								coordinates: [
+									[
+										-71.10051625598281,
+										42.49499639596356
+									],
+									[
+										-71.10051625598281,
+										42.49499639596356
+									]
+								]
+							};
 						}
 
 						delete feature.properties.isPrivate;
