@@ -1,0 +1,11 @@
+<html>
+    <head></head>
+    <body>
+        <img id="barcode" />
+    </body>
+    <script src="/node_modules/jsbarcode/dist/JsBarcode.all.js"></script>
+    <script>
+        var params = new URLSearchParams(document.location.search);
+        JsBarcode("#barcode", params.get('q'), { displayValue: false, margin: 0, width: 8 });
+    </script>
+</html>
