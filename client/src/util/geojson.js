@@ -23,8 +23,6 @@ export function getGeojsonIoUrlForRoute(id, data) {
 		features: allFeatures,
 	};
 
-	console.log(allFeatures);
-
 	const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
 	return `https://geojson.io/#data=data:application/json,${encodedRouteData}`;
 }
