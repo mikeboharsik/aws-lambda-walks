@@ -38,58 +38,56 @@ jobs:
       with:
         aws-region: us-east-1
         role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-    - name: Azure PowerShell Action
-      uses: Azure/powershell@v1
-      with:
-        inlineScript: |
-          $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
-          Write-Host "Deploying to CF distribution $($distId)"
-          
-          Write-Host "Generating geo.json from geo.jsonc"
-          Push-Location ./walk-routes
-          
-          if (Test-Path "./utility") {
-            ./utility/Invoke-GenerateJson.ps1
-          } else {
-            ./Invoke-GenerateJson.ps1
-          }
-          
-          Pop-Location
-          Write-Host "Finished generating geo.json"
+    - name: Invoke PowerShell scripts
+      shell: pwsh
+      run: |
+        $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
+        Write-Host "Deploying to CF distribution $($distId)"
+        
+        Write-Host "Generating geo.json from geo.jsonc"
+        Push-Location ./walk-routes
+        
+        if (Test-Path "./utility") {
+          ./utility/Invoke-GenerateJson.ps1
+        } else {
+          ./Invoke-GenerateJson.ps1
+        }
+        
+        Pop-Location
+        Write-Host "Finished generating geo.json"
 
-          Write-Host "Building client"          
-          Push-Location ./client
-          npm install
-          npm run build
-          Pop-Location
-          Write-Host "Finished building client"
+        Write-Host "Building client"          
+        Push-Location ./client
+        npm install
+        npm run build
+        Pop-Location
+        Write-Host "Finished building client"
 
-          Push-Location ./server
-          Write-Host "Installing server packages"
-          npm install
-          Write-Host "Installed server packages"
-          
-          $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
-          if ($invalidationPaths) {
-            $invalidationPaths = $invalidationPaths -Split " "
-          }
-          Write-Host "`$invalidationPaths = [$invalidationPaths]"
+        Push-Location ./server
+        Write-Host "Installing server packages"
+        npm install
+        Write-Host "Installed server packages"
+        
+        $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
+        if ($invalidationPaths) {
+          $invalidationPaths = $invalidationPaths -Split " "
+        }
+        Write-Host "`$invalidationPaths = [$invalidationPaths]"
 
-          Write-Host "Invoking upload script"
+        Write-Host "Invoking upload script"
 
-          $scriptArgs = @{
-            DeployClient = $true
-            DistributionId = $distId
-            GeoJsonFilePath = "../walk-routes/geo.json"
-          }
+        $scriptArgs = @{
+          DeployClient = $true
+          DistributionId = $distId
+          GeoJsonFilePath = "../walk-routes/geo.json"
+        }
 
-          if ($invalidationPaths) {
-            $scriptArgs["InvalidationPaths"] = $invalidationPaths
-          }
+        if ($invalidationPaths) {
+          $scriptArgs["InvalidationPaths"] = $invalidationPaths
+        }
 
-          Write-Host "Running Invoke-Upload.ps1 with args [$(ConvertTo-Json -Depth 10 $scriptArgs)]"
+        Write-Host "Running Invoke-Upload.ps1 with args [$(ConvertTo-Json -Depth 10 $scriptArgs)]"
 
-          .\Invoke-Upload.ps1 @scriptArgs
+        .\Invoke-Upload.ps1 @scriptArgs
 
-          Write-Host "Invoke-Upload.ps1 completed with result [$?]"
-        azPSVersion: latest
+        Write-Host "Invoke-Upload.ps1 completed with result [$?]"
