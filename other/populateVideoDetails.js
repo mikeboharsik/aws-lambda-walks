@@ -56,7 +56,7 @@ function getDescriptionContent() {
 		}
 	}).join('\n');
 
-	return `Route: ${route}\n\nListening to:\n${listeningToContent}`;
+	return `Route: ${route}\n\nListening to:\n${listeningToContent}\n\nhttps://github.com/lindell/JsBarcode`;
 }
 
 titleContent = getTitleContent();
