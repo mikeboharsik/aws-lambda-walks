@@ -4,7 +4,7 @@
 	import { toFixedDefault } from '../constants/config';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
-	import { getGeojsonIoUrlForRoute, getRouteDistanceRecursively } from '../util/geojson';
+	import { getGeojsonIoUrlForRoute } from '../util/geojson';
 
 	export let currentMonthData = [];
 	export let routesData = [];
@@ -21,7 +21,6 @@
 	const tomorrowSunrise = new Date(sunxData.tomorrow.sunrise);
 
 	const isPastTodaySunrise = now > todaySunrise;
-	const isPastTodaySunset = now > todaySunset;
 
 	const didWalkToday = !!currentMonthData.find((d) => d?.date === getPaddedDateString(now));
 
@@ -63,7 +62,7 @@
 			return (routeIds.reduce((acc, routeId) => {
 				const routeData = routesData.find(r => r.properties.id === routeId);
 
-				const distance = getRouteDistanceRecursively(routesData, routeData);
+				const distance = routeData.properties.distance;
 
 				return distance + acc;
 			}, 0) / 1609).toFixed(toFixedDefault);

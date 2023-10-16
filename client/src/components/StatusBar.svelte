@@ -2,7 +2,6 @@
 	import { fade } from 'svelte/transition';
 
 	import { firstMonth, toFixedDefault } from '../constants/config';
-	import { getRouteDistanceRecursively } from '../util/geojson';
 
 	export let currentMonth;
 	export let currentMonthData;
@@ -42,7 +41,7 @@
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
 		currentMonthTotalDistance = (currentMonthData.reduce((monthTotal, curDay) => {
-			const distance = curDay?.walks.reduce((acc, cur) => acc + getRouteDistanceRecursively(routesData, routesData.find(r => r.properties.id === cur.routeId)) ?? 0, 0) ?? 0;
+			const distance = curDay?.walks.reduce((acc, cur) => acc + routesData.find(r => r.properties.id === cur.routeId).properties.distance ?? 0, 0) ?? 0;
 			return monthTotal + distance;
 		}, 0) / 1609).toFixed(toFixedDefault);
 	}
