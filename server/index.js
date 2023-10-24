@@ -8,6 +8,7 @@ const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client
 const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
+const authUrl = process.env.AUTH_URL;
 
 const minuteInSeconds = 60;
 const hourInSeconds = minuteInSeconds * 60;
@@ -16,11 +17,11 @@ const yearInSeconds = dayInSeconds * 365;
 
 const routeCacheValues = {};
 
-function authenticate(event) {
-	const { headers, queryStringParameters: { 'x-custom-key': qsk } = {} } = event;
-	const xCustomKey = process.env['X_CUSTOM_KEY'];
-	const keyToCheck = headers['x-custom-key'] ?? qsk;
-	event.isAuthed = xCustomKey && keyToCheck === xCustomKey;
+async function authenticate(event) {
+	try {
+		await fetch(authUrl, { headers: { authorization: event.headers.authorization }});
+		event.isAuthed = true;
+	} catch { }
 }
 
 function verifyBodyIsString(result) {
@@ -62,7 +63,9 @@ exports.handler = async (event) => {
 			console.warn('Body seems to exist but it failed to parse', e);
 		}
 
-		authenticate(event);
+		if (event?.headers?.authorization) {
+			await authenticate(event);
+		}
 
 		const isApiRequest = rawPath.startsWith('/api');
 		const handlerFunction = isApiRequest ? handleApiRequest : handleContentRequest;
