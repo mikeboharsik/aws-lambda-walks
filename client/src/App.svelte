@@ -22,9 +22,9 @@
 		function getApiOptions() {
 			let options = {};
 
-			let secret = localStorage.getItem('secret');
-			if (secret) {
-				options.headers = { 'x-custom-key': secret };
+			let accessToken = localStorage.getItem('access_token');
+			if (accessToken) {
+				options.headers = { 'Authorization': `Bearer ${accessToken}` };
 			}
 
 			return options;
@@ -72,12 +72,12 @@
 </script>
 
 <svelte:window on:keydown={({ altKey, code, shiftKey }) => {
-	if (localStorage.getItem('secret') && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
+	if (localStorage.getItem('access_token') && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
 		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
 		window.open(`https://geojson.io/#data=data:application/json,${encodedRouteData}`, '_blank', 'noopener');
 	}
 
-	if (localStorage.getItem('secret') && altKey && shiftKey && code === 'KeyF') {
+	if (localStorage.getItem('access_token') && altKey && shiftKey && code === 'KeyF') {
 		navigate('/routes');
 	}
 }} />
