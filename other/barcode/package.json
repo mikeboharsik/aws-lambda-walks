@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "canvas": "^2.11.2",
+    "clipboardy": "^4.0.0",
+    "img-clipboard": "^1.1.0",
     "jsbarcode": "^3.11.5"
   }
 }

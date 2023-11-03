@@ -15,12 +15,18 @@ const hourInSeconds = minuteInSeconds * 60;
 const dayInSeconds = hourInSeconds * 24;
 const yearInSeconds = dayInSeconds * 365;
 
-const routeCacheValues = {};
+const routeCacheValues = {
+	'/api/yt-thumbnail': yearInSeconds,
+};
 
 async function authenticate(event) {
 	try {
 		await fetch(authUrl, { headers: { authorization: event.headers.authorization }});
 		event.isAuthed = true;
+
+		const [, token] = event.headers.authorization.split('Bearer ');
+		const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
+		event.authExpires = content.exp;
 	} catch { }
 }
 
@@ -30,13 +36,18 @@ function verifyBodyIsString(result) {
 	}
 }
 
-function verifyCacheValue(result, rawPath) {
+function verifyCacheValue(event, result, rawPath) {
 	if (!result['cache-control']) {
-		if (routeCacheValues[rawPath]) {
-			const cacheValue = routeCacheValues[rawPath];
-			result['cache-control'] = cacheValue;
+		if (event.authExpires) {
+			const maxAge = event.authExpires - Math.floor(new Date().getTime() / 1000);
+			result['cache-control'] = `max-age=${maxAge}`;
 		} else {
-			result['cache-control'] = `max-age=${yearInSeconds}`;
+			if (routeCacheValues[rawPath]) {
+				const cacheValue = routeCacheValues[rawPath];
+				result['cache-control'] = `max-age=${cacheValue}`;
+			} else {
+				result['cache-control'] = `max-age=${yearInSeconds}`;
+			}
 		}
 		console.log(`Set cache-control header to [${result['cache-control']}]`);
 	}
@@ -73,7 +84,7 @@ exports.handler = async (event) => {
 		const result = await handlerFunction(event);
 
 		verifyBodyIsString(result);
-		verifyCacheValue(result, rawPath);
+		verifyCacheValue(event, result, rawPath);
 		logResult(result);
 
 		return result;
