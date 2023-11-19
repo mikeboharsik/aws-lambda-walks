@@ -2,8 +2,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	import debug from 'debug';
+
 	import { baseApiUrl } from '../constants/api';
 
+	const log = debug('ThumbnailGrid');
 	export let data;
 
 	const thumbnailWidth = 160;
@@ -28,6 +31,7 @@
 
 	let isTabInFocus = true;
 	let lastPausedTime = null;
+	let populateImageGridCellLastLog = null;
 
 	const offset = 32;
 	const darkModeColor = `${offset}, ${offset}, ${offset}`;
@@ -64,7 +68,7 @@
 	function populateImageArray() {
 		const calendarContainer = document.querySelector('#container-walkcalendar');
 		if (!calendarContainer) {
-			console.warn('Failed to find the calendar container');
+			log('Failed to find the calendar container');
 			return;
 		}
 
@@ -117,7 +121,10 @@
 
 	function draw(ts) {
 		if (!isTabInFocus) {
-			console.debug('Skipping draw as tab is not in focus');
+			if (!populateImageGridCellLastLog || new Date().getTime() - populateImageGridCellLastLog > 1000) {
+				log('Skipping draw as tab is not in focus');
+				populateImageGridCellLastLog = new Date().getTime();
+			}
 			return window.requestAnimationFrame(draw);
 		}
 
@@ -126,7 +133,7 @@
 			const timePaused = ts - lastPausedTime;
 			dt = parseInt(ts - lastFrameTime - timePaused);
 			lastPausedTime = null;
-			console.debug(`Set dt to ${dt} based on lastPausedTime`);
+			log(`Set dt to ${dt} based on lastPausedTime`);
 		} else {
 			dt = parseInt(ts - lastFrameTime);
 		}
@@ -164,7 +171,7 @@
 						}
 					}
 				} catch(e) {
-					console.error(e, x, y, imageCountX * x + y);
+					log(e, x, y, imageCountX * x + y);
 					throw e;
 				}
 			}
@@ -181,12 +188,12 @@
 
 	async function populateImageGridCell() {
 		if (!isTabInFocus) {
-			console.debug('Skipping populateImageGridCell as tab is not in focus');
+			log('Skipping populateImageGridCell as tab is not in focus');
 			return;
 		}
 
 		if (allVideoIds.length <= 0) {
-			console.debug('All videos have been fetched!');
+			log('All videos have been fetched!');
 			return;
 		}
 
@@ -211,14 +218,14 @@
 
 			thumbnailCache[vidId] = cell.image;
 		} else {
-			console.debug('bad index', cell, imageCells);
+			log('bad index', cell, imageCells);
 		}
 	}
 
 	async function setupCanvas() {
 		const canvas = document.getElementById('canvas');
 		if (!canvas) {
-			console.warn('Failed to get canvas');
+			log('Failed to get canvas');
 			return;
 		}
 
