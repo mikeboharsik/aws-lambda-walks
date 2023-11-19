@@ -40,10 +40,16 @@
 		// TODO: FIX: we need to check the absolute Date rather than just the number of month
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
-		currentMonthTotalDistance = (currentMonthData.reduce((monthTotal, curDay) => {
-			const distance = curDay?.walks.reduce((acc, cur) => acc + routesData.find(r => r.properties.id === cur.routeId).properties.distance ?? 0, 0) ?? 0;
+		const monthDistanceInMeters = currentMonthData.reduce((monthTotal, curDay, idx) => {
+			const distance = curDay?.walks?.reduce((acc, cur) => {
+				let walkDistance = routesData.find(r => r?.properties?.id === cur?.routeId)?.properties?.distance ?? 0;
+				if (isNaN(walkDistance)) walkDistance = 0;
+				return acc + walkDistance;
+			}, 0) ?? 0;
 			return monthTotal + distance;
-		}, 0) / 1609).toFixed(toFixedDefault);
+		}, 0);
+
+		currentMonthTotalDistance = (monthDistanceInMeters / 1609).toFixed(toFixedDefault);
 	}
 </script>
 

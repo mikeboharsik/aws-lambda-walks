@@ -73,8 +73,6 @@
 		const initImageCountX = imageCountX;
 		const initImageCountY = imageCountY;
 
-		console.log({ initImageCountX, initImageCountY });
-
 		imageCountX = Math.floor((window.innerWidth - (marginX * 2)) / (thumbnailWidth + paddingX));
 		imageCountY = Math.floor((window.innerHeight - (marginY * 2)) / (thumbnailHeight + paddingY));
 
@@ -215,8 +213,6 @@
 		} else {
 			console.debug('bad index', cell, imageCells);
 		}
-
-		console.debug('Called populateImageGridCell');
 	}
 
 	async function setupCanvas() {
@@ -248,8 +244,6 @@
 
 		clearInterval(intervalRef);
 		intervalRef = setInterval(populateImageGridCell, newImageInterval);
-
-		console.debug('Called setupCanvas');
 	}
 
 	onMount(() => {

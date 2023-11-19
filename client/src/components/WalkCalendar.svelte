@@ -59,10 +59,10 @@
 				.walks
 				.reduce((acc, { routeId }) => { routeId && acc.push(routeId); return acc }, []);
 
-			return (routeIds.reduce((acc, routeId) => {
-				const routeData = routesData.find(r => r.properties.id === routeId);
+			return (routeIds.reduce((acc, routeId, idx) => {
+				const routeData = routesData.find(r => r?.properties?.id === routeId);
 
-				const distance = routeData.properties.distance;
+				const distance = routeData?.properties?.distance ?? 0;
 
 				return distance + acc;
 			}, 0) / 1609).toFixed(toFixedDefault);
