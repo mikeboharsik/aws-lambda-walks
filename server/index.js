@@ -59,6 +59,28 @@ function logResult(result) {
 	}
 }
 
+function makeFeatureSafeForUnauthed(feature) {
+	if (feature.properties.isPrivate) {
+		feature.geometry = {
+			type: "LineString",
+			coordinates: [
+				[
+					-71.10051625598281,
+					42.49499639596356
+				],
+				[
+					-71.10051625598281,
+					42.49499639596356
+				]
+			]
+		};
+	}
+
+	delete feature.properties.isPrivate;
+	delete feature.properties.name;
+	delete feature.properties.path;
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -182,18 +204,16 @@ async function handleWalkRouteRequest(event) {
 		};
 	}
 
-	if (!isAuthed) {
-		return {
-			statusCode: 401,
-		};
-	}
-
 	const json = JSON.parse(await fsPromises.readFile('./public/geo.json', { encoding: 'utf8' }));
 	const route = json.features.find(f => f.properties.id === id);
 	if (!route) {
 		return {
 			statusCode: 404,
 		};
+	}
+
+	if (!isAuthed) {
+		makeFeatureSafeForUnauthed(route);
 	}
 
 	const updatedRouteData = {
@@ -203,6 +223,9 @@ async function handleWalkRouteRequest(event) {
 	route.properties.commonFeatureIds?.forEach((fid) => {
 		const feature = json.features.find(r => r.properties.id === fid);
 		if (feature?.geometry) {
+			if (!isAuthed) {
+				makeFeatureSafeForUnauthed(feature);
+			}
 			updatedRouteData.features.push(feature);
 		}
 	});
@@ -242,27 +265,7 @@ async function handleContentRequest(event) {
 
 				if (rawPath.endsWith('geo.json') && !isAuthed) {
 					const parsed = JSON.parse(body);
-					parsed.features.forEach((feature) => {
-						if (feature.properties.isPrivate) {
-							feature.geometry = {
-								type: "LineString",
-								coordinates: [
-									[
-										-71.10051625598281,
-										42.49499639596356
-									],
-									[
-										-71.10051625598281,
-										42.49499639596356
-									]
-								]
-							};
-						}
-
-						delete feature.properties.isPrivate;
-						delete feature.properties.name;
-						delete feature.properties.path;
-					});
+					parsed.features.forEach(makeFeatureSafeForUnauthed);
 					body = JSON.stringify(parsed);
 				}
 				break;
