@@ -23,21 +23,25 @@ jobs:
     steps:
     - name: Checkout aws-lambda-walks
       uses: actions/checkout@v3
+      
     - name: Checkout walk-routes
       uses: actions/checkout@v3
       with:
         repository: mikeboharsik/walk-routes
         path: walk-routes
         token: ${{ secrets.WALK_ROUTES_PAT }}
+
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.6.0
       with:
         node-version: 16.19.1
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-region: us-east-1
         role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+
     - name: Invoke PowerShell scripts
       shell: pwsh
       run: |
