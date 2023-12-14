@@ -127,3 +127,9 @@ if (!$SkipVideoLaunch) {
 if ($UseShortFilename) {
 	Write-Host "Encoded data = [$encoded]"
 }
+
+$clipsDir = Resolve-Path "..\clips"
+$dateDir = "$clipsDir\$dateStr"
+New-Item -ItemType Directory -Path $dateDir
+New-Item -ItemType Directory -Path "$dateDir\render"
+Copy-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
