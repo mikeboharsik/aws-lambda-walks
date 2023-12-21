@@ -49,10 +49,15 @@ function getDescriptionContent() {
             startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
             finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
         }
-		if (videoId === 'hasanabi') {
-			return `https://twitch.tv/hasanabi?t=${finalVideoStartSeconds}`;
-		} else {
-			return `https://youtu.be/${videoId}?t=${finalVideoStartSeconds}`;
+		
+		switch (videoId) {
+			case 'hasanabi':
+			case 'kitboga': {
+				return `https://twitch.tv/${videoId}?t=${finalVideoStartSeconds}`;
+			}
+			default: {
+				return `https://youtu.be/${videoId}?t=${finalVideoStartSeconds}`;
+			}
 		}
 	}).join('\n');
 
