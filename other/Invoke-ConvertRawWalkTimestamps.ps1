@@ -5,16 +5,18 @@ Param(
 
 Write-Verbose "In directory [$(Get-Location)]"
 
-$textFiles = Get-ChildItem ./*.txt
+$textFiles = Get-ChildItem -File ./*.json
 $file = $textFiles[0]
 
-Get-Content $file
-	| ForEach-Object {
-		if ($_) {
-			$t = [TimeSpan]$_ - $VideoStartTime
-			return $t.ToString()
-		} else {
-			return ""
-		}
-	} 
-	| Set-Content "$($file.BaseName)_converted.txt"
+$json = Get-Content $file
+	| ConvertFrom-Json -AsHashtable -NoEnumerate -Depth 10
+	
+foreach ($event in $json) {
+	$adjustedStart = [TimeSpan]$event.mark - $VideoStartTime
+	$event['adjusted_start'] = $adjustedStart.ToString()
+	$event['adjusted_end'] = $adjustedStart.ToString()
+}
+			
+$json
+	| ConvertTo-Json -Depth 10
+	| Set-Content $file
