@@ -1,0 +1,80 @@
+[
+  {
+    "mark": "00:05:54",
+    "name": "Lane change without signal Plate MA BARR 7",
+    "adjusted_start": "00:02:07",
+    "adjusted_end": "00:02:13"
+  },
+  {
+    "mark": "00:06:55",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:03:10",
+    "adjusted_end": "00:03:15"
+  },
+  {
+    "mark": "00:13:47",
+    "name": "Part of roof fallen onto van",
+    "adjusted_start": "00:09:39",
+    "adjusted_end": "00:10:06"
+  },
+  {
+    "mark": "00:14:16",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:10:27",
+    "adjusted_end": "00:10:35"
+  },
+  {
+    "mark": "00:19:58",
+    "name": "Plate MA 4CMT 86 wreath",
+    "adjusted_start": "00:16:14",
+    "adjusted_end": "00:16:16"
+  },
+  {
+    "mark": "00:23:53",
+    "name": "Waverly Street construction progress",
+    "adjusted_start": "00:19:50",
+    "adjusted_end": "00:20:13"
+  },
+  {
+    "mark": "00:26:25",
+    "name": "Plate MA CLOUD 9",
+    "adjusted_start": "00:22:40",
+    "adjusted_end": "00:22:42"
+  },
+  {
+    "mark": "00:30:18",
+    "name": "Plate MA SPAHKY",
+    "adjusted_start": "00:26:36",
+    "adjusted_end": "00:26:38"
+  },
+  {
+    "mark": "00:32:48",
+    "name": "Broadway roof progress",
+    "adjusted_start": "00:28:42",
+    "adjusted_end": "00:29:08"
+  },
+  {
+    "mark": "00:34:07",
+    "name": "Plate MA TROLL 2",
+    "adjusted_start": "00:30:24",
+    "adjusted_end": "00:30:26"
+  },
+  {
+    "mark": "00:37:11",
+    "name": "Plate MA CAS 8",
+    "adjusted_start": "00:33:28",
+    "adjusted_end": "00:33:30"
+  },
+  {
+    "mark": "00:39:17",
+    "name": "Plate MA MAROC",
+    "adjusted_start": "00:35:34",
+    "adjusted_end": "00:35:36"
+  },
+  {
+    "mark": "00:40:52",
+    "name": "Plate MA SPAHKY",
+    "adjusted_start": "00:37:17",
+    "adjusted_end": "00:37:19"
+  }
+]
