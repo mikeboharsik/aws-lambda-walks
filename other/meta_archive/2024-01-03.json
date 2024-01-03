@@ -1,0 +1,50 @@
+[
+  {
+    "mark": "00:08:17",
+    "name": "Truck driver looks both ways before entering traffic",
+    "adjusted_start": "00:03:55",
+    "adjusted_end": "00:04:03"
+  },
+  {
+    "mark": "00:09:36",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:05:15",
+    "adjusted_end": "00:05:22"
+  },
+  {
+    "mark": "00:12:52",
+    "name": "Broadway roof progress",
+    "adjusted_start": "00:08:29",
+    "adjusted_end": "00:08:41"
+  },
+  {
+    "mark": "00:16:30",
+    "name": "Broadway road work",
+    "adjusted_start": "00:11:40",
+    "adjusted_end": "00:12:10"
+  },
+  {
+    "mark": "00:19:48",
+    "name": "Hillside Avenue construction",
+    "adjusted_start": "00:15:21",
+    "adjusted_end": "00:15:36"
+  },
+  {
+    "mark": "00:25:02",
+    "name": "Lawndale Road garage door work",
+    "adjusted_start": "00:20:33",
+    "adjusted_end": "00:20:49"
+  },
+  {
+    "mark": "00:29:12",
+    "name": "Plate MA TROLL 2",
+    "adjusted_start": "00:24:59",
+    "adjusted_end": "00:25:01"
+  },
+  {
+    "mark": "00:34:30",
+    "name": "SKIP Plate MA TEALA",
+    "adjusted_start": "00:30:20",
+    "adjusted_end": "00:30:20"
+  }
+]
