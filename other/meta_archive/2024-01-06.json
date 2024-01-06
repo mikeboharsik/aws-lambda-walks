@@ -1,0 +1,74 @@
+[
+  {
+    "mark": "00:04:02",
+    "name": "SKIP",
+    "adjusted_start": "-00:00:27",
+    "adjusted_end": "-00:00:27"
+  },
+  {
+    "mark": "00:05:14",
+    "name": "Driver blocks turn area",
+    "adjusted_start": "00:00:34",
+    "adjusted_end": "00:00:42"
+  },
+  {
+    "mark": "00:06:45",
+    "name": "Plate MA S2L",
+    "adjusted_start": "00:02:09",
+    "adjusted_end": "00:02:11"
+  },
+  {
+    "mark": "00:09:41",
+    "name": "SKIP Unknown",
+    "adjusted_start": "00:05:12",
+    "adjusted_end": "00:05:12"
+  },
+  {
+    "mark": "00:12:48",
+    "name": "Plate MA N4Y",
+    "adjusted_start": "00:08:12",
+    "adjusted_end": "00:08:14"
+  },
+  {
+    "mark": "00:20:50",
+    "name": "Blatant stop sign runner does not stay in lane",
+    "adjusted_start": "00:16:12",
+    "adjusted_end": "00:16:24"
+  },
+  {
+    "mark": "00:21:03",
+    "name": "SKIP Plate MA PCHEZ",
+    "adjusted_start": "00:16:34",
+    "adjusted_end": "00:16:34"
+  },
+  {
+    "mark": "00:29:47",
+    "name": "SKIP cop was signaling",
+    "adjusted_start": "00:25:18",
+    "adjusted_end": "00:25:18"
+  },
+  {
+    "mark": "00:34:05",
+    "name": "SKIP trying to time light",
+    "adjusted_start": "00:29:36",
+    "adjusted_end": "00:29:36"
+  },
+  {
+    "mark": "00:34:28",
+    "name": "Driver cuts across 2 lanes to make right turn",
+    "adjusted_start": "00:29:52",
+    "adjusted_end": "00:30:01"
+  },
+  {
+    "mark": "00:34:29",
+    "name": "Plate MA WISE 4",
+    "adjusted_start": "00:29:57",
+    "adjusted_end": "00:29:59"
+  },
+  {
+    "mark": "00:34:52",
+    "name": "SKIP nothing",
+    "adjusted_start": "00:30:23",
+    "adjusted_end": "00:30:23"
+  }
+]
