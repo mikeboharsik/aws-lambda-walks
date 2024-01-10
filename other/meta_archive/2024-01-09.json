@@ -1,0 +1,26 @@
+[
+  {
+    "mark": "00:05:14",
+    "name": "SKIP bad driver",
+    "adjusted_start": "00:00:42",
+    "adjusted_end": "00:00:42"
+  },
+  {
+    "mark": "00:10:36",
+    "name": "Myopia Road construction",
+    "adjusted_start": "00:05:16",
+    "adjusted_end": "00:06:02"
+  },
+  {
+    "mark": "00:34:45",
+    "name": "Plate MA RKBA",
+    "adjusted_start": "00:30:08",
+    "adjusted_end": "00:30:10"
+  },
+  {
+    "mark": "00:37:16",
+    "name": "Bad driver stops in intersection",
+    "adjusted_start": "00:32:23",
+    "adjusted_end": "00:32:40"
+  }
+]
