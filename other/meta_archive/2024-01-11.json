@@ -1,0 +1,86 @@
+[
+  {
+    "mark": "00:06:13",
+    "name": "Bad drivers blocking turn",
+    "adjusted_start": "00:02:33",
+    "adjusted_end": "00:02:40"
+  },
+  {
+    "mark": "00:08:51",
+    "name": "Turn without signal",
+    "adjusted_start": "00:05:10",
+    "adjusted_end": "00:05:19"
+  },
+  {
+    "mark": "00:11:01",
+    "name": "Turn without signal",
+    "adjusted_start": "00:07:20",
+    "adjusted_end": "00:07:31"
+  },
+  {
+    "mark": "00:11:31",
+    "name": "Turn without signal",
+    "adjusted_start": "00:07:45",
+    "adjusted_end": "00:07:53"
+  },
+  {
+    "mark": "00:14:44",
+    "name": "Turn without signal",
+    "adjusted_start": "00:07:53",
+    "adjusted_end": "00:07:59"
+  },
+  {
+    "mark": "00:17:22",
+    "name": "Plate MA DRYFLY",
+    "adjusted_start": "00:13:44",
+    "adjusted_end": "00:13:46"
+  },
+  {
+    "mark": "00:18:20",
+    "name": "Plate MA KRDSTN",
+    "adjusted_start": "00:14:46",
+    "adjusted_end": "00:14:48"
+  },
+  {
+    "mark": "00:20:25",
+    "name": "Plate MA KERKED",
+    "adjusted_start": "00:16:47",
+    "adjusted_end": "00:16:49"
+  },
+  {
+    "mark": "00:21:48",
+    "name": "Turn without signal",
+    "adjusted_start": "00:18:08",
+    "adjusted_end": "00:18:15"
+  },
+  {
+    "mark": "00:25:54",
+    "name": "Plate MA MOOMOO",
+    "adjusted_start": "00:22:18",
+    "adjusted_end": "00:22:20"
+  },
+  {
+    "mark": "00:28:54",
+    "name": "Driver BLATANTLY runs stop sign",
+    "adjusted_start": "00:22:20",
+    "adjusted_end": "00:22:27"
+  },
+  {
+    "mark": "00:28:54",
+    "name": "Driver turns into wrong lane",
+    "adjusted_start": "00:25:15",
+    "adjusted_end": "00:25:24"
+  },
+  {
+    "mark": "00:34:10",
+    "name": "Myopia Road construction",
+    "adjusted_start": "00:30:18",
+    "adjusted_end": "00:30:38"
+  },
+  {
+    "mark": "00:37:05",
+    "name": "Plate MA CRANK",
+    "adjusted_start": "00:33:30",
+    "adjusted_end": "00:33:32"
+  }
+]
