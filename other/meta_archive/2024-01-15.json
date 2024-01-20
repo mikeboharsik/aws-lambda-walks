@@ -1,0 +1,62 @@
+[
+  {
+    "mark": "00:05:22",
+    "name": "Bad driver",
+    "adjusted_start": "00:00:51",
+    "adjusted_end": "00:00:58"
+  },
+  {
+    "mark": "00:06:47",
+    "name": "Plate MA DRYFLY",
+    "adjusted_start": "00:02:26",
+    "adjusted_end": "00:02:28"
+  },
+  {
+    "mark": "00:11:13",
+    "name": "Turn without signal",
+    "adjusted_start": "00:06:39",
+    "adjusted_end": "00:06:53"
+  },
+  {
+    "mark": "00:14:01",
+    "name": "Terrible left turn",
+    "adjusted_start": "00:09:30",
+    "adjusted_end": "00:09:42"
+  },
+  {
+    "mark": "00:16:11",
+    "name": "SKIP sketchy left turn",
+    "adjusted_start": "00:11:51",
+    "adjusted_end": "00:11:51"
+  },
+  {
+    "mark": "00:16:52",
+    "name": "Plate MA BUZZT 3",
+    "adjusted_start": "00:12:31",
+    "adjusted_end": "00:12:33"
+  },
+  {
+    "mark": "00:27:25",
+    "name": "SKIP unknown",
+    "adjusted_start": "00:23:05",
+    "adjusted_end": "00:23:05"
+  },
+  {
+    "mark": "00:29:20",
+    "name": "Turn without signal",
+    "adjusted_start": "00:24:54",
+    "adjusted_end": "00:24:59"
+  },
+  {
+    "mark": "00:30:22",
+    "name": "Turn without signal",
+    "adjusted_start": "00:25:48",
+    "adjusted_end": "00:26:03"
+  },
+  {
+    "mark": "00:31:43",
+    "name": "Plate MA SEMOG",
+    "adjusted_start": "00:27:21",
+    "adjusted_end": "00:27:23"
+  }
+]

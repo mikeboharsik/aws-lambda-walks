@@ -1,0 +1,80 @@
+[
+  {
+    "mark": "00:05:20",
+    "name": "Driver BLATANTLY runs red light",
+    "adjusted_start": "00:00:59",
+    "adjusted_end": "00:01:02"
+  },
+  {
+    "mark": "00:05:31",
+    "name": "Bad driver",
+    "adjusted_start": "00:01:05",
+    "adjusted_end": "00:01:13"
+  },
+  {
+    "mark": "00:05:56",
+    "name": "Two good drivers do not block turn area",
+    "adjusted_start": "00:01:29",
+    "adjusted_end": "00:01:37"
+  },
+  {
+    "mark": "00:13:38",
+    "name": "SKIP was signaling",
+    "adjusted_start": "00:09:19",
+    "adjusted_end": "00:09:19"
+  },
+  {
+    "mark": "00:15:15",
+    "name": "SKIP tinted plate",
+    "adjusted_start": "00:10:56",
+    "adjusted_end": "00:10:56"
+  },
+  {
+    "mark": "00:19:02",
+    "name": "Plate MA FERARA",
+    "adjusted_start": "00:14:40",
+    "adjusted_end": "00:14:42"
+  },
+  {
+    "mark": "00:19:10",
+    "name": "Plate MA BEA 3",
+    "adjusted_start": "00:14:49",
+    "adjusted_end": "00:14:51"
+  },
+  {
+    "mark": "00:21:18",
+    "name": "Driver runs stop sign",
+    "adjusted_start": "00:16:49",
+    "adjusted_end": "00:16:57"
+  },
+  {
+    "mark": "00:27:43",
+    "name": "Plate MA DRYFLY",
+    "adjusted_start": "00:23:19",
+    "adjusted_end": "00:23:21"
+  },
+  {
+    "mark": "00:33:39",
+    "name": "Good dog barking at me",
+    "adjusted_start": "00:28:49",
+    "adjusted_end": "00:29:06"
+  },
+  {
+    "mark": "00:36:30",
+    "name": "SKIP unknown/blurry",
+    "adjusted_start": "00:32:11",
+    "adjusted_end": "00:32:11"
+  },
+  {
+    "mark": "00:38:41",
+    "name": "SKIP unknown",
+    "adjusted_start": "00:34:22",
+    "adjusted_end": "00:34:22"
+  },
+  {
+    "mark": "00:41:56",
+    "name": "SKIP",
+    "adjusted_start": "00:37:37",
+    "adjusted_end": "00:37:37"
+  }
+]
