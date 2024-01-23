@@ -1,0 +1,56 @@
+[
+  {
+    "mark": "00:09:41",
+    "name": "SKIP running stop sign",
+    "adjusted_start": "00:03:02",
+    "adjusted_end": "00:03:02"
+  },
+  {
+    "mark": "00:13:45",
+    "name": "Good husky dog in window",
+    "adjusted_start": "00:06:52",
+    "adjusted_end": "00:07:04"
+  },
+  {
+    "mark": "00:22:02",
+    "name": "Driver struggles to make right turn",
+    "adjusted_start": "00:15:11",
+    "adjusted_end": "00:15:22"
+  },
+  {
+    "mark": "00:22:41",
+    "name": "SKIP stop sign runners",
+    "adjusted_start": "00:16:02",
+    "adjusted_end": "00:16:02"
+  },
+  {
+    "mark": "00:23:50",
+    "name": "Bad parker",
+    "adjusted_start": "00:16:59",
+    "adjusted_end": "00:17:11"
+  },
+  {
+    "mark": "00:32:25",
+    "name": "SKIP not late turner",
+    "adjusted_start": "00:25:46",
+    "adjusted_end": "00:25:46"
+  },
+  {
+    "mark": "00:33:04",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:26:05",
+    "adjusted_end": "00:26:26"
+  },
+  {
+    "mark": "00:34:42",
+    "name": "SKIP unknown",
+    "adjusted_start": "00:28:03",
+    "adjusted_end": "00:28:03"
+  },
+  {
+    "mark": "00:36:47",
+    "name": "SKIP truck going through do not enter",
+    "adjusted_start": "00:30:08",
+    "adjusted_end": "00:30:08"
+  }
+]
