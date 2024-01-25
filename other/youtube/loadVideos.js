@@ -1,4 +1,12 @@
 (async function(){
+	if (process.argv.length === 2) {
+		console.log(`Arguments:
+  - accessToken=[string]
+  - refreshPlaylistItems=[true/false]
+  - refreshVideoItems=[true/false]`);
+		return;
+	}
+	
 	const fs = require('fs/promises');
 
 	const customArgs = {

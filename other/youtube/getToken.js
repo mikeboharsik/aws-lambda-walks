@@ -3,6 +3,20 @@ const http = require('http');
 
 const [,, clientId, clientSecret] = process.argv;
 
+const missingArgs = [];
+if (!clientId) {
+	missingArgs.push('clientId');
+}
+
+if (!clientSecret) {
+	missingArgs.push('clientSecret');
+}
+
+if (missingArgs.length) {
+	console.error(`The following required arguments are missing: [${missingArgs.join(', ')}]`);
+	process.exit(1);
+}
+
 (async function(){	
 	const params = {
 		access_type: 'offline',
@@ -28,8 +42,6 @@ const [,, clientId, clientSecret] = process.argv;
 				if (match) {
 					const [, , code] = match;
 					
-					res.end('<html>Close this</html>');
-					
 					const oauthParams = {
 						client_id: clientId,
 						client_secret: clientSecret,
@@ -40,13 +52,21 @@ const [,, clientId, clientSecret] = process.argv;
 					const processedOauthParams = Object.keys(oauthParams).reduce((acc, cur) => acc + `&${cur}=${oauthParams[cur]}`, '');
 					
 					const oauthUrl = `https://oauth2.googleapis.com/token?code=${code}${processedOauthParams}`;
+					console.log(`Sending OAuth request to [${oauthUrl}]`);
 					const oauthRes = await fetch(oauthUrl, { method: 'POST' }).then(r => r.json());
 					
+					res.end(`<html>
+	<head></head>
+	<body>
+		<button onclick="navigator.clipboard.writeText('${oauthRes.access_token}');window.close();";>
+			Copy token
+		</button>
+	</body>
+</html>`);
 					server.closeAllConnections();
 					server.close();
 					
 					resolve(oauthRes.access_token);
-					console.log(oauthRes.access_token);
 				} else {
 					res.end();
 				}
