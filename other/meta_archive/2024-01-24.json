@@ -1,0 +1,69 @@
+[
+  {
+    "mark": "00:08:23",
+    "name": "Plate MA NAYSIE",
+    "adjusted_start": "00:04:25",
+    "adjusted_end": "00:04:27"
+  },
+  {
+    "mark": "00:11:24",
+    "name": "3 turns without signal",
+    "adjusted_start": "00:07:20",
+    "adjusted_end": "00:07:45"
+  },
+  
+  {
+    "mark": "00:13:18",
+    "name": "Plate NH FIELD",
+    "adjusted_start": "00:09:16",
+    "adjusted_end": "00:09:18"
+  },
+  {
+    "mark": "00:13:17",
+    "name": "Plate MA FDF",
+    "adjusted_start": "00:09:18",
+    "adjusted_end": "00:09:20"
+  },
+  {
+    "mark": "00:15:22",
+    "name": "Driving with wipers on without headlights",
+    "adjusted_start": "00:11:19",
+    "adjusted_end": "00:11:24"
+  },
+  {
+    "mark": "00:18:03",
+    "name": "Turn without signal",
+    "adjusted_start": "00:13:59",
+    "adjusted_end": "00:14:07"
+  },
+  {
+    "mark": "00:26:25",
+    "name": "Plate MA ARENA",
+    "adjusted_start": "00:22:24",
+    "adjusted_end": "00:22:26"
+  },
+  {
+    "mark": "00:27:24",
+    "name": "Plate MA D9Z",
+    "adjusted_start": "00:23:24",
+    "adjusted_end": "00:23:26"
+  },
+  {
+    "mark": "00:31:28",
+    "name": "Signal only once turn started",
+    "adjusted_start": "00:27:15",
+    "adjusted_end": "00:27:26"
+  },
+  {
+    "mark": "00:40:55",
+    "name": "Trumpmobile",
+    "adjusted_start": "00:36:53",
+    "adjusted_end": "00:37:01"
+  },
+  {
+    "mark": "00:41:27",
+    "name": "SKIP red light runner",
+    "adjusted_start": "00:37:33",
+    "adjusted_end": "00:37:33"
+  }
+]
