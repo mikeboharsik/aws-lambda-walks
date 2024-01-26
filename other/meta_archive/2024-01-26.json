@@ -1,0 +1,86 @@
+[
+  {
+    "mark": "00:04:36",
+    "name": "Plate from Guatemala",
+    "adjusted_start": "00:00:29",
+    "adjusted_end": "00:00:31"
+  },
+  {
+    "mark": "00:05:01",
+    "name": "Plate MA JNAS tinted",
+    "adjusted_start": "00:00:55",
+    "adjusted_end": "00:00:57"
+  },
+  {
+    "mark": "00:06:39",
+    "name": "Manhole work",
+    "adjusted_start": "00:01:52",
+    "adjusted_end": "00:02:34"
+  },
+  {
+    "mark": "00:07:59",
+    "name": "Plate MA GATAHS",
+    "adjusted_start": "00:03:52",
+    "adjusted_end": "00:03:54"
+  },
+  {
+    "mark": "00:08:08",
+    "name": "Plate MA BOAST",
+    "adjusted_start": "00:04:05",
+    "adjusted_end": "00:04:07"
+  },
+  {
+    "mark": "00:08:51",
+    "name": "SKIP nothing",
+    "adjusted_start": "00:04:50",
+    "adjusted_end": "00:04:50"
+  },
+  {
+    "mark": "00:09:18",
+    "name": "Driver blocks crosswalk",
+    "adjusted_start": "00:05:05",
+    "adjusted_end": "00:05:16"
+  },
+  {
+    "mark": "00:09:49",
+    "name": "Plate MA W6F",
+    "adjusted_start": "00:05:44",
+    "adjusted_end": "00:05:46"
+  },
+  {
+    "mark": "00:12:37",
+    "name": "Broadway roof progress",
+    "adjusted_start": "00:08:12",
+    "adjusted_end": "00:08:31"
+  },
+  {
+    "mark": "00:21:30",
+    "name": "3 stop sign runners in a row",
+    "adjusted_start": "00:17:15",
+    "adjusted_end": "00:17:28"
+  },
+  {
+    "mark": "00:23:02",
+    "name": "SKIP nothing",
+    "adjusted_start": "00:19:01",
+    "adjusted_end": "00:19:01"
+  },
+  {
+    "mark": "00:23:53",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:19:40",
+    "adjusted_end": "00:19:52"
+  },
+  {
+    "mark": "00:25:48",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:21:37",
+    "adjusted_end": "00:21:44"
+  },
+  {
+    "mark": "00:29:03",
+    "name": "Lane change without signal",
+    "adjusted_start": "00:24:56",
+    "adjusted_end": "00:25:00"
+  }
+]
