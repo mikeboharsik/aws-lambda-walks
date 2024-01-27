@@ -1,13 +1,11 @@
 (async function(){
 	if (process.argv.length === 2) {
 		console.log(`Arguments:
-  - accessToken=[string]
-  - refreshPlaylistItems=[true/false]
-  - refreshVideoItems=[true/false]`);
+	- accessToken=[string]
+	- refreshPlaylistItems=[true/false]
+	- refreshVideoItems=[true/false]`);
 		return;
 	}
-	
-	const fs = require('fs/promises');
 
 	const customArgs = {
 		accessToken: null,
@@ -25,6 +23,8 @@
 		}
 	});
 	
+	const fs = require('fs/promises');
+
 	const accessTokenRequired = customArgs.refreshPlaylistItems || customArgs.refreshVideoItems;
 	if (accessTokenRequired && !customArgs.accessToken) {
 		throw new Error('accessToken is required');
@@ -39,7 +39,6 @@
 
 		const channelResponse = await fetch(channelUrl, { headers }).then(r => r.json());
 		const uploadsPlaylistId = channelResponse.items[0].contentDetails.relatedPlaylists.uploads;
-		console.log(channelResponse);
 		
 		// 1 quota unit
 		let playlistItemsUrl = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=id&part=contentDetails&part=snippet&part=status&maxResults=50&playlistId=${uploadsPlaylistId}`;
@@ -51,7 +50,6 @@
 			
 			const playlistResult = await fetch(url, { headers }).then(r => r.json());
 			pageToken = playlistResult.nextPageToken;
-			console.log({ pageToken });
 			
 			playlistItems.push(...playlistResult.items);
 		} while(pageToken);
@@ -65,7 +63,22 @@
 	
 	// get: 1 quota unit
 	// put: 50 quota units
-	const videosUrl = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=contentDetails&part=fileDetails&part=status&part=processingDetails&maxResults=50`;
+	const parts = 'part=' +[
+		'contentDetails',
+		'fileDetails',
+		'id',
+		'liveStreamingDetails',
+		'localizations',
+		'player',
+		'processingDetails',
+		'recordingDetails',
+		'snippet',
+		'statistics',
+		'status',
+		'suggestions',
+		'topicDetails'
+	].join('&part=');
+	const videosUrl = `https://youtube.googleapis.com/youtube/v3/videos?${parts}&maxResults=50`;
 	
 	let videoItems = [];
 	if (customArgs.refreshVideoItems) {	
@@ -87,5 +100,5 @@
 		videoItems = JSON.parse(await fs.readFile('./uploads_videoitems.json'));
 	}
 	
-	console.log({ videoItems });
+	process.stdout.write(JSON.stringify(videoItems ));
 })();
