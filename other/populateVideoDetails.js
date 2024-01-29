@@ -1,19 +1,17 @@
-data = JSON.parse(
+const data = JSON.parse(
 	atob(
 		document.querySelector('#original-filename').textContent.trim().slice(0, -4)
 	)
 );
 
-console.log(data);
-
 const [, titleInput, descriptionInput] = Array.from(document.querySelectorAll("div[aria-label]"));
 
-console.log({ titleInput, descriptionInput });
+console.log({ data, titleInput, descriptionInput });
 
 ({ date, end, route, start, towns, videos } = data);
 
 function getTitleContent() {
-	townsContent = 'not implemented';
+	let townsContent = null;
 
 	states = Object.keys(towns);
 	if (states.length === 1) {
@@ -35,37 +33,45 @@ function getTitleContent() {
 }
 
 function getDescriptionContent() {
-	listeningToContent = 'not implemented';
+	let listeningToContent = null;
 
-	listeningToContent = Object.keys(videos).map((videoId) => {
-        finalVideoStartSeconds = 0;
-		([vidStart, walkVidStart] = videos[videoId] ?? []);
-        if (vidStart && walkVidStart && start) {
-            ([vHours = 0, vMinutes = 0, vSeconds = 0] = vidStart.split(':').map(e => parseInt(e)));
-            ([wHours = 0, wMinutes = 0, wSeconds = 0] = walkVidStart.split(':').map(e => parseInt(e)));
-            ([sHours = 0, sMinutes = 0, sSeconds = 0] = start.split(':').map(e => parseInt(e)));
-            vidStartSeconds = (vHours * 60 * 60) + (vMinutes * 60) + vSeconds;
-            walkVidStartSeconds = (wHours * 60 * 60) + (wMinutes * 60) + parseInt(wSeconds);
-            startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
-            finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
-        }
-		
-		switch (videoId) {
-			case 'hasanabi':
-			case 'kitboga': {
-				return `https://twitch.tv/${videoId}?t=${finalVideoStartSeconds}`;
+	if (Object.keys(videos).length) {
+		listeningToContent = Object.keys(videos).map((videoId) => {
+			finalVideoStartSeconds = 0;
+			([vidStart, walkVidStart] = videos[videoId] ?? []);
+			if (vidStart && walkVidStart && start) {
+				([vHours = 0, vMinutes = 0, vSeconds = 0] = vidStart.split(':').map(e => parseInt(e)));
+				([wHours = 0, wMinutes = 0, wSeconds = 0] = walkVidStart.split(':').map(e => parseInt(e)));
+				([sHours = 0, sMinutes = 0, sSeconds = 0] = start.split(':').map(e => parseInt(e)));
+				vidStartSeconds = (vHours * 60 * 60) + (vMinutes * 60) + vSeconds;
+				walkVidStartSeconds = (wHours * 60 * 60) + (wMinutes * 60) + parseInt(wSeconds);
+				startSeconds = (sHours * 60 * 60) + (sMinutes * 60) + sSeconds;
+				finalVideoStartSeconds = (vidStartSeconds - walkVidStartSeconds) + startSeconds;
 			}
-			default: {
-				return `https://youtu.be/${videoId}?t=${finalVideoStartSeconds}`;
+			
+			switch (videoId) {
+				case 'hasanabi':
+				case 'kitboga': {
+					return `https://twitch.tv/${videoId}?t=${finalVideoStartSeconds}`;
+				}
+				default: {
+					return `https://youtu.be/${videoId}?t=${finalVideoStartSeconds}`;
+				}
 			}
-		}
-	}).join('\n');
+		}).join('\n');
+	}
 
-	return `Route: ${route}\n\nListening to:\n${listeningToContent}\n\nhttps://github.com/lindell/JsBarcode`;
+	let out = `Route: ${route}\n\n`;
+	if (listeningToContent) {
+		out += `Listening to:\n${listeningToContent}\n\n`;
+	}
+	out += `https://github.com/lindell/JsBarcode`;
+
+	return out;
 }
 
-titleContent = getTitleContent();
-descriptionContent = getDescriptionContent();
+let titleContent = getTitleContent();
+let descriptionContent = getDescriptionContent();
 
 titleInput.textContent = titleContent;
 titleInput.value = titleContent;
