@@ -2,26 +2,18 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 
-const items = JSON.parse(fs.readFileSync('./uploads_videoitems.json'));
+const { getAllVideoItems, getCustomArguments } = require('./common.js');
+
+const items = getAllVideoItems();
 let lastScheduledDate = null;
 let ytData = null;
 let allRoutes = null;
 
-const customArgs = {
-	accessToken: null,
-	commit: false,
-};
-
-process.argv.forEach(e => {
-	let [k, v] = e.split('=');
-	
-	if (k in customArgs) {
-		if (v === 'true') v = true;
-		
-		customArgs[k] = v;
-	}
-});
-
+const customArgs = getCustomArguments({ accessToken: null,	commit: false });
+if (typeof customArgs === 'string') {
+	console.log(customArgs);
+	return;
+}
 if (customArgs.commit && !customArgs.accessToken) {
 	throw new Error(`accessToken is required`);
 }
