@@ -1,29 +1,17 @@
-(async function(){
-	if (process.argv.length === 2) {
-		console.log(`Arguments:
-	- accessToken=[string]
-	- refreshPlaylistItems=[true/false]
-	- refreshVideoItems=[true/false]`);
-		return;
-	}
+const fs = require('fs/promises');
 
-	const customArgs = {
+const { getCustomArguments } = require('./common.js');
+
+(async function(){
+	const customArgs = getCustomArguments({
 		accessToken: null,
 		refreshPlaylistItems: false,
 		refreshVideoItems: false
-	};
-	
-	process.argv.forEach(e => {
-		let [k, v] = e.split('=');
-		
-		if (k in customArgs) {
-			if (v === 'true') v = true;
-			
-			customArgs[k] = v;
-		}
 	});
-	
-	const fs = require('fs/promises');
+	if (typeof customArgs === 'string') {
+		console.log(customArgs);
+		return;
+	}
 
 	const accessTokenRequired = customArgs.refreshPlaylistItems || customArgs.refreshVideoItems;
 	if (accessTokenRequired && !customArgs.accessToken) {
@@ -99,6 +87,4 @@
 	} else {
 		videoItems = JSON.parse(await fs.readFile('./uploads_videoitems.json'));
 	}
-	
-	process.stdout.write(JSON.stringify(videoItems ));
 })();
