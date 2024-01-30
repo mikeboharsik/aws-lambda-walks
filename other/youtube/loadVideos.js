@@ -47,6 +47,8 @@ const { getCustomArguments } = require('./common.js');
 		playlistItems = JSON.parse(await fs.readFile('./uploads_playlistitems.json'));
 	}
 	
+	console.log(`Found ${playlistItems.length} playlist items`);
+
 	const videoIds = playlistItems.map(e => e.contentDetails.videoId);
 	
 	// get: 1 quota unit
@@ -81,6 +83,8 @@ const { getCustomArguments } = require('./common.js');
 			videoItems.push(...videosRes.items);
 			
 			batchesRun++;
+
+			console.log(`Loaded video items page ${batchesRun} of ${Math.ceil(videoIds.length / batchSize)}`);
 		}
 		
 		await fs.writeFile('./uploads_videoitems.json', JSON.stringify(videoItems, null, '\t'));
