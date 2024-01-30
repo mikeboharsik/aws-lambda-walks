@@ -2,12 +2,7 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 
-const { getAllVideoItems, getCustomArguments } = require('./common.js');
-
-const items = getAllVideoItems();
-let lastScheduledDate = null;
-let ytData = null;
-let allRoutes = null;
+const { getAllVideoItems, getCustomArguments, shuffleArray } = require('./common.js');
 
 const customArgs = getCustomArguments({ accessToken: null,	commit: false });
 if (typeof customArgs === 'string') {
@@ -18,14 +13,10 @@ if (customArgs.commit && !customArgs.accessToken) {
 	throw new Error(`accessToken is required`);
 }
 
-function shuffleArray(e) {
-	for (let i = e.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		const temp = e[i];
-		e[i] = e[j];
-		e[j] = temp;
-	}
-}
+const items = getAllVideoItems();
+let lastScheduledDate = null;
+let ytData = null;
+let allRoutes = null;
 
 async function getRouteId(date) {
 	if (!ytData) {
@@ -152,12 +143,12 @@ async function getAllRoutes() {
 			const title = e.snippet.title;
 			const privacyStatus = e.status.privacyStatus;
 
-			return !fileName.startsWith('ey') // typically a full walk video
-				&& !fileName.startsWith('joined') // typically a full walk video
+			return !fileName.startsWith('ey') 					// typically a full walk video
+				&& !fileName.startsWith('joined') 				// typically a full walk video
 				&& !title.match(/\d{4}-\d{2}-\d{2} Walk/) // a full walk video
-				&& !title.includes('#') // a short that has already been prepared
-				&& title.match(/^\d{4} \d{2} \d{2}/) // the default title of a draft short
-				&& privacyStatus === 'private'; // draft shorts will always be private
+				&& !title.includes('#') 									// a short that has already been prepared
+				&& title.match(/^\d{4} \d{2} \d{2}/) 			// the default title of a draft short
+				&& privacyStatus === 'private'; 					// draft shorts will always be private
 		}).map(e => ({
 			id: e.id,
 			fileDetails: {
