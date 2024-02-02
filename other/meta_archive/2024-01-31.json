@@ -1,0 +1,110 @@
+[
+  {
+    "mark": "00:05:22",
+    "name": "SKIP",
+    "adjusted_start": "00:00:53",
+    "adjusted_end": "00:00:53"
+  },
+  {
+    "mark": "00:05:22",
+    "name": "Plate MA VHALEN",
+    "adjusted_start": "00:00:49",
+    "adjusted_end": "00:00:51"
+  },
+  {
+    "mark": "00:07:03",
+    "name": "SKIP lane change without signal",
+    "adjusted_start": "00:02:34",
+    "adjusted_end": "00:02:34"
+  },
+  {
+    "mark": "00:08:38",
+    "name": "Plate MA CHAS 1",
+    "adjusted_start": "00:04:04",
+    "adjusted_end": "00:04:06"
+  },
+  {
+    "mark": "00:09:08",
+    "name": "Plate NH SIRMIMI",
+    "adjusted_start": "00:04:35",
+    "adjusted_end": "00:04:37"
+  },
+  {
+    "mark": "00:11:31",
+    "name": "Driver left their signal on",
+    "adjusted_start": "00:06:35",
+    "adjusted_end": "00:06:57"
+  },
+  {
+    "mark": "00:12:34",
+    "name": "SKIP unknown",
+    "adjusted_start": "00:08:05",
+    "adjusted_end": "00:08:05"
+  },
+  {
+    "mark": "00:14:38",
+    "name": "Plate MA DNRDNI",
+    "adjusted_start": "00:10:06",
+    "adjusted_end": "00:10:08"
+  },
+  {
+    "mark": "00:15:25",
+    "name": "Irresponsible driver fails to yield to pedestrian",
+    "adjusted_start": "00:10:45",
+    "adjusted_end": "00:10:52"
+  },
+  {
+    "mark": "00:19:17",
+    "name": "SKIP annoying parking blocks sidewalk",
+    "adjusted_start": "00:14:48",
+    "adjusted_end": "00:14:48"
+  },
+  {
+    "mark": "00:23:01",
+    "name": "Turn without signal",
+    "adjusted_start": "00:18:12",
+    "adjusted_end": "00:18:30"
+  },
+  {
+    "mark": "00:23:24",
+    "name": "Plate MA 4BWN 49 crazy person",
+    "adjusted_start": "00:18:50",
+    "adjusted_end": "00:18:52"
+  },
+  {
+    "mark": "00:25:17",
+    "name": "Turn without signal",
+    "adjusted_start": "00:20:37",
+    "adjusted_end": "00:20:44"
+  },
+  {
+    "mark": "00:26:58",
+    "name": "Driver runs stop sign and turns without signal",
+    "adjusted_start": "00:22:17",
+    "adjusted_end": "00:22:27"
+  },
+  {
+    "mark": "00:27:29",
+    "name": "Myopia Road construction",
+    "adjusted_start": "00:22:28",
+    "adjusted_end": "00:22:59"
+  },
+  {
+    "mark": "00:30:34",
+    "name": "Driver does not look before turning",
+    "adjusted_start": "00:25:45",
+    "adjusted_end": "00:26:02"
+  },
+  {
+    "mark": "00:30:56",
+    "name": "Plate MA ROHIT",
+    "adjusted_start": "00:26:23",
+    "adjusted_end": "00:26:25"
+  },
+  {
+    "mark": "00:32:12",
+    "name": "Public works truck stops in crosswalk and turns without signal",
+    "adjusted_start": "00:27:38",
+    "adjusted_end": "00:27:55"
+  }
+]
