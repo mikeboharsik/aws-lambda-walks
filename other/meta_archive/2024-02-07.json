@@ -1,0 +1,104 @@
+[
+  {
+    "mark": "00:03:34",
+    "name": "SKIP OOB Left turn cut off",
+    "adjusted_start": "-00:00:24",
+    "adjusted_end": "-00:00:24"
+  },
+  {
+    "mark": "00:05:16",
+    "name": "Driver blocks turn area while leaving loads of space in front",
+    "adjusted_start": "00:01:08",
+    "adjusted_end": "00:01:16",
+	"plate": "CT AU-22698"
+  },
+  {
+    "mark": "00:06:19",
+    "name": "North Street roof work",
+    "adjusted_start": "00:02:01",
+    "adjusted_end": "00:02:16"
+  },
+  {
+    "mark": "00:07:49",
+    "name": "Plate MA 460 U",
+    "adjusted_start": "00:03:49",
+    "adjusted_end": "00:03:51"
+  },
+  {
+    "mark": "00:09:14",
+    "name": "SKIP messed up plate",
+    "adjusted_start": "00:05:16",
+    "adjusted_end": "00:05:16"
+  },
+  {
+    "mark": "00:10:33",
+    "name": "Turn without signal",
+    "adjusted_start": "00:06:23",
+    "adjusted_end": "00:06:33",
+	"plate": "MA 5GHS 37"
+  },
+  {
+    "mark": "00:10:44",
+    "name": "Turn without signal",
+    "adjusted_start": "00:06:37",
+    "adjusted_end": "00:06:45",
+	"plate": "MA 3CXJ21"
+  },
+  {
+    "mark": "00:12:11",
+    "name": "Plate MA 3085",
+    "adjusted_start": "00:08:08",
+    "adjusted_end": "00:08:10"
+  },
+  {
+    "mark": "00:26:56",
+    "name": "Plate MA 8888 PC",
+    "adjusted_start": "00:22:54",
+    "adjusted_end": "00:22:56"
+  },
+  {
+    "mark": "00:30:19",
+    "name": "Turn without signal",
+    "adjusted_start": "00:26:09",
+    "adjusted_end": "00:26:19",
+	"plate": "MA 339S"
+  },
+  {
+    "mark": "00:30:44",
+    "name": "SKIP can't see plate",
+    "adjusted_start": "00:26:46",
+    "adjusted_end": "00:26:46"
+  },
+  {
+    "mark": "00:33:14",
+    "name": "SKIP can't see plate",
+    "adjusted_start": "00:29:16",
+    "adjusted_end": "00:29:16"
+  },
+  {
+    "mark": "00:34:33",
+    "name": "Uselessly late turn signal",
+    "adjusted_start": "00:30:24",
+    "adjusted_end": "00:30:30",
+	"plate": "MA 339S"
+  },
+  {
+    "mark": "00:35:06",
+    "name": "SKIP nothing",
+    "adjusted_start": "00:31:08",
+    "adjusted_end": "00:31:08"
+  },
+  {
+    "mark": "00:35:32",
+    "name": "SKIP nothing",
+    "adjusted_start": "00:31:34",
+    "adjusted_end": "00:31:34"
+  },
+  {
+    "mark": "00:35:56",
+    "name": "Driver BLATANTLY runs red light",
+    "adjusted_start": "00:31:50",
+    "adjusted_end": "00:32:00",
+	"plate": "MA 4ZWX 68"
+  }
+]
