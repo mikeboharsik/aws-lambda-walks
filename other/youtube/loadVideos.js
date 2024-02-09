@@ -20,36 +20,42 @@ const { getCustomArguments } = require('./common.js');
 	
 	const headers = { 'Authorization': `Bearer ${customArgs.accessToken}` };
 	
-	let playlistItems = [];
+	let playlistPages = [];
 	if (customArgs.refreshPlaylistItems) {
 		// 1 quota unit
 		const channelUrl = `https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true`;
 
-		const channelResponse = await fetch(channelUrl, { headers }).then(r => r.json());
-		const uploadsPlaylistId = channelResponse.items[0].contentDetails.relatedPlaylists.uploads;
-		
-		// 1 quota unit
-		let playlistItemsUrl = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=id&part=contentDetails&part=snippet&part=status&maxResults=50&playlistId=${uploadsPlaylistId}`;
-		
-		let pageToken = null;
-		do {
-			let url = playlistItemsUrl;
-			if (pageToken) { url += `&pageToken=${pageToken}` };
+		let channelResponse
+		try {
+			channelResponse = await fetch(channelUrl, { headers }).then(r => r.json());
+			const uploadsPlaylistId = channelResponse.items[0].contentDetails.relatedPlaylists.uploads;
 			
-			const playlistResult = await fetch(url, { headers }).then(r => r.json());
-			pageToken = playlistResult.nextPageToken;
+			// 1 quota unit
+			let playlistItemsUrl = `https://youtube.googleapis.com/youtube/v3/playlistItems?part=id&part=contentDetails&part=snippet&part=status&maxResults=50&playlistId=${uploadsPlaylistId}`;
 			
-			playlistItems.push(...playlistResult.items);
-		} while(pageToken);
-		
-		await fs.writeFile('./uploads_playlistitems.json', JSON.stringify(playlistItems, null, '\t'));
+			let pageToken = null;
+			do {
+				let url = playlistItemsUrl;
+				if (pageToken) { url += `&pageToken=${pageToken}` };
+				
+				const playlistResult = await fetch(url, { headers }).then(r => r.json());
+				pageToken = playlistResult.nextPageToken;
+				
+				playlistPages.push(playlistResult);
+			} while(pageToken);
+			
+			await fs.writeFile('./uploads_playlistitems.json', JSON.stringify(playlistPages, null, '\t'));
+		} catch (e) {
+			console.log(JSON.stringify(channelResponse));
+			throw e;
+		}
 	} else {
-		playlistItems = JSON.parse(await fs.readFile('./uploads_playlistitems.json'));
+		playlistPages = JSON.parse(await fs.readFile('./uploads_playlistitems.json'));
 	}
 	
-	console.log(`Found ${playlistItems.length} playlist items`);
+	console.log(`Found ${playlistPages.length} playlist items`);
 
-	const videoIds = playlistItems.map(e => e.contentDetails.videoId);
+	const videoIds = playlistPages.flatMap(p => p.items.map(e => e.contentDetails.videoId ));
 	
 	// get: 1 quota unit
 	// put: 50 quota units
@@ -70,7 +76,7 @@ const { getCustomArguments } = require('./common.js');
 	].join('&part=');
 	const videosUrl = `https://youtube.googleapis.com/youtube/v3/videos?${parts}&maxResults=50`;
 	
-	let videoItems = [];
+	let videoPages = [];
 	if (customArgs.refreshVideoItems) {	
 		const batchSize = 50;
 		let batchesRun = 0;
@@ -80,15 +86,19 @@ const { getCustomArguments } = require('./common.js');
 			const url = videosUrl + `&id=${batchIds.join(',')}`
 			const videosRes = await fetch(url, { headers }).then(r => r.json());
 			
-			videoItems.push(...videosRes.items);
+			videoPages.push(videosRes);
 			
 			batchesRun++;
 
 			console.log(`Loaded video items page ${batchesRun} of ${Math.ceil(videoIds.length / batchSize)}`);
 		}
 		
-		await fs.writeFile('./uploads_videoitems.json', JSON.stringify(videoItems, null, '\t'));
+		const videoCount = playlistPages.reduce((acc, cur) => acc + cur.items.length, 0);
+		console.log(`Retrieved ${videoCount} videos over ${batchesRun} pages`);
+
+		await fs.writeFile('./uploads_videoitems.json', JSON.stringify(videoPages, null, '\t'));
 	} else {
-		videoItems = JSON.parse(await fs.readFile('./uploads_videoitems.json'));
+		videoPages = JSON.parse(await fs.readFile('./uploads_videoitems.json'));
+		console.log(`Loaded ${videoPages.length} pages of videos with a total of ${videoPages.reduce((acc, cur) => acc + cur.items.length, 0)} videos`);
 	}
 })();
