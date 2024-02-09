@@ -2,7 +2,7 @@ const fs = require('fs');
 const fsp = require('fs/promises');
 const path = require('path');
 
-const { getAllVideoItems, getCustomArguments, shuffleArray } = require('./common.js');
+const { getAllVideoItems, getAllDraftShortsWithoutPlates, getCustomArguments, shuffleArray } = require('./common.js');
 
 const customArgs = getCustomArguments({ accessToken: null,	commit: false });
 if (typeof customArgs === 'string') {
@@ -138,18 +138,7 @@ async function getAllRoutes() {
 	let [,, commit = false] = process.argv;
 	commit = commit === 'true';
 
-	const relevantItems = items.filter(e => {
-			const fileName = e.fileDetails.fileName;
-			const title = e.snippet.title;
-			const privacyStatus = e.status.privacyStatus;
-
-			return !fileName.startsWith('ey') 					// typically a full walk video
-				&& !fileName.startsWith('joined') 				// typically a full walk video
-				&& !title.match(/\d{4}-\d{2}-\d{2} Walk/) // a full walk video
-				&& !title.includes('#') 									// a short that has already been prepared
-				&& title.match(/^\d{4} \d{2} \d{2}/) 			// the default title of a draft short
-				&& privacyStatus === 'private'; 					// draft shorts will always be private
-		}).map(e => ({
+	const relevantItems = getAllDraftShortsWithoutPlates().map(e => ({
 			id: e.id,
 			fileDetails: {
 				fileName: e.fileDetails.fileName,
@@ -189,7 +178,7 @@ async function getAllRoutes() {
 				const result = await fetch(url, updateOptions).then(r => r.json());
 				console.log(`Successfully updated video ${Number(idx) + 1} of ${updatedItems.length} [${item.id}] [${JSON.stringify(result)}]`);
 			} else {
-				console.log(`Video ${Number(idx) + 1} of ${updatedItems.length}\n${JSON.stringify(updateOptions)}`);
+				console.log(`Video ${Number(idx) + 1} of ${updatedItems.length}\n${JSON.stringify({ id: item.id, title: item.snippet.title, publishAt: item.status.publishAt })}`);
 			}
 		}
 	} catch (e) {
