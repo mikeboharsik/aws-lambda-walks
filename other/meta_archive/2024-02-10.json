@@ -1,0 +1,167 @@
+[
+  {
+    "mark": "00:05:01",
+    "name": "Plate NH AMC",
+    "adjusted_start": "00:01:07",
+    "adjusted_end": "00:01:09",
+		"plate": "NH AMC"
+  },
+  {
+    "mark": "00:05:02",
+    "name": "SKIP can't see non-signalling lane change",
+    "adjusted_start": "00:01:11",
+    "adjusted_end": "00:01:11"
+  },
+  {
+    "mark": "00:11:12",
+    "name": "Impatient driver encroaches on sidewalk",
+    "adjusted_start": "00:07:07",
+    "adjusted_end": "00:07:18",
+		"plate": "MA 30900"
+  },
+  {
+    "mark": "00:14:40",
+    "name": "Plate MA P11E",
+    "adjusted_start": "00:10:45",
+    "adjusted_end": "00:10:47"
+  },
+  {
+    "mark": "00:14:52",
+    "name": "SKIP these plates are captured later",
+    "adjusted_start": "00:11:01",
+    "adjusted_end": "00:11:01"
+  },
+  {
+    "mark": "00:17:50",
+    "name": "SKIP can't read plate",
+    "adjusted_start": "00:13:59",
+    "adjusted_end": "00:13:59"
+  },
+  {
+    "mark": "00:17:59",
+    "name": "Turn without signal",
+    "adjusted_start": "00:14:02",
+    "adjusted_end": "00:14:08",
+		"plate": "1VGT 42"
+  },
+  {
+    "mark": "00:24:00",
+    "name": "13 colonies flag",
+    "adjusted_start": "00:20:07",
+    "adjusted_end": "00:20:12"
+  },
+  {
+    "mark": "00:24:16",
+    "name": "SKIP can't read plate",
+    "adjusted_start": "00:20:25",
+    "adjusted_end": "00:20:25"
+  },
+  {
+    "mark": "00:24:49",
+    "name": "Random utility pole power oulet",
+    "adjusted_start": "00:20:50",
+    "adjusted_end": "00:20:54"
+  },
+  {
+    "mark": "00:30:56",
+    "name": "Parked on wrong side of the road",
+    "adjusted_start": "00:27:01",
+    "adjusted_end": "00:27:07",
+		"plate": "MA 48070"
+  },
+  {
+    "mark": "00:38:03",
+    "name": "SKIP unknown",
+    "adjusted_start": "00:34:12",
+    "adjusted_end": "00:34:12"
+  },
+	{
+		"mark": "00:40:15",
+    "name": "SKIP cut",
+    "adjusted_start": "00:40:15",
+    "adjusted_end": "00:40:15"
+	},
+  {
+    "mark": "00:54:11",
+    "name": "SKIP police doesn't signal",
+    "adjusted_start": "00:50:20 - 20",
+    "adjusted_end": "00:50:20"
+  },
+  {
+    "mark": "00:56:49",
+    "name": "Driver signals turn after I start crossing",
+    "adjusted_start": "00:52:25",
+    "adjusted_end": "00:52:39"
+  },
+  {
+    "mark": "00:58:00",
+    "name": "Plate ME NVY HMC",
+    "adjusted_start": "00:53:42",
+    "adjusted_end": "00:53:44",
+		"plate": "ME NVY HMC"
+  },
+  {
+    "mark": "00:58:11",
+    "name": "Plate MA JA 1",
+    "adjusted_start": "00:53:55",
+    "adjusted_end": "00:53:57",
+		"plate": "MA JA 1"
+  },
+  {
+    "mark": "01:01:12",
+    "name": "Person walking around with RC",
+    "adjusted_start": "00:56:26",
+    "adjusted_end": "00:56:57"
+  },
+  {
+    "mark": "01:04:25",
+    "name": "SKIP unknown",
+    "adjusted_start": "01:00:34 - 20",
+    "adjusted_end": "01:00:34"
+  },
+  {
+    "mark": "01:12:11",
+    "name": "Many yard signs",
+    "adjusted_start": "01:07:46",
+    "adjusted_end": "01:07:58"
+  },
+  {
+    "mark": "01:13:44",
+    "name": "SKIP suspicious driver",
+    "adjusted_start": "01:09:53 - 20",
+    "adjusted_end": "01:09:53"
+  },
+  {
+    "mark": "01:23:06",
+    "name": "Plate MA KM 1 and MA JJM 1",
+    "adjusted_start": "01:18:49",
+    "adjusted_end": "01:18:52",
+		"plate": "MA KM1 and JJM 1"
+  },
+	{
+    "mark": "01:24:54",
+    "name": "SKIP cut",
+    "adjusted_start": "01:24:37",
+    "adjusted_end": "01:24:37"
+  },
+  {
+    "mark": "01:24:54",
+    "name": "Driver struggles to stop at line",
+    "adjusted_start": "01:20:27",
+    "adjusted_end": "01:20:45",
+		"plate": "CA 8U0M770"
+  },
+  {
+    "mark": "01:27:07",
+    "name": "Plate MA B 908",
+    "adjusted_start": "01:22:53",
+    "adjusted_end": "01:22:55",
+		"plate": "MA B 908"
+  },
+  {
+    "mark": "01:33:04",
+    "name": "SKIP nothing",
+    "adjusted_start": "01:28:39",
+    "adjusted_end": "01:29:13"
+  }
+]
