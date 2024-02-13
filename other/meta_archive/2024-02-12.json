@@ -1,0 +1,126 @@
+[
+  {
+    "mark": "00:04:30",
+    "name": "Blocking turn area",
+    "adjusted_start": "00:00:48",
+    "adjusted_end": "00:00:57",
+	"plate": "MA BRLN 80"
+  },
+  {
+    "mark": "00:05:08",
+    "name": "Leaving driveway without looking",
+    "adjusted_start": "00:01:29",
+    "adjusted_end": "00:01:36",
+		"plate": "MA 20353"
+  },
+  {
+    "mark": "00:07:04",
+    "name": "Plate MA DRYFLY",
+    "adjusted_start": "00:03:30",
+    "adjusted_end": "00:03:32",
+		"plate": "MA DRYFLY"
+  },
+  {
+    "mark": "00:08:38",
+    "name": "Plate MA CHOC 1",
+    "adjusted_start": "00:05:05",
+    "adjusted_end": "00:05:07",
+		"plate": "MA CHOC 1"
+  },
+  {
+    "mark": "00:09:54",
+    "name": "Turn without signal followed by stop sign runner",
+    "adjusted_start": "00:06:13",
+    "adjusted_end": "00:06:23",
+		"plate": "NH MOOSHI and MA 3MNB 81"
+  },
+  {
+    "mark": "00:12:32",
+    "name": "Turn without signal and cut off",
+    "adjusted_start": "00:08:49",
+    "adjusted_end": "00:09:01",
+		"plate": "MA 2KSN 93"
+  },
+  {
+    "mark": "00:13:56",
+    "name": "Plate MA 2233",
+    "adjusted_start": "00:10:21",
+    "adjusted_end": "00:10:23",
+		"plate": "MA 2233"
+  },
+  {
+    "mark": "00:15:24",
+    "name": "Turn without signal",
+    "adjusted_start": "00:11:43",
+    "adjusted_end": "00:11:51",
+		"plate": "MA 6GA 390"
+  },
+  {
+    "mark": "00:17:07",
+    "name": "Parked on wrong side of road",
+    "adjusted_start": "00:13:27",
+    "adjusted_end": "00:13:33",
+		"plate": "MA 3EXS 99"
+  },
+  {
+    "mark": "00:20:01",
+    "name": "SKIP cannot read plate",
+    "adjusted_start": "00:16:31",
+    "adjusted_end": "00:16:31"
+  },
+  {
+    "mark": "00:23:00",
+    "name": "Parked on wrong side of road",
+    "adjusted_start": "00:19:22",
+    "adjusted_end": "00:19:28",
+		"plate": "MA 1PM 595"
+  },
+  {
+    "mark": "00:27:53",
+    "name": "Plate MA H 644",
+    "adjusted_start": "00:24:20",
+    "adjusted_end": "00:24:23",
+		"plate": "MA H 644"
+  },
+  {
+    "mark": "00:30:30",
+    "name": "Turn without signal",
+    "adjusted_start": "00:26:44",
+    "adjusted_end": "00:26:56",
+		"plate": "MA 347 TZ5"
+  },
+  {
+    "mark": "00:35:45",
+    "name": "Plate MA STL",
+    "adjusted_start": "00:32:08",
+    "adjusted_end": "00:32:10",
+		"plate": "MA STL"
+  },
+  {
+    "mark": "00:38:00",
+    "name": "Plate MA BZS 100",
+    "adjusted_start": "00:34:23",
+    "adjusted_end": "00:34:25",
+		"plate": "MA BZS 100"
+  },
+  {
+    "mark": "00:38:29",
+    "name": "BLATANT stop sign runner",
+    "adjusted_start": "00:34:50",
+    "adjusted_end": "00:34:58",
+		"plate": "MA 9ML 442"
+  },
+  {
+    "mark": "00:39:26",
+    "name": "Driver cuts across 2 lanes of traffic to turn",
+    "adjusted_start": "00:35:44",
+    "adjusted_end": "00:36:00",
+		"plate": "6PF 559"
+  },
+  {
+    "mark": "00:40:18",
+    "name": "SKIP OOB",
+    "adjusted_start": "00:36:48",
+    "adjusted_end": "00:36:48"
+  }
+]
