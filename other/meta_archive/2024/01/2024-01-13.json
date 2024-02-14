@@ -1,32 +1,45 @@
-[
-  {
-    "mark": "00:08:13",
-    "name": "Storm damage broken branch",
-    "adjusted_start": "00:06:24",
-    "adjusted_end": "00:06:37"
+{
+  "end": "00:33:30",
+  "towns": {
+    "MA": [
+      "Sudbury"
+    ]
   },
-  {
-    "mark": "00:10:37",
-    "name": "Storm damage broken branch",
-    "adjusted_start": "00:08:46",
-    "adjusted_end": "00:08:58"
-  },
-  {
-    "mark": "00:11:35",
-    "name": "Storm damage broken branch",
-    "adjusted_start": "00:09:45",
-    "adjusted_end": "00:10:03"
-  },
-  {
-    "mark": "00:14:20",
-    "name": "Storm damage fallen tree",
-    "adjusted_start": "00:12:23",
-    "adjusted_end": "00:12:45"
-  },
-  {
-    "mark": "00:29:19",
-    "name": "Storm damage broken lamp",
-    "adjusted_start": "00:27:37",
-    "adjusted_end": "00:27:45"
-  }
-]
+  "route": "07DD0E45-1957-4AE7-BB4C-4FEE0E1684A4",
+  "date": "2024-01-13",
+  "start": "00:01:37",
+  "videos": {},
+  "events": [
+    {
+      "mark": "00:08:13",
+      "name": "Storm damage broken branch",
+      "adjusted_start": "00:06:24",
+      "adjusted_end": "00:06:37"
+    },
+    {
+      "mark": "00:10:37",
+      "name": "Storm damage broken branch",
+      "adjusted_start": "00:08:46",
+      "adjusted_end": "00:08:58"
+    },
+    {
+      "mark": "00:11:35",
+      "name": "Storm damage broken branch",
+      "adjusted_start": "00:09:45",
+      "adjusted_end": "00:10:03"
+    },
+    {
+      "mark": "00:14:20",
+      "name": "Storm damage fallen tree",
+      "adjusted_start": "00:12:23",
+      "adjusted_end": "00:12:45"
+    },
+    {
+      "mark": "00:29:19",
+      "name": "Storm damage broken lamp",
+      "adjusted_start": "00:27:37",
+      "adjusted_end": "00:27:45"
+    }
+  ]
+}
+

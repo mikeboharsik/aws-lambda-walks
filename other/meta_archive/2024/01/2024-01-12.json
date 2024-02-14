@@ -1,260 +1,278 @@
-[
-  {
-    "mark": "00:05:06",
-    "name": "Sea Latch Inn storm debris",
-    "adjusted_start": "00:02:13",
-    "adjusted_end": "00:02:25"
+{
+  "end": "01:32:21",
+  "towns": {
+    "ME": [
+      "York"
+    ]
   },
-  {
-    "mark": "00:05:48",
-    "name": "Plate MA RECLES",
-    "adjusted_start": "00:03:06",
-    "adjusted_end": "00:03:08"
+  "route": "2D5358D0-7124-4246-8DA2-265376D1B27D",
+  "date": "2024-01-12",
+  "start": "00:02:38",
+  "videos": {
+    "ii13N7tahUs": [
+      "00:00:10",
+      "00:00:34"
+    ]
   },
-  {
-    "mark": "00:08:18",
-    "name": "Long Beach Ave Sidewalk construction",
-    "adjusted_start": "00:04:53",
-    "adjusted_end": "00:05:34"
-  },
-  {
-    "mark": "00:09:00",
-    "name": "Sidewalk log storm debris",
-    "adjusted_start": "00:06:10",
-    "adjusted_end": "00:06:21"
-  },
-  {
-    "mark": "00:10:57",
-    "name": "Broken Long Sands Beach sign",
-    "adjusted_start": "00:08:10",
-    "adjusted_end": "00:08:15"
-  },
-  {
-    "mark": "00:11:36",
-    "name": "Plate ME 2THETOP",
-    "adjusted_start": "00:08:53",
-    "adjusted_end": "00:08:55"
-  },
-  {
-    "mark": "00:12:20",
-    "name": "Plate NH SNOOZN",
-    "adjusted_start": "00:09:39",
-    "adjusted_end": "00:09:42"
-  },
-  {
-    "mark": "00:13:54",
-    "name": "Long Sands Beach Bath House storm damage",
-    "adjusted_start": "00:10:54",
-    "adjusted_end": "00:11:14"
-  },
-  {
-    "mark": "00:15:43",
-    "name": "Long Sands Beach seaweed storm debris",
-    "adjusted_start": "00:11:47",
-    "adjusted_end": "00:13:03"
-  },
-  {
-    "mark": "00:16:39",
-    "name": "Long Beach Ave Construction",
-    "adjusted_start": "00:13:53",
-    "adjusted_end": "00:14:00"
-  },
-  {
-    "mark": "00:21:00",
-    "name": "SKIP broken sidewalk",
-    "adjusted_start": "00:18:12",
-    "adjusted_end": "00:18:22"
-  },
-  {
-    "mark": "00:21:19",
-    "name": "Storm debris",
-    "adjusted_start": "00:18:27",
-    "adjusted_end": "00:18:38"
-  },
-  {
-    "mark": "00:25:46",
-    "name": "Turn without signal",
-    "adjusted_start": "00:22:56",
-    "adjusted_end": "00:23:08"
-  },
-  {
-    "mark": "00:26:37",
-    "name": "Lane change without signal",
-    "adjusted_start": "00:23:48",
-    "adjusted_end": "00:23:58"
-  },
-  {
-    "mark": "00:30:19",
-    "name": "Ocean Ave Ext construction",
-    "adjusted_start": "00:27:15",
-    "adjusted_end": "00:27:38"
-  },
-  {
-    "mark": "00:30:20",
-    "name": "Plate ME NUBBLE 2",
-    "adjusted_start": "00:27:42",
-    "adjusted_end": "00:27:44"
-  },
-  {
-    "mark": "00:31:18",
-    "name": "Crumbling seawall",
-    "adjusted_start": "00:28:19",
-    "adjusted_end": "00:28:39"
-  },
-  {
-    "mark": "00:31:42",
-    "name": "Crumbling seawall",
-    "adjusted_start": "00:28:48",
-    "adjusted_end": "00:29:04"
-  },
-  {
-    "mark": "00:32:06",
-    "name": "Ocean Ave Ext construction",
-    "adjusted_start": "00:29:07",
-    "adjusted_end": "00:29:27"
-  },
-  {
-    "mark": "00:34:34",
-    "name": "SKIP unplowed driveway",
-    "adjusted_start": "00:31:56",
-    "adjusted_end": "00:31:56"
-  },
-  {
-    "mark": "00:40:11",
-    "name": "SKIP Mailbox damaged by storm",
-    "adjusted_start": "00:37:20",
-    "adjusted_end": "00:37:30"
-  },
-  {
-    "mark": "00:41:27",
-    "name": "Broadway construction",
-    "adjusted_start": "00:38:03",
-    "adjusted_end": "00:38:44"
-  },
-  {
-    "mark": "00:44:16",
-    "name": "Plate ME PKOBLU",
-    "adjusted_start": "00:41:34",
-    "adjusted_end": "00:41:36"
-  },
-  {
-    "mark": "00:51:53",
-    "name": "SKIP Nubble placard scan",
-    "adjusted_start": "00:48:11",
-    "adjusted_end": "00:49:00"
-  },
-  {
-	  "mark": "00:51:53",
-	  "name": "Nubble view",
-	  "adjusted_start": "00:49:22",
-	  "adjusted_end": "00:49:36"
-  },
-  {
-    "mark": "00:53:34",
-    "name": "SKIP National Ocean Survey mark scan",
-    "adjusted_start": "00:50:17",
-    "adjusted_end": "00:50:39"
-  },
-  {
-    "mark": "00:54:25",
-    "name": "Sohier Park collapsed pavement",
-    "adjusted_start": "00:51:13",
-    "adjusted_end": "00:51:31"
-  },
-  {
-    "mark": "00:54:59",
-    "name": "Plate MA IMAGEN and Plate NH RAGDOLL",
-    "adjusted_start": "00:51:59",
-    "adjusted_end": "00:52:04"
-  },
-  {
-    "mark": "00:55:00",
-    "name": "SKIP unknown",
-    "adjusted_start": "00:52:22",
-    "adjusted_end": "00:52:22"
-  },
-  {
-    "mark": "00:56:24",
-    "name": "2 turns without signal",
-    "adjusted_start": "00:53:16",
-    "adjusted_end": "00:53:31"
-  },
-  {
-    "mark": "01:00:43",
-    "name": "Plate NY SCUBAPRO",
-    "adjusted_start": "00:57:46",
-    "adjusted_end": "00:57:48"
-  },
-  {
-    "mark": "01:06:42",
-    "name": "Storm damaged fence",
-    "adjusted_start": "01:03:29",
-    "adjusted_end": "01:03:45"
-  },
-  {
-    "mark": "01:09:51",
-    "name": "SKIP cannot make out plate",
-    "adjusted_start": "01:07:13",
-    "adjusted_end": "01:07:13"
-  },
-  {
-    "mark": "01:11:43",
-    "name": "Personal ambulance question",
-    "adjusted_start": "01:08:32",
-    "adjusted_end": "01:08:47"
-  },
-  {
-    "mark": "01:11:43",
-    "name": "Plate NH IBLAST",
-    "adjusted_start": "01:08:49",
-    "adjusted_end": "01:08:51"
-  },
-  {
-    "mark": "01:17:29",
-    "name": "Long Beach Ave construction",
-    "adjusted_start": "01:14:00",
-    "adjusted_end": "01:14:34"
-  },
-  {
-    "mark": "01:18:52",
-    "name": "Plate ME FREMSV",
-    "adjusted_start": "01:15:56",
-    "adjusted_end": "01:15:58"
-  },
-  {
-    "mark": "01:19:46",
-    "name": "Long Beach Ave storm debris",
-    "adjusted_start": "01:16:35",
-    "adjusted_end": "01:16:51"
-  },
-  {
-    "mark": "01:23:03",
-    "name": "Plate NH SHPLGH",
-    "adjusted_start": "01:20:08",
-    "adjusted_end": "01:20:10"
-  },
-  {
-    "mark": "01:24:42",
-    "name": "Plate NH BZZZZT",
-    "adjusted_start": "01:21:44",
-    "adjusted_end": "01:21:46"
-  },
-  {
-    "mark": "01:25:38",
-    "name": "House 1899",
-    "adjusted_start": "01:22:38",
-    "adjusted_end": "01:22:42"
-  },
-  {
-    "mark": "01:25:39",
-    "name": "Plat ME R JACK",
-    "adjusted_start": "01:22:46",
-    "adjusted_end": "01:22:48"
-  },
-  {
-    "mark": "01:26:32",
-    "name": "Plate MA LILY B",
-    "adjusted_start": "01:23:34",
-    "adjusted_end": "01:23:36"
-  }
-]
+  "events": [
+    {
+      "mark": "00:05:06",
+      "name": "Sea Latch Inn storm debris",
+      "adjusted_start": "00:02:13",
+      "adjusted_end": "00:02:25"
+    },
+    {
+      "mark": "00:05:48",
+      "name": "Plate MA RECLES",
+      "adjusted_start": "00:03:06",
+      "adjusted_end": "00:03:08"
+    },
+    {
+      "mark": "00:08:18",
+      "name": "Long Beach Ave Sidewalk construction",
+      "adjusted_start": "00:04:53",
+      "adjusted_end": "00:05:34"
+    },
+    {
+      "mark": "00:09:00",
+      "name": "Sidewalk log storm debris",
+      "adjusted_start": "00:06:10",
+      "adjusted_end": "00:06:21"
+    },
+    {
+      "mark": "00:10:57",
+      "name": "Broken Long Sands Beach sign",
+      "adjusted_start": "00:08:10",
+      "adjusted_end": "00:08:15"
+    },
+    {
+      "mark": "00:11:36",
+      "name": "Plate ME 2THETOP",
+      "adjusted_start": "00:08:53",
+      "adjusted_end": "00:08:55"
+    },
+    {
+      "mark": "00:12:20",
+      "name": "Plate NH SNOOZN",
+      "adjusted_start": "00:09:39",
+      "adjusted_end": "00:09:42"
+    },
+    {
+      "mark": "00:13:54",
+      "name": "Long Sands Beach Bath House storm damage",
+      "adjusted_start": "00:10:54",
+      "adjusted_end": "00:11:14"
+    },
+    {
+      "mark": "00:15:43",
+      "name": "Long Sands Beach seaweed storm debris",
+      "adjusted_start": "00:11:47",
+      "adjusted_end": "00:13:03"
+    },
+    {
+      "mark": "00:16:39",
+      "name": "Long Beach Ave Construction",
+      "adjusted_start": "00:13:53",
+      "adjusted_end": "00:14:00"
+    },
+    {
+      "mark": "00:21:00",
+      "name": "SKIP broken sidewalk",
+      "adjusted_start": "00:18:12",
+      "adjusted_end": "00:18:22"
+    },
+    {
+      "mark": "00:21:19",
+      "name": "Storm debris",
+      "adjusted_start": "00:18:27",
+      "adjusted_end": "00:18:38"
+    },
+    {
+      "mark": "00:25:46",
+      "name": "Turn without signal",
+      "adjusted_start": "00:22:56",
+      "adjusted_end": "00:23:08"
+    },
+    {
+      "mark": "00:26:37",
+      "name": "Lane change without signal",
+      "adjusted_start": "00:23:48",
+      "adjusted_end": "00:23:58"
+    },
+    {
+      "mark": "00:30:19",
+      "name": "Ocean Ave Ext construction",
+      "adjusted_start": "00:27:15",
+      "adjusted_end": "00:27:38"
+    },
+    {
+      "mark": "00:30:20",
+      "name": "Plate ME NUBBLE 2",
+      "adjusted_start": "00:27:42",
+      "adjusted_end": "00:27:44"
+    },
+    {
+      "mark": "00:31:18",
+      "name": "Crumbling seawall",
+      "adjusted_start": "00:28:19",
+      "adjusted_end": "00:28:39"
+    },
+    {
+      "mark": "00:31:42",
+      "name": "Crumbling seawall",
+      "adjusted_start": "00:28:48",
+      "adjusted_end": "00:29:04"
+    },
+    {
+      "mark": "00:32:06",
+      "name": "Ocean Ave Ext construction",
+      "adjusted_start": "00:29:07",
+      "adjusted_end": "00:29:27"
+    },
+    {
+      "mark": "00:34:34",
+      "name": "SKIP unplowed driveway",
+      "adjusted_start": "00:31:56",
+      "adjusted_end": "00:31:56"
+    },
+    {
+      "mark": "00:40:11",
+      "name": "SKIP Mailbox damaged by storm",
+      "adjusted_start": "00:37:20",
+      "adjusted_end": "00:37:30"
+    },
+    {
+      "mark": "00:41:27",
+      "name": "Broadway construction",
+      "adjusted_start": "00:38:03",
+      "adjusted_end": "00:38:44"
+    },
+    {
+      "mark": "00:44:16",
+      "name": "Plate ME PKOBLU",
+      "adjusted_start": "00:41:34",
+      "adjusted_end": "00:41:36"
+    },
+    {
+      "mark": "00:51:53",
+      "name": "SKIP Nubble placard scan",
+      "adjusted_start": "00:48:11",
+      "adjusted_end": "00:49:00"
+    },
+    {
+      "mark": "00:51:53",
+      "name": "Nubble view",
+      "adjusted_start": "00:49:22",
+      "adjusted_end": "00:49:36"
+    },
+    {
+      "mark": "00:53:34",
+      "name": "SKIP National Ocean Survey mark scan",
+      "adjusted_start": "00:50:17",
+      "adjusted_end": "00:50:39"
+    },
+    {
+      "mark": "00:54:25",
+      "name": "Sohier Park collapsed pavement",
+      "adjusted_start": "00:51:13",
+      "adjusted_end": "00:51:31"
+    },
+    {
+      "mark": "00:54:59",
+      "name": "Plate MA IMAGEN and Plate NH RAGDOLL",
+      "adjusted_start": "00:51:59",
+      "adjusted_end": "00:52:04"
+    },
+    {
+      "mark": "00:55:00",
+      "name": "SKIP unknown",
+      "adjusted_start": "00:52:22",
+      "adjusted_end": "00:52:22"
+    },
+    {
+      "mark": "00:56:24",
+      "name": "2 turns without signal",
+      "adjusted_start": "00:53:16",
+      "adjusted_end": "00:53:31"
+    },
+    {
+      "mark": "01:00:43",
+      "name": "Plate NY SCUBAPRO",
+      "adjusted_start": "00:57:46",
+      "adjusted_end": "00:57:48"
+    },
+    {
+      "mark": "01:06:42",
+      "name": "Storm damaged fence",
+      "adjusted_start": "01:03:29",
+      "adjusted_end": "01:03:45"
+    },
+    {
+      "mark": "01:09:51",
+      "name": "SKIP cannot make out plate",
+      "adjusted_start": "01:07:13",
+      "adjusted_end": "01:07:13"
+    },
+    {
+      "mark": "01:11:43",
+      "name": "Personal ambulance question",
+      "adjusted_start": "01:08:32",
+      "adjusted_end": "01:08:47"
+    },
+    {
+      "mark": "01:11:43",
+      "name": "Plate NH IBLAST",
+      "adjusted_start": "01:08:49",
+      "adjusted_end": "01:08:51"
+    },
+    {
+      "mark": "01:17:29",
+      "name": "Long Beach Ave construction",
+      "adjusted_start": "01:14:00",
+      "adjusted_end": "01:14:34"
+    },
+    {
+      "mark": "01:18:52",
+      "name": "Plate ME FREMSV",
+      "adjusted_start": "01:15:56",
+      "adjusted_end": "01:15:58"
+    },
+    {
+      "mark": "01:19:46",
+      "name": "Long Beach Ave storm debris",
+      "adjusted_start": "01:16:35",
+      "adjusted_end": "01:16:51"
+    },
+    {
+      "mark": "01:23:03",
+      "name": "Plate NH SHPLGH",
+      "adjusted_start": "01:20:08",
+      "adjusted_end": "01:20:10"
+    },
+    {
+      "mark": "01:24:42",
+      "name": "Plate NH BZZZZT",
+      "adjusted_start": "01:21:44",
+      "adjusted_end": "01:21:46"
+    },
+    {
+      "mark": "01:25:38",
+      "name": "House 1899",
+      "adjusted_start": "01:22:38",
+      "adjusted_end": "01:22:42"
+    },
+    {
+      "mark": "01:25:39",
+      "name": "Plat ME R JACK",
+      "adjusted_start": "01:22:46",
+      "adjusted_end": "01:22:48"
+    },
+    {
+      "mark": "01:26:32",
+      "name": "Plate MA LILY B",
+      "adjusted_start": "01:23:34",
+      "adjusted_end": "01:23:36"
+    }
+  ]
+}
+
