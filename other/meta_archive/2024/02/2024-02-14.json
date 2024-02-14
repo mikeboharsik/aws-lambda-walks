@@ -119,15 +119,15 @@
     {
       "mark": "00:32:49",
       "name": "Plate MA RFL",
-      "adjusted_start": "00:28:42",
-      "adjusted_end": "00:28:42",
+      "adjusted_start": "00:28:37",
+      "adjusted_end": "00:28:39",
       "plate": "MA RFL"
     },
     {
       "mark": "00:33:41",
       "name": "Plate MA PCHEZ",
-      "adjusted_start": "00:29:34",
-      "adjusted_end": "00:29:34",
+      "adjusted_start": "00:29:29",
+      "adjusted_end": "00:29:31",
       "plate": "MA PCHEZ"
     }
   ],
