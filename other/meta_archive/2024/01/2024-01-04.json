@@ -1,86 +1,104 @@
-[
-  {
-    "mark": "00:05:49",
-    "name": "Plate NH -CF-",
-    "adjusted_start": "00:01:46",
-    "adjusted_end": "00:01:48"
+{
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:07:48",
-    "name": "SKIP",
-    "adjusted_start": "00:03:51",
-    "adjusted_end": "00:03:51"
+  "videos": {
+    "hasanabi": [
+      "01:21:30",
+      "00:00:32"
+    ]
   },
-  {
-    "mark": "00:10:02",
-    "name": "Driver on phone at stop sign",
-    "adjusted_start": "00:06:11",
-    "adjusted_end": "00:06:20"
-  },
-  {
-    "mark": "00:10:20",
-    "name": "SKIP",
-    "adjusted_start": "00:06:23",
-    "adjusted_end": "00:06:23"
-  },
-  {
-    "mark": "00:13:18",
-    "name": "SKIP",
-    "adjusted_start": "00:09:21",
-    "adjusted_end": "00:09:21"
-  },
-  {
-    "mark": "00:15:45",
-    "name": "Really bad left turn",
-    "adjusted_start": "00:11:27",
-    "adjusted_end": "00:11:44"
-  },
-  {
-    "mark": "00:15:54",
-    "name": "Parked in handicap zone",
-    "adjusted_start": "00:11:48",
-    "adjusted_end": "00:11:58"
-  },
-  {
-    "mark": "00:27:39",
-    "name": "SKIP Broken porch",
-    "adjusted_start": "00:23:27",
-    "adjusted_end": "00:23:35"
-  },
-  {
-    "mark": "00:32:37",
-    "name": "SKIP Helicopter",
-    "adjusted_start": "00:28:40",
-    "adjusted_end": "00:28:40"
-  },
-  {
-    "mark": "00:33:19",
-    "name": "Cut off car cuts off another car",
-    "adjusted_start": "00:29:03",
-    "adjusted_end": "00:29:19"
-  },
-  {
-    "mark": "00:36:51",
-    "name": "Plate MA TOM 12",
-    "adjusted_start": "00:32:46",
-    "adjusted_end": "00:32:48"
-  },
-  {
-    "mark": "00:36:59",
-    "name": "SKIP backing into traffic",
-    "adjusted_start": "00:33:02",
-    "adjusted_end": "00:33:02"
-  },
-  {
-    "mark": "00:39:12",
-    "name": "SKIP bad parking",
-    "adjusted_start": "00:35:15",
-    "adjusted_end": "00:35:15"
-  },
-  {
-    "mark": "00:42:41",
-    "name": "SKIP nothing",
-    "adjusted_start": "00:38:44",
-    "adjusted_end": "00:38:44"
-  }
-]
+  "start": "00:03:57",
+  "date": "2024-01-04",
+  "end": "00:41:24",
+  "route": "20E429BB-1309-465F-9FE8-236F26F11E60",
+  "events": [
+    {
+      "mark": "00:05:49",
+      "name": "Plate NH -CF-",
+      "adjusted_start": "00:01:46",
+      "adjusted_end": "00:01:48"
+    },
+    {
+      "mark": "00:07:48",
+      "name": "SKIP",
+      "adjusted_start": "00:03:51",
+      "adjusted_end": "00:03:51"
+    },
+    {
+      "mark": "00:10:02",
+      "name": "Driver on phone at stop sign",
+      "adjusted_start": "00:06:11",
+      "adjusted_end": "00:06:20"
+    },
+    {
+      "mark": "00:10:20",
+      "name": "SKIP",
+      "adjusted_start": "00:06:23",
+      "adjusted_end": "00:06:23"
+    },
+    {
+      "mark": "00:13:18",
+      "name": "SKIP",
+      "adjusted_start": "00:09:21",
+      "adjusted_end": "00:09:21"
+    },
+    {
+      "mark": "00:15:45",
+      "name": "Really bad left turn",
+      "adjusted_start": "00:11:27",
+      "adjusted_end": "00:11:44"
+    },
+    {
+      "mark": "00:15:54",
+      "name": "Parked in handicap zone",
+      "adjusted_start": "00:11:48",
+      "adjusted_end": "00:11:58"
+    },
+    {
+      "mark": "00:27:39",
+      "name": "SKIP Broken porch",
+      "adjusted_start": "00:23:27",
+      "adjusted_end": "00:23:35"
+    },
+    {
+      "mark": "00:32:37",
+      "name": "SKIP Helicopter",
+      "adjusted_start": "00:28:40",
+      "adjusted_end": "00:28:40"
+    },
+    {
+      "mark": "00:33:19",
+      "name": "Cut off car cuts off another car",
+      "adjusted_start": "00:29:03",
+      "adjusted_end": "00:29:19"
+    },
+    {
+      "mark": "00:36:51",
+      "name": "Plate MA TOM 12",
+      "adjusted_start": "00:32:46",
+      "adjusted_end": "00:32:48"
+    },
+    {
+      "mark": "00:36:59",
+      "name": "SKIP backing into traffic",
+      "adjusted_start": "00:33:02",
+      "adjusted_end": "00:33:02"
+    },
+    {
+      "mark": "00:39:12",
+      "name": "SKIP bad parking",
+      "adjusted_start": "00:35:15",
+      "adjusted_end": "00:35:15"
+    },
+    {
+      "mark": "00:42:41",
+      "name": "SKIP nothing",
+      "adjusted_start": "00:38:44",
+      "adjusted_end": "00:38:44"
+    }
+  ]
+}
+
