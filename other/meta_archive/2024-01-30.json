@@ -1,44 +1,62 @@
-[
-  {
-    "mark": "00:04:28",
-    "name": "Ducks chilling",
-    "adjusted_start": "00:02:39",
-    "adjusted_end": "00:02:56"
+{
+  "end": "00:36:07",
+  "route": "7DF5668E-2402-4140-B9B8-E00AFABF24F1",
+  "date": "2024-01-30",
+  "start": "00:01:29",
+  "towns": {
+    "MA": [
+      "Somerville",
+      "Medford"
+    ]
   },
-  {
-    "mark": "00:09:10",
-    "name": "SKIP honk",
-    "adjusted_start": "00:07:41",
-    "adjusted_end": "00:07:41"
+  "videos": {
+    "0zeJvtgLoVc": [
+      "03:47:30",
+      "00:00:31"
+    ]
   },
-  {
-    "mark": "00:10:15",
-    "name": "Fallen tree remains",
-    "adjusted_start": "00:08:33",
-    "adjusted_end": "00:08:44"
-  },
-  {
-    "mark": "00:19:24",
-    "name": "PRIVATE Object scan",
-    "adjusted_start": "00:17:15",
-    "adjusted_end": "00:17:56"
-  },
-  {
-    "mark": "00:19:41",
-    "name": "SKIP",
-    "adjusted_start": "00:18:12",
-    "adjusted_end": "00:18:12"
-  },
-  {
-    "mark": "00:29:10",
-    "name": "SKIP Speeder",
-    "adjusted_start": "00:27:41",
-    "adjusted_end": "00:27:41"
-  },
-  {
-    "mark": "00:33:09",
-    "name": "Seagulls and ducks",
-    "adjusted_start": "00:31:17",
-    "adjusted_end": "00:31:37"
-  }
-]
+  "events": [
+    {
+      "mark": "00:04:28",
+      "name": "Ducks chilling",
+      "adjusted_start": "00:02:39",
+      "adjusted_end": "00:02:56"
+    },
+    {
+      "mark": "00:09:10",
+      "name": "SKIP honk",
+      "adjusted_start": "00:07:41",
+      "adjusted_end": "00:07:41"
+    },
+    {
+      "mark": "00:10:15",
+      "name": "Fallen tree remains",
+      "adjusted_start": "00:08:33",
+      "adjusted_end": "00:08:44"
+    },
+    {
+      "mark": "00:19:24",
+      "name": "PRIVATE Object scan",
+      "adjusted_start": "00:17:15",
+      "adjusted_end": "00:17:56"
+    },
+    {
+      "mark": "00:19:41",
+      "name": "SKIP",
+      "adjusted_start": "00:18:12",
+      "adjusted_end": "00:18:12"
+    },
+    {
+      "mark": "00:29:10",
+      "name": "SKIP Speeder",
+      "adjusted_start": "00:27:41",
+      "adjusted_end": "00:27:41"
+    },
+    {
+      "mark": "00:33:09",
+      "name": "Seagulls and ducks",
+      "adjusted_start": "00:31:17",
+      "adjusted_end": "00:31:37"
+    }
+  ]
+}
