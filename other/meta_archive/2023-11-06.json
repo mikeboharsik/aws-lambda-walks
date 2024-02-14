@@ -1,0 +1,19 @@
+{
+  "route": "447E7002-EA14-4F55-9FD7-6DE2278C137E",
+  "end": "00:32:26",
+  "towns": {
+    "MA": [
+      "Stoneham",
+      "Reading",
+      "Wakefield"
+    ]
+  },
+  "start": "00:03:30",
+  "videos": {
+    "5JZWWZbrOUI": [
+      "00:00:03",
+      "00:00:22"
+    ]
+  },
+  "date": "2023-11-06"
+}
