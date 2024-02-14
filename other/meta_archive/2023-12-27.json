@@ -1,38 +1,55 @@
-[
-  {
-    "name": "Plate MA GIUGNO",
-    "mark": "00:04:59",
-    "adjusted_start": "00:01:17",
-    "adjusted_end": "00:01:21"
+{
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "name": "Driver looks before entering traffic",
-    "mark": "00:06:59",
-    "adjusted_start": "00:03:08",
-    "adjusted_end": "00:03:18"
+  "videos": {
+    "hasanabi": [
+      "00:36:15",
+      "00:00:17"
+    ]
   },
-  {
-    "name": "Roof progress",
-    "mark": "00:11:42",
-    "adjusted_start": "00:07:45",
-    "adjusted_end": "00:08:04"
-  },
-  {
-    "name": "Stop sign runner",
-    "mark": "00:14:37",
-    "adjusted_start": "00:10:51",
-    "adjusted_end": "00:10:58"
-  },
-  {
-    "name": "Plate MA EMIR",
-    "mark": "00:19:25",
-    "adjusted_start": "00:15:40",
-    "adjusted_end": "00:15:48"
-  },
-  {
-    "name": "Driver is bad at stopping",
-    "mark": "00:24:20",
-    "adjusted_start": "00:20:25",
-    "adjusted_end": "00:20:42"
-  }
-]
+  "start": "00:03:37",
+  "date": "2023-12-27",
+  "end": "00:30:52",
+  "route": "52A0728B-0CDE-41CB-931B-F958C29113B2",
+  "events": [
+    {
+      "name": "Plate MA GIUGNO",
+      "mark": "00:04:59",
+      "adjusted_start": "00:01:17",
+      "adjusted_end": "00:01:21"
+    },
+    {
+      "name": "Driver looks before entering traffic",
+      "mark": "00:06:59",
+      "adjusted_start": "00:03:08",
+      "adjusted_end": "00:03:18"
+    },
+    {
+      "name": "Roof progress",
+      "mark": "00:11:42",
+      "adjusted_start": "00:07:45",
+      "adjusted_end": "00:08:04"
+    },
+    {
+      "name": "Stop sign runner",
+      "mark": "00:14:37",
+      "adjusted_start": "00:10:51",
+      "adjusted_end": "00:10:58"
+    },
+    {
+      "name": "Plate MA EMIR",
+      "mark": "00:19:25",
+      "adjusted_start": "00:15:40",
+      "adjusted_end": "00:15:48"
+    },
+    {
+      "name": "Driver is bad at stopping",
+      "mark": "00:24:20",
+      "adjusted_start": "00:20:25",
+      "adjusted_end": "00:20:42"
+    }
+  ]
+}

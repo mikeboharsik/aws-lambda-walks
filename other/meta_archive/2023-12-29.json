@@ -1,32 +1,49 @@
-[
-  {
-    "mark": "00:17:34",
-    "name": "Stop sign runner",
-    "adjusted_start": "00:10:53",
-    "adjusted_end": "00:11:01"
+{
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:18:30",
-    "name": "Driver cannot signal",
-    "adjusted_start": "00:11:40",
-    "adjusted_end": "00:12:01"
+  "videos": {
+    "hasanabi": [
+      "01:50:20",
+      "00:00:31"
+    ]
   },
-  {
-    "mark": "00:19:53",
-    "name": "Something taped to windshield",
-    "adjusted_start": "00:13:17",
-    "adjusted_end": "00:13:23"
-  },
-  {
-    "mark": "00:27:21",
-    "name": "Roof progress",
-    "adjusted_start": "00:20:31",
-    "adjusted_end": "00:20:52"
-  },
-  {
-    "mark": "00:35:43",
-    "name": "Incredibly brilliant drivers trying to time the light",
-    "adjusted_start": "00:29:00",
-    "adjusted_end": "00:29:18"
-  }
-]
+  "start": "00:06:30",
+  "date": "2023-12-29",
+  "end": "00:36:04",
+  "route": "19B132E9-2829-4467-A3F3-F9C8C230F9B9",
+  "events": [
+    {
+      "mark": "00:17:34",
+      "name": "Stop sign runner",
+      "adjusted_start": "00:10:53",
+      "adjusted_end": "00:11:01"
+    },
+    {
+      "mark": "00:18:30",
+      "name": "Driver cannot signal",
+      "adjusted_start": "00:11:40",
+      "adjusted_end": "00:12:01"
+    },
+    {
+      "mark": "00:19:53",
+      "name": "Something taped to windshield",
+      "adjusted_start": "00:13:17",
+      "adjusted_end": "00:13:23"
+    },
+    {
+      "mark": "00:27:21",
+      "name": "Roof progress",
+      "adjusted_start": "00:20:31",
+      "adjusted_end": "00:20:52"
+    },
+    {
+      "mark": "00:35:43",
+      "name": "Incredibly brilliant drivers trying to time the light",
+      "adjusted_start": "00:29:00",
+      "adjusted_end": "00:29:18"
+    }
+  ]
+}
