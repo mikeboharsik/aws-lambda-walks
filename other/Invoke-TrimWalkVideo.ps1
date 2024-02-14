@@ -6,7 +6,7 @@ Param(
 	[string] $Route,
 
 	[switch] $SkipVideoLaunch,
-	[switch] $UseShortFilename,
+	[switch] $OnlyOutputBase64,
 	[switch] $WhatIf
 )
 
@@ -93,17 +93,19 @@ $data = @{
 	towns = $Towns
 	route = $Route
 	videos = $Videos
+	events = @()
 }
 
 $json = ConvertTo-Json $data -Compress
 
 $encoded = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
 
-if ($UseShortFilename) {
-	$outputName = "$($dateStr)_trimmed.mp4"
-} else {
-	$outputName = $encoded + ".mp4"
+if ($OnlyOutputBase64) {
+	Write-Host "Encoded data = [$encoded]"
+	return
 }
+
+$outputName = "$($dateStr)_trimmed.mp4"
 
 $ffmpegArgs = @(
 	'-ss', $Start
@@ -124,12 +126,21 @@ if (!$SkipVideoLaunch) {
 	Start-Process $outputName
 }
 
-if ($UseShortFilename) {
-	Write-Host "Encoded data = [$encoded]"
-}
-
 $clipsDir = Resolve-Path "..\clips"
 $dateDir = "$clipsDir\$dateStr"
 New-Item -ItemType Directory -Path $dateDir
 New-Item -ItemType Directory -Path "$dateDir\render"
 Copy-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
+
+$clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
+$metaArchiveDir = Resolve-Path "$PSScriptRoot\meta_archive"
+
+if (!(Test-Path "$metaArchiveDir\$clipYear")) {
+	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear"
+}
+
+if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
+	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear\$clipMonth"
+}
+
+Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" (ConvertTo-Json -Depth 10 $data)

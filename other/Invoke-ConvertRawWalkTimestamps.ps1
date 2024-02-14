@@ -1,22 +1,21 @@
 Param(
 	[Parameter(Mandatory=$true)]
-	[TimeSpan] $VideoStartTime
+	[string] $Date
 )
 
-Write-Verbose "In directory [$(Get-Location)]"
+$year, $month, $date = $Date -Split '-'
 
-$textFiles = Get-ChildItem -File ./*.json
-$file = $textFiles[0]
+$filePath = "$PSScriptRoot\meta_archive\$year\$month\$year-$month-$date.json"
 
-$json = Get-Content $file
+$json = Get-Content $filePath
 	| ConvertFrom-Json -AsHashtable -NoEnumerate -Depth 10
 	
-foreach ($event in $json) {
-	$adjustedStart = [TimeSpan]$event.mark - $VideoStartTime
+foreach ($event in $json.events) {
+	$adjustedStart = [TimeSpan]$event.mark - [TimeSpan]$json.start
 	$event['adjusted_start'] = $adjustedStart.ToString()
 	$event['adjusted_end'] = $adjustedStart.ToString()
 }
 			
 $json
 	| ConvertTo-Json -Depth 10
-	| Set-Content $file
+	| Set-Content $filePath
