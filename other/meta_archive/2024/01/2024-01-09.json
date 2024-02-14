@@ -1,26 +1,44 @@
-[
-  {
-    "mark": "00:05:14",
-    "name": "SKIP bad driver",
-    "adjusted_start": "00:00:42",
-    "adjusted_end": "00:00:42"
+{
+  "date": "2024-01-09",
+  "route": "7F7E1572-D308-48D8-A567-25872E484125",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:10:36",
-    "name": "Myopia Road construction",
-    "adjusted_start": "00:05:16",
-    "adjusted_end": "00:06:02"
+  "start": "00:04:32",
+  "videos": {
+    "D6H06SN8S1U": [
+      "00:00:15",
+      "00:00:35"
+    ]
   },
-  {
-    "mark": "00:34:45",
-    "name": "Plate MA RKBA",
-    "adjusted_start": "00:30:08",
-    "adjusted_end": "00:30:10"
-  },
-  {
-    "mark": "00:37:16",
-    "name": "Bad driver stops in intersection",
-    "adjusted_start": "00:32:23",
-    "adjusted_end": "00:32:40"
-  }
-]
+  "end": "00:37:31",
+  "events": [
+    {
+      "mark": "00:05:14",
+      "name": "SKIP bad driver",
+      "adjusted_start": "00:00:42",
+      "adjusted_end": "00:00:42"
+    },
+    {
+      "mark": "00:10:36",
+      "name": "Myopia Road construction",
+      "adjusted_start": "00:05:16",
+      "adjusted_end": "00:06:02"
+    },
+    {
+      "mark": "00:34:45",
+      "name": "Plate MA RKBA",
+      "adjusted_start": "00:30:08",
+      "adjusted_end": "00:30:10"
+    },
+    {
+      "mark": "00:37:16",
+      "name": "Bad driver stops in intersection",
+      "adjusted_start": "00:32:23",
+      "adjusted_end": "00:32:40"
+    }
+  ]
+}
+

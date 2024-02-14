@@ -1,50 +1,68 @@
-[
-  {
-    "mark": "00:07:01",
-    "name": "Illegal u-turn",
-    "adjusted_start": "00:02:36",
-    "adjusted_end": "00:02:48"
+{
+  "date": "2024-01-10",
+  "route": "C09F023F-96C1-4DFA-9251-C399A6685E8A",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:11:26",
-    "name": "Myopia Road construction",
-    "adjusted_start": "00:06:26",
-    "adjusted_end": "00:07:11"
+  "start": "00:04:15",
+  "videos": {
+    "56mBLtIUHH4": [
+      "00:00:15",
+      "00:00:45"
+    ]
   },
-  {
-    "mark": "00:14:03",
-    "name": "Cute dog in window",
-    "adjusted_start": "00:09:43",
-    "adjusted_end": "00:09:48"
-  },
-  {
-    "mark": "00:31:07",
-    "name": "Plate MA JAC 1",
-    "adjusted_start": "00:26:52",
-    "adjusted_end": "00:26:54"
-  },
-  {
-    "mark": "00:32:45",
-    "name": "Random broken asphalt",
-    "adjusted_start": "00:28:19",
-    "adjusted_end": "00:28:29"
-  },
-  {
-    "mark": "00:33:01",
-    "name": "Turn without signal",
-    "adjusted_start": "00:28:42",
-    "adjusted_end": "00:28:50"
-  },
-  {
-    "mark": "00:33:16",
-    "name": "Driver runs stop sign",
-    "adjusted_start": "00:28:56",
-    "adjusted_end": "00:29:01"
-  },
-  {
-    "mark": "00:36:23",
-    "name": "Flooded road",
-    "adjusted_start": "00:32:02",
-    "adjusted_end": "00:32:10"
-  }
-]
+  "end": "00:39:32",
+  "events": [
+    {
+      "mark": "00:07:01",
+      "name": "Illegal u-turn",
+      "adjusted_start": "00:02:36",
+      "adjusted_end": "00:02:48"
+    },
+    {
+      "mark": "00:11:26",
+      "name": "Myopia Road construction",
+      "adjusted_start": "00:06:26",
+      "adjusted_end": "00:07:11"
+    },
+    {
+      "mark": "00:14:03",
+      "name": "Cute dog in window",
+      "adjusted_start": "00:09:43",
+      "adjusted_end": "00:09:48"
+    },
+    {
+      "mark": "00:31:07",
+      "name": "Plate MA JAC 1",
+      "adjusted_start": "00:26:52",
+      "adjusted_end": "00:26:54"
+    },
+    {
+      "mark": "00:32:45",
+      "name": "Random broken asphalt",
+      "adjusted_start": "00:28:19",
+      "adjusted_end": "00:28:29"
+    },
+    {
+      "mark": "00:33:01",
+      "name": "Turn without signal",
+      "adjusted_start": "00:28:42",
+      "adjusted_end": "00:28:50"
+    },
+    {
+      "mark": "00:33:16",
+      "name": "Driver runs stop sign",
+      "adjusted_start": "00:28:56",
+      "adjusted_end": "00:29:01"
+    },
+    {
+      "mark": "00:36:23",
+      "name": "Flooded road",
+      "adjusted_start": "00:32:02",
+      "adjusted_end": "00:32:10"
+    }
+  ]
+}
+
