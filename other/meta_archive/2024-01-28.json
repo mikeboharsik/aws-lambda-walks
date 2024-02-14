@@ -1,176 +1,193 @@
-[
-  {
-    "mark": "00:06:10",
-    "name": "Car with multiple cars worth of space in front of it",
-    "adjusted_start": "00:00:10",
-    "adjusted_end": "00:00:19"
+{
+  "end": "01:09:37",
+  "route": "BB93626C-2970-4C86-89C3-18308238B32A",
+  "date": "2024-01-28",
+  "start": "00:05:45",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:07:11",
-    "name": "Plate MA 689",
-    "adjusted_start": "00:01:19",
-    "adjusted_end": "00:01:21"
+  "videos": {
+    "0zeJvtgLoVc": [
+      "00:00:10",
+      "00:00:26"
+    ]
   },
-  {
-    "mark": "00:08:26",
-    "name": "Driving in rain without headlights",
-    "adjusted_start": "00:02:28",
-    "adjusted_end": "00:02:36"
-  },
-  {
-    "mark": "00:10:02",
-    "name": "Plate MA GOWNS",
-    "adjusted_start": "00:04:11",
-    "adjusted_end": "00:04:13"
-  },
-  {
-    "mark": "00:10:57",
-    "name": "Driver completely blocking crosswalk",
-    "adjusted_start": "00:05:00",
-    "adjusted_end": "00:05:12"
-  },
-  {
-    "mark": "00:11:25",
-    "name": "Driving in rain without headlights",
-    "adjusted_start": "00:05:20",
-    "adjusted_end": "00:05:37"
-  },
-  {
-    "mark": "00:13:28",
-    "name": "Lane change without signal",
-    "adjusted_start": "00:07:30",
-    "adjusted_end": "00:07:42"
-  },
-  {
-    "mark": "00:14:20",
-    "name": "Driving in rain without headlights",
-    "adjusted_start": "00:08:28",
-    "adjusted_end": "00:08:32"
-  },
-  {
-    "mark": "00:15:03",
-    "name": "Lane change without signal",
-    "adjusted_start": "00:09:08",
-    "adjusted_end": "00:09:15"
-  },
-  {
-    "mark": "00:15:23",
-    "name": "SKIP can't actually see it",
-    "adjusted_start": "00:09:38",
-    "adjusted_end": "00:09:38"
-  },
-  {
-    "mark": "00:16:21",
-    "name": "Plate MA 808 OR BOB",
-    "adjusted_start": "00:10:31",
-    "adjusted_end": "00:10:33"
-  },
-  {
-    "mark": "00:18:49",
-    "name": "New branch growth off tree",
-    "adjusted_start": "00:12:45",
-    "adjusted_end": "00:12:56"
-  },
-  {
-    "mark": "00:19:33",
-    "name": "Driving in rain without headlights",
-    "adjusted_start": "00:13:40",
-    "adjusted_end": "00:13:44"
-  },
-  {
-    "mark": "00:25:20",
-    "name": "Plate MA PA-MA",
-    "adjusted_start": "00:19:30",
-    "adjusted_end": "00:19:32"
-  },
-  {
-    "mark": "00:26:06",
-    "name": "SKIP unknown",
-    "adjusted_start": "00:20:21",
-    "adjusted_end": "00:20:21"
-  },
-  {
-    "mark": "00:27:27",
-    "name": "Save the mural",
-    "adjusted_start": "00:21:34",
-    "adjusted_end": "00:21:38"
-  },
-  {
-    "mark": "00:28:15",
-    "name": "Turn without signal",
-    "adjusted_start": "00:22:19",
-    "adjusted_end": "00:22:26"
-  },
-  {
-    "mark": "00:28:30",
-    "name": "2 turns without signal",
-    "adjusted_start": "00:22:36",
-    "adjusted_end": "00:22:44"
-  },
-  {
-    "mark": "00:30:52",
-    "name": "Fallen tree",
-    "adjusted_start": "00:24:43",
-    "adjusted_end": "00:25:03"
-  },
-  {
-    "mark": "00:32:58",
-    "name": "Plate MA NOTEXT",
-    "adjusted_start": "00:27:08",
-    "adjusted_end": "00:27:10"
-  },
-  {
-    "mark": "00:35:17",
-    "name": "Driving in rain without headlights",
-    "adjusted_start": "00:29:20",
-    "adjusted_end": "00:29:27"
-  },
-  {
-    "mark": "00:37:06",
-    "name": "Washington Court construction",
-    "adjusted_start": "00:30:17",
-    "adjusted_end": "00:31:17"
-  },
-  {
-    "mark": "00:37:56",
-    "name": "SKIP can't see",
-    "adjusted_start": "00:32:11",
-    "adjusted_end": "00:32:11"
-  },
-  {
-    "mark": "00:38:10",
-    "name": "Speeder runs stop sign and turns without signal",
-    "adjusted_start": "00:32:16",
-    "adjusted_end": "00:32:30"
-  },
-  {
-    "mark": "00:39:54",
-    "name": "Please, put all the packages inside the porch. Thanks",
-    "adjusted_start": "00:33:57",
-    "adjusted_end": "00:34:06"
-  },
-  {
-    "mark": "00:43:03",
-    "name": "Duncklee Avenue construction",
-    "adjusted_start": "00:36:40",
-    "adjusted_end": "00:37:14"
-  },
-  {
-    "mark": "00:50:21",
-    "name": "West Park Drive construction",
-    "adjusted_start": "00:44:03",
-    "adjusted_end": "00:44:13"
-  },
-  {
-    "mark": "00:52:18",
-    "name": "Plate MA 887 D and U 9001",
-    "adjusted_start": "00:46:08",
-    "adjusted_end": "00:46:11"
-  },
-  {
-    "mark": "00:55:48",
-    "name": "Possibly the first driver I've seen actually stop at a stop sign without a car or pedestrian coming",
-    "adjusted_start": "00:49:20",
-    "adjusted_end": "00:49:32"
-  }
-]
+  "events": [
+    {
+      "mark": "00:06:10",
+      "name": "Car with multiple cars worth of space in front of it",
+      "adjusted_start": "00:00:10",
+      "adjusted_end": "00:00:19"
+    },
+    {
+      "mark": "00:07:11",
+      "name": "Plate MA 689",
+      "adjusted_start": "00:01:19",
+      "adjusted_end": "00:01:21"
+    },
+    {
+      "mark": "00:08:26",
+      "name": "Driving in rain without headlights",
+      "adjusted_start": "00:02:28",
+      "adjusted_end": "00:02:36"
+    },
+    {
+      "mark": "00:10:02",
+      "name": "Plate MA GOWNS",
+      "adjusted_start": "00:04:11",
+      "adjusted_end": "00:04:13"
+    },
+    {
+      "mark": "00:10:57",
+      "name": "Driver completely blocking crosswalk",
+      "adjusted_start": "00:05:00",
+      "adjusted_end": "00:05:12"
+    },
+    {
+      "mark": "00:11:25",
+      "name": "Driving in rain without headlights",
+      "adjusted_start": "00:05:20",
+      "adjusted_end": "00:05:37"
+    },
+    {
+      "mark": "00:13:28",
+      "name": "Lane change without signal",
+      "adjusted_start": "00:07:30",
+      "adjusted_end": "00:07:42"
+    },
+    {
+      "mark": "00:14:20",
+      "name": "Driving in rain without headlights",
+      "adjusted_start": "00:08:28",
+      "adjusted_end": "00:08:32"
+    },
+    {
+      "mark": "00:15:03",
+      "name": "Lane change without signal",
+      "adjusted_start": "00:09:08",
+      "adjusted_end": "00:09:15"
+    },
+    {
+      "mark": "00:15:23",
+      "name": "SKIP can't actually see it",
+      "adjusted_start": "00:09:38",
+      "adjusted_end": "00:09:38"
+    },
+    {
+      "mark": "00:16:21",
+      "name": "Plate MA 808 OR BOB",
+      "adjusted_start": "00:10:31",
+      "adjusted_end": "00:10:33"
+    },
+    {
+      "mark": "00:18:49",
+      "name": "New branch growth off tree",
+      "adjusted_start": "00:12:45",
+      "adjusted_end": "00:12:56"
+    },
+    {
+      "mark": "00:19:33",
+      "name": "Driving in rain without headlights",
+      "adjusted_start": "00:13:40",
+      "adjusted_end": "00:13:44"
+    },
+    {
+      "mark": "00:25:20",
+      "name": "Plate MA PA-MA",
+      "adjusted_start": "00:19:30",
+      "adjusted_end": "00:19:32"
+    },
+    {
+      "mark": "00:26:06",
+      "name": "SKIP unknown",
+      "adjusted_start": "00:20:21",
+      "adjusted_end": "00:20:21"
+    },
+    {
+      "mark": "00:27:27",
+      "name": "Save the mural",
+      "adjusted_start": "00:21:34",
+      "adjusted_end": "00:21:38"
+    },
+    {
+      "mark": "00:28:15",
+      "name": "Turn without signal",
+      "adjusted_start": "00:22:19",
+      "adjusted_end": "00:22:26"
+    },
+    {
+      "mark": "00:28:30",
+      "name": "2 turns without signal",
+      "adjusted_start": "00:22:36",
+      "adjusted_end": "00:22:44"
+    },
+    {
+      "mark": "00:30:52",
+      "name": "Fallen tree",
+      "adjusted_start": "00:24:43",
+      "adjusted_end": "00:25:03"
+    },
+    {
+      "mark": "00:32:58",
+      "name": "Plate MA NOTEXT",
+      "adjusted_start": "00:27:08",
+      "adjusted_end": "00:27:10"
+    },
+    {
+      "mark": "00:35:17",
+      "name": "Driving in rain without headlights",
+      "adjusted_start": "00:29:20",
+      "adjusted_end": "00:29:27"
+    },
+    {
+      "mark": "00:37:06",
+      "name": "Washington Court construction",
+      "adjusted_start": "00:30:17",
+      "adjusted_end": "00:31:17"
+    },
+    {
+      "mark": "00:37:56",
+      "name": "SKIP can't see",
+      "adjusted_start": "00:32:11",
+      "adjusted_end": "00:32:11"
+    },
+    {
+      "mark": "00:38:10",
+      "name": "Speeder runs stop sign and turns without signal",
+      "adjusted_start": "00:32:16",
+      "adjusted_end": "00:32:30"
+    },
+    {
+      "mark": "00:39:54",
+      "name": "Please, put all the packages inside the porch. Thanks",
+      "adjusted_start": "00:33:57",
+      "adjusted_end": "00:34:06"
+    },
+    {
+      "mark": "00:43:03",
+      "name": "Duncklee Avenue construction",
+      "adjusted_start": "00:36:40",
+      "adjusted_end": "00:37:14"
+    },
+    {
+      "mark": "00:50:21",
+      "name": "West Park Drive construction",
+      "adjusted_start": "00:44:03",
+      "adjusted_end": "00:44:13"
+    },
+    {
+      "mark": "00:52:18",
+      "name": "Plate MA 887 D and U 9001",
+      "adjusted_start": "00:46:08",
+      "adjusted_end": "00:46:11"
+    },
+    {
+      "mark": "00:55:48",
+      "name": "Possibly the first driver I've seen actually stop at a stop sign without a car or pedestrian coming",
+      "adjusted_start": "00:49:20",
+      "adjusted_end": "00:49:32"
+    }
+  ]
+}

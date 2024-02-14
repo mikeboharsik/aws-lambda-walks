@@ -1,54 +1,71 @@
-[
-  {
-    "mark": "00:04:36",
-    "name": "Strange u-turn",
-    "adjusted_start": "00:00:04",
-    "adjusted_end": "00:00:19"
+{
+  "route": "744AC54A-F7DA-4943-88B8-B467183B99B1",
+  "videos": {
+    "f_L3tRc305s": [
+      "04:20:50",
+      "00:00:28"
+    ]
   },
-  {
-    "mark": "00:06:05",
-    "name": "SKIP following close",
-    "adjusted_start": "00:01:46",
-    "adjusted_end": "00:01:46"
+  "start": "00:04:19",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:08:09",
-    "name": "Driver drives wrong way through one-way",
-    "adjusted_start": "00:03:42",
-    "adjusted_end": "00:03:52"
-  },
-  {
-    "mark": "00:10:51",
-    "name": "Lane change without signal",
-    "adjusted_start": "00:06:24",
-    "adjusted_end": "00:06:32",
-		"plate": "MA 3ZE J68"
-  },
-  {
-    "mark": "00:14:15",
-    "name": "SKIP can't read plate",
-    "adjusted_start": "00:09:51",
-    "adjusted_end": "00:09:53"
-  },
-  {
-    "mark": "00:16:19",
-    "name": "Stop sign runner",
-    "adjusted_start": "00:11:53",
-    "adjusted_end": "00:12:00",
-		"plate": "MA 736 GJ9"
-  },
-  {
-    "mark": "00:24:50",
-    "name": "Plate MA DONNA 1",
-    "adjusted_start": "00:20:25",
-    "adjusted_end": "00:20:27",
-		"plate": "MA DONNA 1"
-  },
-  {
-    "mark": "00:30:36",
-    "name": "Plate MA PLMBUM",
-    "adjusted_start": "00:26:13",
-    "adjusted_end": "00:26:15",
-		"plate": "MA PLMBUM"
-  }
-]
+  "date": "2024-02-09",
+  "end": "00:30:59",
+  "events": [
+    {
+      "mark": "00:04:36",
+      "name": "Strange u-turn",
+      "adjusted_start": "00:00:04",
+      "adjusted_end": "00:00:19"
+    },
+    {
+      "mark": "00:06:05",
+      "name": "SKIP following close",
+      "adjusted_start": "00:01:46",
+      "adjusted_end": "00:01:46"
+    },
+    {
+      "mark": "00:08:09",
+      "name": "Driver drives wrong way through one-way",
+      "adjusted_start": "00:03:42",
+      "adjusted_end": "00:03:52"
+    },
+    {
+      "mark": "00:10:51",
+      "name": "Lane change without signal",
+      "adjusted_start": "00:06:24",
+      "adjusted_end": "00:06:32",
+      "plate": "MA 3ZE J68"
+    },
+    {
+      "mark": "00:14:15",
+      "name": "SKIP can't read plate",
+      "adjusted_start": "00:09:51",
+      "adjusted_end": "00:09:53"
+    },
+    {
+      "mark": "00:16:19",
+      "name": "Stop sign runner",
+      "adjusted_start": "00:11:53",
+      "adjusted_end": "00:12:00",
+      "plate": "MA 736 GJ9"
+    },
+    {
+      "mark": "00:24:50",
+      "name": "Plate MA DONNA 1",
+      "adjusted_start": "00:20:25",
+      "adjusted_end": "00:20:27",
+      "plate": "MA DONNA 1"
+    },
+    {
+      "mark": "00:30:36",
+      "name": "Plate MA PLMBUM",
+      "adjusted_start": "00:26:13",
+      "adjusted_end": "00:26:15",
+      "plate": "MA PLMBUM"
+    }
+  ]
+}
