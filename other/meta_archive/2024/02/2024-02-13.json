@@ -13,5 +13,71 @@
     ]
   },
   "start": "00:06:17",
-  "route": "744AC54A-F7DA-4943-88B8-B467183B99B1"
+  "route": "744AC54A-F7DA-4943-88B8-B467183B99B1",
+  "events": [
+    {
+      "mark": "00:07:34",
+      "name": "Stop sign runner turns without signal",
+      "adjusted_start": "00:01:04",
+      "adjusted_end": "00:01:18"
+    },
+    {
+      "mark": "00:08:09",
+      "name": "SKIP no problem",
+      "adjusted_start": "00:01:52",
+      "adjusted_end": "00:01:52"
+    },
+    {
+      "mark": "00:12:44",
+      "name": "SKIP no problem",
+      "adjusted_start": "00:06:19",
+      "adjusted_end": "00:06:27"
+    },
+    {
+      "mark": "00:17:10",
+      "name": "Plate MA SHPOND",
+      "adjusted_start": "00:10:49",
+      "adjusted_end": "00:10:51",
+      "plate": "MA SHPOND"
+    },
+    {
+      "mark": "00:24:35",
+      "name": "Responsible driver regulates speed down hill",
+      "adjusted_start": "00:18:04",
+      "adjusted_end": "00:18:12",
+      "plate": "MA 1YFP 97"
+    },
+    {
+      "mark": "00:25:28",
+      "name": "Broadway roof progress",
+      "adjusted_start": "00:18:51",
+      "adjusted_end": "00:19:09"
+    },
+    {
+      "mark": "00:28:13",
+      "name": "SKIP cannot read plate",
+      "adjusted_start": "00:21:56",
+      "adjusted_end": "00:21:56"
+    },
+    {
+      "mark": "00:31:20",
+      "name": "SKIP unknown",
+      "adjusted_start": "00:25:03",
+      "adjusted_end": "00:25:03"
+    },
+    {
+      "mark": "00:31:58",
+      "name": "Lane change without signal",
+      "adjusted_start": "00:25:30",
+      "adjusted_end": "00:25:41",
+      "plate": "MA 8TP 164"
+    },
+    {
+      "mark": "00:35:40",
+      "name": "SKIP OOB Plate MA NATCHA",
+      "adjusted_start": "00:29:23",
+      "adjusted_end": "00:29:23",
+      "plate": "MA NATCHA"
+    }
+  ]  
 }
