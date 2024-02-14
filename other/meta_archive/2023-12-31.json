@@ -1,38 +1,55 @@
-[
-  {
-    "mark": "00:16:05",
-    "name": "Bike party at Dunkin",
-    "adjusted_start": "00:11:35",
-    "adjusted_end": "00:11:58"
+{
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:24:57",
-    "name": "Truck driver struggles to make right turn",
-    "adjusted_start": "00:20:33",
-    "adjusted_end": "00:20:48"
+  "videos": {
+    "b8cEyCtzf9c": [
+      "00:00:15",
+      "00:00:35"
+    ]
   },
-  {
-    "mark": "00:31:54",
-    "name": "Sherwood Road construction progress",
-    "adjusted_start": "00:27:20",
-    "adjusted_end": "00:27:48"
-  },
-  {
-    "mark": "00:34:47",
-    "name": "Myopia Road construction progress",
-    "adjusted_start": "00:29:58",
-    "adjusted_end": "00:30:39"
-  },
-  {
-    "mark": "00:37:41",
-    "name": "Lane change without signal 1",
-    "adjusted_start": "00:33:26",
-    "adjusted_end": "00:33:34"
-  },
-  {
-    "mark": "00:38:05",
-    "name": "Lane change without signal 2",
-    "adjusted_start": "00:33:53",
-    "adjusted_end": "00:33:59"
-  }
-]
+  "start": "00:04:05",
+  "date": "2023-12-31",
+  "end": "00:40:26",
+  "route": "24F78FCD-A4AE-4F59-824B-27643FEC50EA",
+  "events": [
+    {
+      "mark": "00:16:05",
+      "name": "Bike party at Dunkin",
+      "adjusted_start": "00:11:35",
+      "adjusted_end": "00:11:58"
+    },
+    {
+      "mark": "00:24:57",
+      "name": "Truck driver struggles to make right turn",
+      "adjusted_start": "00:20:33",
+      "adjusted_end": "00:20:48"
+    },
+    {
+      "mark": "00:31:54",
+      "name": "Sherwood Road construction progress",
+      "adjusted_start": "00:27:20",
+      "adjusted_end": "00:27:48"
+    },
+    {
+      "mark": "00:34:47",
+      "name": "Myopia Road construction progress",
+      "adjusted_start": "00:29:58",
+      "adjusted_end": "00:30:39"
+    },
+    {
+      "mark": "00:37:41",
+      "name": "Lane change without signal 1",
+      "adjusted_start": "00:33:26",
+      "adjusted_end": "00:33:34"
+    },
+    {
+      "mark": "00:38:05",
+      "name": "Lane change without signal 2",
+      "adjusted_start": "00:33:53",
+      "adjusted_end": "00:33:59"
+    }
+  ]
+}

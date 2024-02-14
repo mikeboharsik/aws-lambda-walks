@@ -1,50 +1,67 @@
-[
-  {
-    "mark": "00:07:03",
-    "name": "SKIP lane change over solid white line",
-    "adjusted_start": "00:02:35",
-    "adjusted_end": "00:02:35"
+{
+  "end": "00:39:08",
+  "route": "83EEBC73-EF78-455A-87FB-597B0908D0F1",
+  "date": "2024-01-22",
+  "start": "00:04:28",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
   },
-  {
-    "mark": "00:07:55",
-    "name": "Truck driver going a little too fast",
-    "adjusted_start": "00:03:18",
-    "adjusted_end": "00:03:25"
+  "videos": {
+    "hasanabi": [
+      "02:01:20",
+      "00:00:20"
+    ]
   },
-  {
-    "mark": "00:18:35",
-    "name": "SKIP interesting license plate NHIS",
-    "adjusted_start": "00:14:07",
-    "adjusted_end": "00:14:07"
-  },
-  {
-    "mark": "00:18:38",
-    "name": "SKIP not illegal",
-    "adjusted_start": "00:14:10",
-    "adjusted_end": "00:14:10"
-  },
-  {
-    "mark": "00:31:41",
-    "name": "Bad driver runs stop sign and turns without signaling",
-    "adjusted_start": "00:26:55",
-    "adjusted_end": "00:27:12"
-  },
-  {
-    "mark": "00:33:19",
-    "name": "SKIP dark plate",
-    "adjusted_start": "00:28:51",
-    "adjusted_end": "00:28:51"
-  },
-  {
-    "mark": "00:37:50",
-    "name": "Driver tries to beat red light and embarrassingly fails",
-    "adjusted_start": "00:33:16",
-    "adjusted_end": "00:33:23"
-  },
-  { 
-    "mark": "00:38:40",
-    "name": "SKIP made it",
-    "adjusted_start": "00:34:12",
-    "adjusted_end": "00:34:12"
-  }
-]
+  "events": [
+    {
+      "mark": "00:07:03",
+      "name": "SKIP lane change over solid white line",
+      "adjusted_start": "00:02:35",
+      "adjusted_end": "00:02:35"
+    },
+    {
+      "mark": "00:07:55",
+      "name": "Truck driver going a little too fast",
+      "adjusted_start": "00:03:18",
+      "adjusted_end": "00:03:25"
+    },
+    {
+      "mark": "00:18:35",
+      "name": "SKIP interesting license plate NHIS",
+      "adjusted_start": "00:14:07",
+      "adjusted_end": "00:14:07"
+    },
+    {
+      "mark": "00:18:38",
+      "name": "SKIP not illegal",
+      "adjusted_start": "00:14:10",
+      "adjusted_end": "00:14:10"
+    },
+    {
+      "mark": "00:31:41",
+      "name": "Bad driver runs stop sign and turns without signaling",
+      "adjusted_start": "00:26:55",
+      "adjusted_end": "00:27:12"
+    },
+    {
+      "mark": "00:33:19",
+      "name": "SKIP dark plate",
+      "adjusted_start": "00:28:51",
+      "adjusted_end": "00:28:51"
+    },
+    {
+      "mark": "00:37:50",
+      "name": "Driver tries to beat red light and embarrassingly fails",
+      "adjusted_start": "00:33:16",
+      "adjusted_end": "00:33:23"
+    },
+    {
+      "mark": "00:38:40",
+      "name": "SKIP made it",
+      "adjusted_start": "00:34:12",
+      "adjusted_end": "00:34:12"
+    }
+  ]
+}
