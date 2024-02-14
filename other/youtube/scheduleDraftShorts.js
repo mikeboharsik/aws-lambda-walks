@@ -178,7 +178,11 @@ async function getAllRoutes() {
 				const result = await fetch(url, updateOptions).then(r => r.json());
 				console.log(`Successfully updated video ${Number(idx) + 1} of ${updatedItems.length} [${item.id}] [${JSON.stringify(result)}]`);
 			} else {
-				console.log(`Video ${Number(idx) + 1} of ${updatedItems.length}\n${JSON.stringify({ id: item.id, title: item.snippet.title, publishAt: item.status.publishAt })}`);
+				console.log(`Video ${Number(idx) + 1} of ${updatedItems.length}\n${JSON.stringify({
+					id: item.id,
+					title: `${relevantItems.find(e => e.id === item.id).snippet.title} --> ${item.snippet.title}`,
+					publishAt: item.status.publishAt,
+				})}`);
 			}
 		}
 	} catch (e) {
