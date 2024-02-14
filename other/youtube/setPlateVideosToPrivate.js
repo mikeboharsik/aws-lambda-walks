@@ -1,4 +1,4 @@
-const { getAllVideoItems, getCustomArguments } = require('./common.js');
+const { getAllDraftShortsPlatesOnly, getCustomArguments } = require('./common.js');
 
 const customArgs = getCustomArguments({ accessToken: null,	commit: false });
 if (typeof customArgs === 'string') {
@@ -10,12 +10,20 @@ if (customArgs.commit && !customArgs.accessToken) {
 }
 
 (async() => {
-	const allPlateVideos = getAllVideoItems().filter(e => e.snippet.title.toUpperCase().includes('PLATE') && !e.snippet.title.includes('#'));
-	const drafts = JSON.parse(JSON.stringify(allPlateVideos.filter(e => e.snippet.title.match(/^\d{4} \d{2} \d{2}/))));
-	const projected = drafts.map(e => ({ id: e.id, title: e.snippet.title.replace(/\d{4} \d{2} \d{2} /g, ''), status: { privacyStatus: e.status.privacyStatus, publishAt: e.status.publishAt } }));
+	const drafts = getAllDraftShortsPlatesOnly();
+	const projected = drafts.map(e => ({ id: e.id, snippet: { ...e.snippet, title: e.snippet.title.replace(/\d{4} \d{2} \d{2} /g, '') }, status: { ...e.status, privacyStatus: e.status.privacyStatus } }));
+
+	const url = `https://www.googleapis.com/youtube/v3/videos?part=id&part=snippet&part=status`;
+	const headers = { Authorization: `Bearer ${customArgs.accessToken}` };
+	const options = { method: 'PUT', headers };
 
 	if (customArgs.commit) {
+		for (const [idx, item] of Object.entries(projected)) {
+			const updateOptions = { ...options, body: JSON.stringify(item) };
 
+			const result = await fetch(url, updateOptions).then(r => r.json());
+			console.log(`Successfully updated video ${Number(idx) + 1} of ${projected.length} [${item.id}] [${JSON.stringify(result)}]`);
+		}
 	} else {
 		console.log(JSON.stringify(projected, null, '\t'));
 	}
