@@ -1,0 +1,28 @@
+{
+  "route": "BFFC4B9E-B511-4EFD-BC08-402E299BFF63",
+  "start": "00:03:58",
+  "events": [],
+  "date": "2024-02-15",
+  "videos": {
+    "67jNiQ6xhnU": [
+      "00:00:02",
+      "00:00:19"
+    ]
+  },
+  "end": "00:39:53",
+  "durations": [
+    {
+      "SourceFile": "D:/wip/walks/2024-02-15/GX_0025_01.MP4",
+      "Duration": "0:25:38"
+    },
+    {
+      "SourceFile": "D:/wip/walks/2024-02-15/GX_0025_02.MP4",
+      "Duration": "0:17:52"
+    }
+  ],
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
+  }
+}
