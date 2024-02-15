@@ -12,11 +12,7 @@ $outputFolderPath = Resolve-Path $outputFolderPath
 Write-Verbose "`$outputFolderPath = $outputFolderPath"
 
 try {
-	if (Get-ChildItem | Where-Object { $_.Extension.ToLower() -ne ".mp4" }) {
-		throw "Expected folder [$outputFolderPath] to contain only .mp4 files, cannot continue"
-	}
-
-	$files = Get-ChildItem $outputFolderPath
+	$files = Get-ChildItem "$outputFolderPath/*.MP4"
 		| Sort-Object { $_.Name }
 
 	foreach ($file in $files) {

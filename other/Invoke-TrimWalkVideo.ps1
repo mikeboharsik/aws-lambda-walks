@@ -10,10 +10,10 @@ Param(
 	[switch] $WhatIf
 )
 
-[System.IO.FileSystemInfo[]]$items = Get-ChildItem -File
+[System.IO.FileSystemInfo[]]$items = Get-ChildItem -File "*.mp4"
 
 if ($items.Length -gt 1) {
-	Write-Error "More than 1 item found in directory, halting execution"
+	Write-Error "More than 1 items found in directory, halting execution"
 	exit 1
 }
 
@@ -96,6 +96,13 @@ $data = @{
 	events = @()
 }
 
+if (Test-Path 'durations.json') {
+	$durations = Get-Content 'durations.json' | ConvertFrom-Json -Depth 10
+	$data.durations = $durations
+} else {
+	Write-Host 'Missing durations.json'
+}
+
 $json = ConvertTo-Json $data -Compress
 
 $encoded = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
@@ -133,7 +140,7 @@ New-Item -ItemType Directory -Path "$dateDir\render"
 Copy-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 
 $clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
-$metaArchiveDir = Resolve-Path "$PSScriptRoot\meta_archive"
+$metaArchiveDir = Resolve-Path "$PSScriptRoot\..\meta_archive"
 
 if (!(Test-Path "$metaArchiveDir\$clipYear")) {
 	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear"
