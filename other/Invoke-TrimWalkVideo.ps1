@@ -137,7 +137,7 @@ $clipsDir = Resolve-Path "..\clips"
 $dateDir = "$clipsDir\$dateStr"
 New-Item -ItemType Directory -Path $dateDir
 New-Item -ItemType Directory -Path "$dateDir\render"
-Copy-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
+Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 
 $clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
 $metaArchiveDir = Resolve-Path "$PSScriptRoot\..\meta_archive"
