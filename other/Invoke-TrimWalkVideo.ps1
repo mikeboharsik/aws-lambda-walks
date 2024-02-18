@@ -96,11 +96,11 @@ $data = @{
 	events = @()
 }
 
-if (Test-Path 'durations.json') {
-	$durations = Get-Content 'durations.json' | ConvertFrom-Json -Depth 10
-	$data.durations = $durations
+if (Test-Path 'exif.json') {
+	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
+	$data.exif = $exif
 } else {
-	Write-Host 'Missing durations.json'
+	Write-Host 'Missing exif.json'
 }
 
 $json = ConvertTo-Json $data -Compress

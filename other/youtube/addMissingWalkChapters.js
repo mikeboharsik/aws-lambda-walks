@@ -1,4 +1,4 @@
-const { getAllVideoItems, getCustomArguments } = require('./common.js');
+const { getAllMetaArchiveDocuments, getAllPublicVideoItems, getCustomArguments } = require('./common.js');
 
 const customArgs = getCustomArguments({ accessToken: null,	commit: false });
 if (typeof customArgs === 'string') {
@@ -10,12 +10,16 @@ if (customArgs.commit && !customArgs.accessToken) {
 }
 
 (async() => {
-	const allWalkVideos = getAllVideoItems().filter(e => e.snippet.title.match(/^\d{4}-\d{2}-\d{2} Walk - /));
-	const projected = allWalkVideos.map(e => ({
+	const allWalkVideos = getAllPublicVideoItems().filter(e => e.snippet.title.match(/^\d{4}-\d{2}-\d{2} Walk - /));
+	const videosWithoutChapters = allWalkVideos.filter(e => !e.snippet.description.match(/\d{2}:\d{2}:\d{2}/));
+
+	var allMetaArchiveDocuments = getAllMetaArchiveDocuments();
+
+	const projected = JSON.parse(JSON.stringify(videosWithoutChapters.map(e => ({
 		description: e.snippet.description,
 		id: e.id,
-		title: e.snippet.title.replace(/\d{4} \d{2} \d{2} /g, ''),
-	}));
+		title: e.snippet.title,
+	}))));
 
 	if (customArgs.commit) {
 

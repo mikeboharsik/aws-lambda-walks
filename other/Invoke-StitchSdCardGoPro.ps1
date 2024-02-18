@@ -81,7 +81,7 @@ try {
 	$files = Get-ChildItem $outputFolderPath
 		| Sort-Object { $_.Name }
 
-	exiftool.exe -api largefilesupport=1 -duration -json $files > durations.json
+	exiftool.exe -api largefilesupport=1 -json $files > exif.json
 
 	$initialFile = $files[0]
 

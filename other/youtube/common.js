@@ -28,6 +28,10 @@ function getAllVideoItems() {
 	return JSON.parse(fs.readFileSync('./uploads_videoitems.json')).flatMap(e => e.items);
 }
 
+function getAllPublicVideoItems() {
+	return getAllVideoItems().filter(e => e.status.privacyStatus === 'public');
+}
+
 function getAllDrafts() {
 	return getAllVideoItems().filter(e => !e.status.publishAt && e.snippet.title.match(/\d{4} \d{2} \d{2}/));
 }
@@ -38,6 +42,22 @@ function getAllDraftShortsWithoutPlates() {
 
 function getAllDraftShortsPlatesOnly() {
 	return getAllDrafts().filter(e => e.snippet.title.match(/\d{4} \d{2} \d{2} Plate [A-Z]{2} /))
+}
+
+function getAllMetaArchiveDocuments() {
+	const results = {};
+	const baseDir = '../meta_archive';
+	const yearFolders = fs.readdirSync(baseDir);
+	yearFolders.forEach((year) => {
+		const monthFolders = fs.readdirSync(`${baseDir}/${year}`);
+		monthFolders.forEach((month) => {
+			const files = fs.readdirSync(`${baseDir}/${year}/${month}`);
+			files.forEach((file) => {
+				results[file.replace('.json', '')] = JSON.parse(fs.readFileSync(`${baseDir}/${year}/${month}/${file}`));
+			});
+		});
+	});
+	return results;
 }
 
 function shuffleArray(e, seed = 20240130) {
@@ -68,6 +88,8 @@ module.exports = {
 	getAllDrafts,
 	getAllDraftShortsPlatesOnly,
 	getAllDraftShortsWithoutPlates,
+	getAllMetaArchiveDocuments,
+	getAllPublicVideoItems,
 	getAllVideoItems,
 	getCustomArguments,
 	getLastPublishedVideo,
