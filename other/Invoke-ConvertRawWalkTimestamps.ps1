@@ -12,8 +12,8 @@ $json = Get-Content $filePath
 	
 foreach ($event in $json.events) {
 	$adjustedStart = [TimeSpan]$event.mark - [TimeSpan]$json.start
-	$event['adjusted_start'] = $adjustedStart.ToString()
-	$event['adjusted_end'] = $adjustedStart.ToString()
+	$event['trimmedStart'] = $adjustedStart.ToString()
+	$event['trimmedEnd'] = $adjustedStart.ToString()
 }
 			
 $json
