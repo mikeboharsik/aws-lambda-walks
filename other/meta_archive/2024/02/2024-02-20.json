@@ -1,0 +1,339 @@
+{
+  "route": "52325268-AD70-47B2-9830-EF6B47FAA205",
+  "start": "00:04:09",
+  "events": [
+    {
+      "mark": "00:03:45",
+      "name": "Driver runs red light"
+    },
+    {
+      "mark": "00:05:09",
+      "name": "Driver changes lane without signal"
+    },
+    {
+      "mark": "00:06:14",
+      "name": "Plate 69 X"
+    },
+    {
+      "mark": "00:06:15",
+      "name": "Driver changes lane without signal"
+    },
+    {
+      "mark": "00:07:19",
+      "name": "Plate 127 D"
+    },
+    {
+      "mark": "00:07:54",
+      "name": "Plate FF 39"
+    },
+    {
+      "mark": "00:09:23",
+      "name": "Plate"
+    },
+    {
+      "mark": "00:09:23",
+      "name": "Plate"
+    },
+    {
+      "mark": "00:10:04",
+      "name": "Nodding off"
+    },
+    {
+      "mark": "00:10:59",
+      "name": "Speeding"
+    },
+    {
+      "mark": "00:12:05",
+      "name": "Speeding"
+    },
+    {
+      "mark": "00:15:32",
+      "name": "Drivera run stop sign"
+    },
+    {
+      "mark": "00:17:21",
+      "name": "concrete post "
+    },
+    {
+      "mark": "00:22:18",
+      "name": "Waverly construction"
+    },
+    {
+      "mark": "00:24:11",
+      "name": "Trump flags "
+    },
+    {
+      "mark": "00:24:42",
+      "name": "Plate ma 3261"
+    },
+    {
+      "mark": "00:26:35",
+      "name": "Driver runs red light"
+    },
+    {
+      "mark": "00:32:06",
+      "name": "Driver changes lane without signal"
+    },
+    {
+      "mark": "00:33:34",
+      "name": "Plate accident"
+    },
+    {
+      "mark": "00:33:37",
+      "name": "Driver changes lane without signal"
+    },
+    {
+      "mark": "00:35:29",
+      "name": "Driver hits curb"
+    },
+    {
+      "mark": "00:37:18",
+      "name": "Exit 32 sticker"
+    },
+    {
+      "mark": "00:38:08",
+      "name": "Plate"
+    },
+    {
+      "mark": "00:38:09",
+      "name": "Plate"
+    },
+    {
+      "mark": "00:38:38",
+      "name": "Turn no signal"
+    },
+    {
+      "mark": "00:42:01",
+      "name": "Driver trouble shopping"
+    }
+  ],
+  "exif": [
+    {
+      "SourceFile": "D:/wip/walks/2024-02-20/GX_0031_01.MP4",
+      "ExifToolVersion": 12.29,
+      "FileName": "GX_0031_01.MP4",
+      "Directory": "D:/wip/walks/2024-02-20",
+      "FileSize": "11 GiB",
+      "FileModifyDate": "2024:02:20 16:09:41-05:00",
+      "FileAccessDate": "2024:02:20 17:05:20-05:00",
+      "FileCreateDate": "2024:02:20 17:03:15-05:00",
+      "FilePermissions": "-rw-rw-rw-",
+      "FileType": "MP4",
+      "FileTypeExtension": "mp4",
+      "MIMEType": "video/mp4",
+      "MajorBrand": "MP4 v1 [ISO 14496-1:ch13]",
+      "MinorVersion": "2013.10.18",
+      "CompatibleBrands": [
+        "mp41"
+      ],
+      "MediaDataSize": 11522976577,
+      "MediaDataOffset": 36,
+      "MovieHeaderVersion": 0,
+      "CreateDate": "2024:02:20 20:44:02",
+      "ModifyDate": "2024:02:20 20:44:02",
+      "TimeScale": 60000,
+      "Duration": "0:25:38",
+      "PreferredRate": 1,
+      "PreferredVolume": "100.00%",
+      "PreviewTime": "0 s",
+      "PreviewDuration": "0 s",
+      "PosterTime": "0 s",
+      "SelectionTime": "0 s",
+      "SelectionDuration": "0 s",
+      "CurrentTime": "0 s",
+      "NextTrackID": 5,
+      "LensSerialNumber": "LSU2061501400799",
+      "SerialNumberHash": "f2a4977be60c509ddbdfe8b18fd8cb15",
+      "MetadataVersion": "8.2.0",
+      "FirmwareVersion": "H22.01.02.20.00",
+      "CameraSerialNumber": "C3471325335652",
+      "Model": "HERO11 Black",
+      "AutoRotation": "Up",
+      "DigitalZoom": "Yes",
+      "ProTune": "On",
+      "WhiteBalance": "AUTO",
+      "Sharpness": "MED",
+      "ColorMode": "NATURAL",
+      "AutoISOMax": 3200,
+      "AutoISOMin": 100,
+      "ExposureCompensation": 0.0,
+      "Rate": "",
+      "ElectronicImageStabilization": "HS EIS",
+      "AudioSetting": "AUTO",
+      "FieldOfView": "Linear",
+      "DeviceName": "Highlights",
+      "TrackHeaderVersion": 0,
+      "TrackCreateDate": "2024:02:20 20:44:02",
+      "TrackModifyDate": "2024:02:20 20:44:02",
+      "TrackID": 1,
+      "TrackDuration": "0:25:38",
+      "TrackLayer": 0,
+      "TrackVolume": "0.00%",
+      "ImageWidth": 5312,
+      "ImageHeight": 2988,
+      "GraphicsMode": "srcCopy",
+      "OpColor": "0 0 0",
+      "CompressorID": "hvc1",
+      "SourceImageWidth": 5312,
+      "SourceImageHeight": 2988,
+      "XResolution": 72,
+      "YResolution": 72,
+      "CompressorName": "GoPro H.265 encoder",
+      "BitDepth": 24,
+      "VideoFrameRate": 59.94,
+      "TimeCode": 3,
+      "Balance": 0,
+      "AudioFormat": "mp4a",
+      "AudioChannels": 2,
+      "AudioBitsPerSample": 24,
+      "AudioSampleRate": 48000,
+      "TextFont": "Unknown (21)",
+      "TextFace": "Plain",
+      "TextSize": 10,
+      "TextColor": "0 0 0",
+      "BackgroundColor": "65535 65535 65535",
+      "FontName": "Helvetica",
+      "OtherFormat": "tmcd",
+      "MatrixStructure": "1 0 0 0 1 0 0 0 1",
+      "MediaHeaderVersion": 0,
+      "MediaCreateDate": "2024:02:20 20:44:02",
+      "MediaModifyDate": "2024:02:20 20:44:02",
+      "MediaTimeScale": 1000,
+      "MediaDuration": "0:25:38",
+      "HandlerClass": "Media Handler",
+      "HandlerType": "NRT Metadata",
+      "HandlerDescription": "GoPro MET  ",
+      "GenMediaVersion": 0,
+      "GenFlags": "0 0 0",
+      "GenGraphicsMode": "srcCopy",
+      "GenOpColor": "0 0 0",
+      "GenBalance": 0,
+      "MetaFormat": "gpmd",
+      "Warning": "[minor] The ExtractEmbedded option may find more tags in the media data",
+      "ImageSize": "5312x2988",
+      "Megapixels": 15.9,
+      "AvgBitrate": "60 Mbps",
+      "Rotation": 0
+    },
+    {
+      "SourceFile": "D:/wip/walks/2024-02-20/GX_0031_02.MP4",
+      "ExifToolVersion": 12.29,
+      "FileName": "GX_0031_02.MP4",
+      "Directory": "D:/wip/walks/2024-02-20",
+      "FileSize": "8.6 GiB",
+      "FileModifyDate": "2024:02:20 16:30:08-05:00",
+      "FileAccessDate": "2024:02:20 17:06:58-05:00",
+      "FileCreateDate": "2024:02:20 17:05:20-05:00",
+      "FilePermissions": "-rw-rw-rw-",
+      "FileType": "MP4",
+      "FileTypeExtension": "mp4",
+      "MIMEType": "video/mp4",
+      "MajorBrand": "MP4 v1 [ISO 14496-1:ch13]",
+      "MinorVersion": "2013.10.18",
+      "CompatibleBrands": [
+        "mp41"
+      ],
+      "MediaDataSize": 9196031206,
+      "MediaDataOffset": 36,
+      "MovieHeaderVersion": 0,
+      "CreateDate": "2024:02:20 20:44:02",
+      "ModifyDate": "2024:02:20 20:44:02",
+      "TimeScale": 60000,
+      "Duration": "0:20:27",
+      "PreferredRate": 1,
+      "PreferredVolume": "100.00%",
+      "PreviewTime": "0 s",
+      "PreviewDuration": "0 s",
+      "PosterTime": "0 s",
+      "SelectionTime": "0 s",
+      "SelectionDuration": "0 s",
+      "CurrentTime": "0 s",
+      "NextTrackID": 5,
+      "LensSerialNumber": "LSU2061501400799",
+      "SerialNumberHash": "f2a4977be60c509ddbdfe8b18fd8cb15",
+      "MetadataVersion": "8.2.0",
+      "FirmwareVersion": "H22.01.02.20.00",
+      "CameraSerialNumber": "C3471325335652",
+      "Model": "HERO11 Black",
+      "AutoRotation": "Up",
+      "DigitalZoom": "Yes",
+      "ProTune": "On",
+      "WhiteBalance": "AUTO",
+      "Sharpness": "MED",
+      "ColorMode": "NATURAL",
+      "AutoISOMax": 3200,
+      "AutoISOMin": 100,
+      "ExposureCompensation": 0.0,
+      "Rate": "",
+      "ElectronicImageStabilization": "HS EIS",
+      "AudioSetting": "AUTO",
+      "FieldOfView": "Linear",
+      "DeviceName": "Highlights",
+      "TrackHeaderVersion": 0,
+      "TrackCreateDate": "2024:02:20 20:44:02",
+      "TrackModifyDate": "2024:02:20 20:44:02",
+      "TrackID": 1,
+      "TrackDuration": "0:20:27",
+      "TrackLayer": 0,
+      "TrackVolume": "0.00%",
+      "ImageWidth": 5312,
+      "ImageHeight": 2988,
+      "GraphicsMode": "srcCopy",
+      "OpColor": "0 0 0",
+      "CompressorID": "hvc1",
+      "SourceImageWidth": 5312,
+      "SourceImageHeight": 2988,
+      "XResolution": 72,
+      "YResolution": 72,
+      "CompressorName": "GoPro H.265 encoder",
+      "BitDepth": 24,
+      "VideoFrameRate": 59.94,
+      "TimeCode": 3,
+      "Balance": 0,
+      "AudioFormat": "mp4a",
+      "AudioChannels": 2,
+      "AudioBitsPerSample": 24,
+      "AudioSampleRate": 48000,
+      "TextFont": "Unknown (21)",
+      "TextFace": "Plain",
+      "TextSize": 10,
+      "TextColor": "0 0 0",
+      "BackgroundColor": "65535 65535 65535",
+      "FontName": "Helvetica",
+      "OtherFormat": "tmcd",
+      "MatrixStructure": "1 0 0 0 1 0 0 0 1",
+      "MediaHeaderVersion": 0,
+      "MediaCreateDate": "2024:02:20 20:44:02",
+      "MediaModifyDate": "2024:02:20 20:44:02",
+      "MediaTimeScale": 1000,
+      "MediaDuration": "0:20:27",
+      "HandlerClass": "Media Handler",
+      "HandlerType": "NRT Metadata",
+      "HandlerDescription": "GoPro MET  ",
+      "GenMediaVersion": 0,
+      "GenFlags": "0 0 0",
+      "GenGraphicsMode": "srcCopy",
+      "GenOpColor": "0 0 0",
+      "GenBalance": 0,
+      "MetaFormat": "gpmd",
+      "Warning": "[minor] The ExtractEmbedded option may find more tags in the media data",
+      "ImageSize": "5312x2988",
+      "Megapixels": 15.9,
+      "AvgBitrate": "60 Mbps",
+      "Rotation": 0
+    }
+  ],
+  "date": "2024-02-20",
+  "videos": {
+    "hasanabi": [
+      "01:09:40",
+      "00:00:16"
+    ]
+  },
+  "end": "00:42:19",
+  "towns": {
+    "MA": [
+      "Stoneham"
+    ]
+  }
+}
