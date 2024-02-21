@@ -11,7 +11,7 @@ doShit = (links, idx) => {
 			}
 
 			doShit(links, idx + 1);
-		}, 5000);
+		}, 2100);
 	}
 	return;
 }
