@@ -41,9 +41,11 @@
     { label: 'Lane change', name: 'Driver changes lane without signal' },
     { label: 'Stop sign', name: 'Driver runs stop sign' },
     { label: 'Red light', name: 'Driver runs red light' },
-    { label: 'Block turn', name: 'Driver blocks turn area' },
-    { label: 'Good look', name: 'Driver looks before turning' },
-    { label: 'Bad look', name: 'Driver does not look before turning' },
+    { label: 'Wrong park', name: 'Car parked on wrong side of road'},
+    { label: 'Speeder', name: 'Speeding driver'},
+    { label: 'Block turn', name: 'Driver blocks turn area' },    
+    { label: 'Good look', name: 'Good driver looks before turning' },
+    { label: 'Bad look', name: 'Bad driver does not look before turning' },
     { label: 'Misc', name: 'Misc' },
   ];
 
@@ -52,12 +54,19 @@
   let lastMsSinceInit = 0;
   let lastTimestamp = getInitialLastTimestamp();
   
+  if (state.running) {
+    state.elapsed += (new Date().getTime() - lastTimestamp);
+  }
+
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
 
   function download(filename) {
     const copy = JSON.parse(JSON.stringify(state.marks));
-    copy.forEach((m) => m.mark = getDisplayText(m.mark));
+    copy.forEach((m) => {
+      delete m.id;
+      m.mark = getDisplayText(m.mark);
+    });
     const json = JSON.stringify(copy);
     const blob = new Blob([json], { type: "application/json" });
     const link = document.createElement("a");
@@ -87,14 +96,11 @@
     state.marks = [];
     state.elapsed = 0;
     state.running = false;
+    updateStorage(true);
   }
 
   function addMark(name = 'SKIP') {
-    const newMark = { id: crypto.randomUUID().toUpperCase(), mark: state.elapsed, name };
-    if (name === 'SKIP Plate') {
-      newMark.plate = '';
-    }
-    state.marks.push(newMark);
+    state.marks.push({ id: crypto.randomUUID().toUpperCase(), mark: state.elapsed, name, plate: '' });
   }
 
   function getMarkHandler(name) {
