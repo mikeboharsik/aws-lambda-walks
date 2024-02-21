@@ -4,107 +4,159 @@
   "events": [
     {
       "mark": "00:03:45",
-      "name": "Driver runs red light"
+      "name": "Driver runs red light",
+      "trimmedStart": "-00:00:24",
+      "trimmedEnd": "-00:00:24"
     },
     {
       "mark": "00:05:09",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:01:00",
+      "trimmedEnd": "00:01:00"
     },
     {
       "mark": "00:06:14",
-      "name": "Plate 69 X"
+      "name": "Plate 69 X",
+      "trimmedStart": "00:02:05",
+      "trimmedEnd": "00:02:05"
     },
     {
       "mark": "00:06:15",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:02:06",
+      "trimmedEnd": "00:02:06"
     },
     {
       "mark": "00:07:19",
-      "name": "Plate 127 D"
+      "name": "Plate 127 D",
+      "trimmedStart": "00:03:10",
+      "trimmedEnd": "00:03:10"
     },
     {
       "mark": "00:07:54",
-      "name": "Plate FF 39"
+      "name": "Plate FF 39",
+      "trimmedStart": "00:03:45",
+      "trimmedEnd": "00:03:45"
     },
     {
       "mark": "00:09:23",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:05:14",
+      "trimmedEnd": "00:05:14"
     },
     {
       "mark": "00:09:23",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:05:14",
+      "trimmedEnd": "00:05:14"
     },
     {
       "mark": "00:10:04",
-      "name": "Nodding off"
+      "name": "Nodding off",
+      "trimmedStart": "00:05:55",
+      "trimmedEnd": "00:05:55"
     },
     {
       "mark": "00:10:59",
-      "name": "Speeding"
+      "name": "Speeding",
+      "trimmedStart": "00:06:50",
+      "trimmedEnd": "00:06:50"
     },
     {
       "mark": "00:12:05",
-      "name": "Speeding"
+      "name": "Speeding",
+      "trimmedStart": "00:07:56",
+      "trimmedEnd": "00:07:56"
     },
     {
       "mark": "00:15:32",
-      "name": "Drivera run stop sign"
+      "name": "Drivera run stop sign",
+      "trimmedStart": "00:11:23",
+      "trimmedEnd": "00:11:23"
     },
     {
       "mark": "00:17:21",
-      "name": "concrete post "
+      "name": "concrete post ",
+      "trimmedStart": "00:13:12",
+      "trimmedEnd": "00:13:12"
     },
     {
       "mark": "00:22:18",
-      "name": "Waverly construction"
+      "name": "Waverly construction",
+      "trimmedStart": "00:18:09",
+      "trimmedEnd": "00:18:09"
     },
     {
       "mark": "00:24:11",
-      "name": "Trump flags "
+      "name": "Trump flags ",
+      "trimmedStart": "00:20:02",
+      "trimmedEnd": "00:20:02"
     },
     {
       "mark": "00:24:42",
-      "name": "Plate ma 3261"
+      "name": "Plate ma 3261",
+      "trimmedStart": "00:20:33",
+      "trimmedEnd": "00:20:33"
     },
     {
       "mark": "00:26:35",
-      "name": "Driver runs red light"
+      "name": "Driver runs red light",
+      "trimmedStart": "00:22:26",
+      "trimmedEnd": "00:22:26"
     },
     {
       "mark": "00:32:06",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:27:57",
+      "trimmedEnd": "00:27:57"
     },
     {
       "mark": "00:33:34",
-      "name": "Plate accident"
+      "name": "Plate accident",
+      "trimmedStart": "00:29:25",
+      "trimmedEnd": "00:29:25"
     },
     {
       "mark": "00:33:37",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:29:28",
+      "trimmedEnd": "00:29:28"
     },
     {
       "mark": "00:35:29",
-      "name": "Driver hits curb"
+      "name": "Driver hits curb",
+      "trimmedStart": "00:31:20",
+      "trimmedEnd": "00:31:20"
     },
     {
       "mark": "00:37:18",
-      "name": "Exit 32 sticker"
+      "name": "Exit 32 sticker",
+      "trimmedStart": "00:33:09",
+      "trimmedEnd": "00:33:09"
     },
     {
       "mark": "00:38:08",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:33:59",
+      "trimmedEnd": "00:33:59"
     },
     {
       "mark": "00:38:09",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:34:00",
+      "trimmedEnd": "00:34:00"
     },
     {
       "mark": "00:38:38",
-      "name": "Turn no signal"
+      "name": "Turn no signal",
+      "trimmedStart": "00:34:29",
+      "trimmedEnd": "00:34:29"
     },
     {
       "mark": "00:42:01",
-      "name": "Driver trouble shopping"
+      "name": "Driver trouble shopping",
+      "trimmedStart": "00:37:52",
+      "trimmedEnd": "00:37:52"
     }
   ],
   "exif": [
