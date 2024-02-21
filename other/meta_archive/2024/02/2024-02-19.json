@@ -4,107 +4,159 @@
   "events": [
     {
       "mark": "00:03:54",
-      "name": "Driver runs red light"
+      "name": "Driver runs red light",
+      "trimmedStart": "-00:00:29",
+      "trimmedEnd": "-00:00:29"
     },
     {
       "mark": "00:04:09",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "-00:00:14",
+      "trimmedEnd": "-00:00:14"
     },
     {
       "mark": "00:04:49",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:00:26",
+      "trimmedEnd": "00:00:26"
     },
     {
       "mark": "00:05:02",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:00:39",
+      "trimmedEnd": "00:00:39"
     },
     {
       "mark": "00:07:04",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:02:41",
+      "trimmedEnd": "00:02:41"
     },
     {
       "mark": "00:07:40",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:03:17",
+      "trimmedEnd": "00:03:17"
     },
     {
       "mark": "00:08:05",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:03:42",
+      "trimmedEnd": "00:03:42"
     },
     {
       "mark": "00:09:32",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:05:09",
+      "trimmedEnd": "00:05:09"
     },
     {
       "mark": "00:09:53",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:05:30",
+      "trimmedEnd": "00:05:30"
     },
     {
       "mark": "00:10:37",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:06:14",
+      "trimmedEnd": "00:06:14"
     },
     {
       "mark": "00:11:10",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:06:47",
+      "trimmedEnd": "00:06:47"
     },
     {
       "mark": "00:12:06",
-      "name": "Driver changes lane without signal"
+      "name": "Driver changes lane without signal",
+      "trimmedStart": "00:07:43",
+      "trimmedEnd": "00:07:43"
     },
     {
       "mark": "00:14:03",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:09:40",
+      "trimmedEnd": "00:09:40"
     },
     {
       "mark": "00:16:45",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:12:22",
+      "trimmedEnd": "00:12:22"
     },
     {
       "mark": "00:17:20",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:12:57",
+      "trimmedEnd": "00:12:57"
     },
     {
       "mark": "00:19:53",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:15:30",
+      "trimmedEnd": "00:15:30"
     },
     {
       "mark": "00:20:32",
-      "name": "Driver runs stop sign"
+      "name": "Driver runs stop sign",
+      "trimmedStart": "00:16:09",
+      "trimmedEnd": "00:16:09"
     },
     {
       "mark": "00:20:52",
-      "name": "Driver runs stop sign"
+      "name": "Driver runs stop sign",
+      "trimmedStart": "00:16:29",
+      "trimmedEnd": "00:16:29"
     },
     {
       "mark": "00:21:30",
-      "name": "Driver runs stop sign"
+      "name": "Driver runs stop sign",
+      "trimmedStart": "00:17:07",
+      "trimmedEnd": "00:17:07"
     },
     {
       "mark": "00:24:37",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:20:14",
+      "trimmedEnd": "00:20:14"
     },
     {
       "mark": "00:26:40",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:22:17",
+      "trimmedEnd": "00:22:17"
     },
     {
       "mark": "00:27:30",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:23:07",
+      "trimmedEnd": "00:23:07"
     },
     {
       "mark": "00:27:57",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:23:34",
+      "trimmedEnd": "00:23:34"
     },
     {
       "mark": "00:30:11",
-      "name": ""
+      "name": "",
+      "trimmedStart": "00:25:48",
+      "trimmedEnd": "00:25:48"
     },
     {
       "mark": "00:30:18",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:25:55",
+      "trimmedEnd": "00:25:55"
     },
     {
       "mark": "00:31:51",
-      "name": "Plate"
+      "name": "Plate",
+      "trimmedStart": "00:27:28",
+      "trimmedEnd": "00:27:28"
     }
   ],
   "exif": [
