@@ -142,7 +142,6 @@ if (!$SkipVideoLaunch) {
 $clipsDir = Resolve-Path "..\clips"
 $dateDir = "$clipsDir\$dateStr"
 New-Item -ItemType Directory -Path $dateDir
-New-Item -ItemType Directory -Path "$dateDir\render"
 Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 
 $clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
@@ -157,3 +156,7 @@ if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
 }
 
 Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" (ConvertTo-Json -Depth 10 $data)
+
+if ($data.events.Length -gt 0) {
+	& "$Repos\aws-lambda-walks\other\Invoke-ConvertRawWalkTimestamps.ps1" -Date $dateStr
+}

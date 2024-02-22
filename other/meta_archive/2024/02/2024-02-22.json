@@ -5,112 +5,156 @@
     {
       "mark": "00:03:21.556",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "-00:00:18.4440000",
+      "trimmedEnd": "-00:00:18.4440000"
     },
     {
       "mark": "00:03:49.077",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:00:09.0770000",
+      "trimmedEnd": "00:00:09.0770000"
     },
     {
       "mark": "00:04:34.706",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:00:54.7060000",
+      "trimmedEnd": "00:00:54.7060000"
     },
     {
       "mark": "00:05:00.936",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:01:20.9360000",
+      "trimmedEnd": "00:01:20.9360000"
     },
     {
       "mark": "00:05:43.986",
       "name": "Driver changes lane without signal",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:02:03.9860000",
+      "trimmedEnd": "00:02:03.9860000"
     },
     {
       "mark": "00:06:11.413",
       "name": "Driver changes lane without signal",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:02:31.4130000",
+      "trimmedEnd": "00:02:31.4130000"
     },
     {
       "mark": "00:07:48.496",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:04:08.4960000",
+      "trimmedEnd": "00:04:08.4960000"
     },
     {
       "mark": "00:08:17.210",
       "name": "Driver runs red light",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:04:37.2100000",
+      "trimmedEnd": "00:04:37.2100000"
     },
     {
       "mark": "00:09:37.166",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:05:57.1660000",
+      "trimmedEnd": "00:05:57.1660000"
     },
     {
       "mark": "00:12:25.632",
       "name": "Driver turns without signal",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:08:45.6320000",
+      "trimmedEnd": "00:08:45.6320000"
     },
     {
       "mark": "00:12:28.364",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:08:48.3640000",
+      "trimmedEnd": "00:08:48.3640000"
     },
     {
       "mark": "00:16:00.083",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:12:20.0830000",
+      "trimmedEnd": "00:12:20.0830000"
     },
     {
       "mark": "00:17:44.435",
       "name": "Speeding driver",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:14:04.4350000",
+      "trimmedEnd": "00:14:04.4350000"
     },
     {
       "mark": "00:17:55.626",
       "name": "Driver turns without signal",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:14:15.6260000",
+      "trimmedEnd": "00:14:15.6260000"
     },
     {
       "mark": "00:21:40.459",
       "name": "Driver turns without signal",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:18:00.4590000",
+      "trimmedEnd": "00:18:00.4590000"
     },
     {
       "mark": "00:21:41.125",
       "name": "Driver runs stop sign",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:18:01.1250000",
+      "trimmedEnd": "00:18:01.1250000"
     },
     {
       "mark": "00:22:55.632",
       "name": "Pd wrong side of road?",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:19:15.6320000",
+      "trimmedEnd": "00:19:15.6320000"
     },
     {
       "mark": "00:24:22.191",
       "name": "Dog",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:20:42.1910000",
+      "trimmedEnd": "00:20:42.1910000"
     },
     {
       "mark": "00:27:03.255",
       "name": "Myopia Road construction",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:23:23.2550000",
+      "trimmedEnd": "00:23:23.2550000"
     },
     {
       "mark": "00:29:34.568",
       "name": "SKIP Plate",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:25:54.5680000",
+      "trimmedEnd": "00:25:54.5680000"
     },
     {
       "mark": "00:30:24.635",
       "name": "Weird u turn",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:26:44.6350000",
+      "trimmedEnd": "00:26:44.6350000"
     },
     {
       "mark": "00:33:10.264",
       "name": "Driver runs red light",
-      "plate": ""
+      "plate": "",
+      "trimmedStart": "00:29:30.2640000",
+      "trimmedEnd": "00:29:30.2640000"
     }
   ],
   "exif": [
