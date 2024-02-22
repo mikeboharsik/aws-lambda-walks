@@ -103,6 +103,12 @@ if (Test-Path 'exif.json') {
 	Write-Host 'Missing exif.json'
 }
 
+$eventsQuery = Get-ChildItem -File './events*.json'
+if ($eventsQuery.Length -gt 0) {
+	$eventsParsed = Get-Content $eventsQuery[0] | ConvertFrom-Json
+	$data.events = $eventsParsed
+}
+
 $json = ConvertTo-Json $data -Compress
 
 $encoded = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))

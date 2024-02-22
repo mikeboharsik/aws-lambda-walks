@@ -39,6 +39,7 @@
   const markButtons = [
     { label: 'Plate', name: 'SKIP Plate' },
     { label: 'Lane change', name: 'Driver changes lane without signal' },
+    { label: 'No signal turn', name: 'Driver turns without signal' },
     { label: 'Stop sign', name: 'Driver runs stop sign' },
     { label: 'Red light', name: 'Driver runs red light' },
     { label: 'Wrong park', name: 'Car parked on wrong side of road'},
