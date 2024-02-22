@@ -78,7 +78,7 @@ try {
 		}
 	}
 
-	$files = Get-ChildItem $outputFolderPath
+	$files = Get-ChildItem "$outputFolderPath\*.MP4"
 		| Sort-Object { $_.Name }
 
 	exiftool.exe -api largefilesupport=1 -json $files > exif.json
