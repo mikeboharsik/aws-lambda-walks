@@ -1,4 +1,25 @@
 <script>
+  let lastTimestamp = parseInt(localStorage.getItem('lastTimestamp') ?? new Date().getTime());
+
+  function getInitialState() {
+    const init = localStorage.getItem('state');
+    if (init) {
+      return JSON.parse(init);
+    }
+
+    return {
+      running: false,
+      marks: [],
+      elapsed: 0
+    };
+  }
+  let state = getInitialState();
+  if (state.running) {
+    state.elapsed += (new Date().getTime() - lastTimestamp);
+  }
+
+  let lastMsSinceInit = 0;
+
   function getDisplayText(timestamp, withoutMillseconds = false) {
     const hours = (Math.floor(timestamp / (1000 * 60 * 60))).toString().padStart(2, '0');
     const minutes = (Math.floor(timestamp / (1000 * 60)) % 60).toString().padStart(2, '0');
@@ -19,23 +40,6 @@
     return `${hour}:${minute}:${second}.${millisecond}`;
   }
 
-  function getInitialState() {
-    const init = localStorage.getItem('state');
-    if (init) {
-      return JSON.parse(init);
-    }
-
-    return {
-      running: false,
-      marks: [],
-      elapsed: 0
-    };
-  }
-
-  function getInitialLastTimestamp() {
-    return parseInt(localStorage.getItem('lastTimestamp') ?? new Date().getTime());
-  }
-
   const markButtons = [
     { label: 'Plate', name: 'SKIP Plate' },
     { label: 'Lane change', name: 'Driver changes lane without signal' },
@@ -50,14 +54,7 @@
     { label: 'Misc', name: 'Misc' },
   ];
 
-  let state = getInitialState();
-
-  let lastMsSinceInit = 0;
-  let lastTimestamp = getInitialLastTimestamp();
   
-  if (state.running) {
-    state.elapsed += (new Date().getTime() - lastTimestamp);
-  }
 
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
