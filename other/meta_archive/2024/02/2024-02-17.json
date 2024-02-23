@@ -10,193 +10,244 @@
     },
     {
       "mark": "00:06:17",
-      "name": "",
-      "trimmedStart": "00:01:57",
-      "trimmedEnd": "00:01:57"
+      "name": "Driver fails to yield to pedestrian",
+      "plate": "MA V73 732",
+      "trimmedStart": "00:01:43",
+      "trimmedEnd": "00:01:52"
     },
     {
       "mark": "00:08:08",
-      "name": "",
+      "name": "SKIP downed tree, hard to tell",
       "trimmedStart": "00:03:48",
       "trimmedEnd": "00:03:48"
     },
     {
       "mark": "00:10:11",
-      "name": "",
-      "trimmedStart": "00:05:51",
-      "trimmedEnd": "00:05:51"
+      "name": "Curious tire tracks",
+      "trimmedStart": "00:05:36",
+      "trimmedEnd": "00:05:50"
     },
     {
       "mark": "00:11:16",
-      "name": "",
-      "trimmedStart": "00:06:56",
-      "trimmedEnd": "00:06:56"
+      "name": "Someone honking over something",
+      "trimmedStart": "00:06:35",
+      "trimmedEnd": "00:06:42"
     },
     {
       "mark": "00:18:07",
-      "name": "",
-      "trimmedStart": "00:13:47",
-      "trimmedEnd": "00:13:47"
+      "name": "Good driver does not block sidewalk",
+      "plate": "MA 7WL 794",
+      "trimmedStart": "00:13:30",
+      "trimmedEnd": "00:13:44"
     },
     {
       "mark": "00:28:38",
-      "name": "",
-      "trimmedStart": "00:24:18",
-      "trimmedEnd": "00:24:18"
+      "name": "Good driver does not block turn",
+      "plate": "MA 2XVA 39",
+      "trimmedStart": "00:24:00",
+      "trimmedEnd": "00:24:08"
     },
     {
       "mark": "00:29:53",
-      "name": "",
-      "trimmedStart": "00:25:33",
-      "trimmedEnd": "00:25:33"
+      "name": "Closed gas station",
+      "trimmedStart": "00:24:44",
+      "trimmedEnd": "00:25:36"
     },
     {
       "mark": "00:30:24",
-      "name": "",
-      "trimmedStart": "00:26:04",
-      "trimmedEnd": "00:26:04"
+      "name": "SKIP Plate",
+      "plate": "MA CHICKY",
+      "trimmedStart": "00:25:59",
+      "trimmedEnd": "00:26:01"
     },
     {
       "mark": "00:32:37",
-      "name": "",
-      "trimmedStart": "00:28:17",
-      "trimmedEnd": "00:28:17"
+      "name": "Path",
+      "trimmedStart": "00:27:56",
+      "trimmedEnd": "00:28:12"
     },
     {
       "mark": "00:34:26",
-      "name": "",
-      "trimmedStart": "00:30:06",
-      "trimmedEnd": "00:30:06"
+      "name": "Green Street construction",
+      "trimmedStart": "00:29:40",
+      "trimmedEnd": "00:30:04"
     },
     {
       "mark": "00:36:56",
-      "name": "",
-      "trimmedStart": "00:32:36",
-      "trimmedEnd": "00:32:36"
+      "name": "Fallen trees",
+      "trimmedStart": "00:32:20",
+      "trimmedEnd": "00:32:33"
+    },
+    {
+      "mark": "",
+      "name": "SKIP Tag",
+      "tag": "RECK",
+      "trimmedStart": "00:35:27",
+      "trimmedEnd": "00:35:27"
+    },
+    {
+      "mark": "",
+      "name": "Sunshine",
+      "trimmedStart": "00:35:27",
+      "trimmedEnd": "00:35:41"
+    },
+    {
+      "mark": "",
+      "name": "SKIP Tag",
+      "tag": "HOST",
+      "trimmedStart": "00:35:39",
+      "trimmedEnd": "00:35:39"
+    },
+    {
+      "mark": "",
+      "name": "MassDEP road",
+      "trimmedStart": "00:36:28",
+      "trimmedEnd": "00:36:40"
     },
     {
       "mark": "00:42:56",
-      "name": "",
-      "trimmedStart": "00:38:36",
-      "trimmedEnd": "00:38:36"
+      "name": "SKIP annoying driver",
+      "plate": "MA 399 TW1",
+      "trimmedStart": "00:38:29",
+      "trimmedEnd": "00:38:32"
     },
     {
       "mark": "00:45:24",
-      "name": "",
-      "trimmedStart": "00:41:04",
-      "trimmedEnd": "00:41:04"
+      "name": "Graffiti",
+      "trimmedStart": "00:40:54",
+      "trimmedEnd": "00:41:00"
     },
     {
       "mark": "00:49:07",
-      "name": "",
-      "trimmedStart": "00:44:47",
-      "trimmedEnd": "00:44:47"
+      "name": "Fallen tree and cleared field",
+      "trimmedStart": "00:44:14",
+      "trimmedEnd": "00:44:58"
     },
     {
       "mark": "00:49:37",
-      "name": "",
+      "name": "SKIP",
       "trimmedStart": "00:45:17",
       "trimmedEnd": "00:45:17"
     },
     {
       "mark": "00:51:09",
-      "name": "",
+      "name": "SKIP",
       "trimmedStart": "00:46:49",
       "trimmedEnd": "00:46:49"
     },
     {
       "mark": "00:55:28",
-      "name": "",
-      "trimmedStart": "00:51:08",
-      "trimmedEnd": "00:51:08"
+      "name": "SKIP Tag",
+      "tag": "RECK",
+      "trimmedStart": "00:50:07",
+      "trimmedEnd": "00:50:07"
+    },
+    {
+      "mark": "00:55:28",
+      "name": "Winn Street bridge",
+      "trimmedStart": "00:50:00",
+      "trimmedEnd": "00:50:49"
     },
     {
       "mark": "00:57:27",
-      "name": "",
-      "trimmedStart": "00:53:07",
+      "name": "SKIP Plate",
+      "plate": "MA 19",
+      "trimmedStart": "00:52:40",
+      "trimmedEnd": "00:53:07"
+    },
+    {
+      "mark": "00:57:27",
+      "name": "SKIP Plate",
+      "plate": "MA 20",
+      "trimmedStart": "00:52:40",
       "trimmedEnd": "00:53:07"
     },
     {
       "mark": "00:58:34",
-      "name": "",
-      "trimmedStart": "00:54:14",
-      "trimmedEnd": "00:54:14"
+      "name": "SKIP all you need is love",
+      "trimmedStart": "00:53:51",
+      "trimmedEnd": "00:53:53"
     },
     {
       "mark": "00:59:03",
-      "name": "",
+      "name": "SKIP girl scout QR code",
       "trimmedStart": "00:54:43",
       "trimmedEnd": "00:54:43"
     },
     {
       "mark": "01:00:02",
-      "name": "",
-      "trimmedStart": "00:55:42",
-      "trimmedEnd": "00:55:42"
+      "name": "Hole in road near drain",
+      "trimmedStart": "00:55:15",
+      "trimmedEnd": "00:55:25"
     },
     {
       "mark": "01:01:12",
-      "name": "",
-      "trimmedStart": "00:56:52",
-      "trimmedEnd": "00:56:52"
+      "name": "Chud flag",
+      "trimmedStart": "00:56:25",
+      "trimmedEnd": "00:56:35"
     },
     {
       "mark": "01:01:51",
-      "name": "",
-      "trimmedStart": "00:57:31",
-      "trimmedEnd": "00:57:31"
+      "name": "(s)hoe donations",
+      "trimmedStart": "00:57:08",
+      "trimmedEnd": "00:57:14"
     },
     {
       "mark": "01:04:07",
-      "name": "",
-      "trimmedStart": "00:59:47",
-      "trimmedEnd": "00:59:47"
+      "name": "Driver turns without signal",
+      "plate": "MA 3LR 879",
+      "trimmedStart": "00:59:22",
+      "trimmedEnd": "00:59:29"
     },
     {
       "mark": "01:04:48",
-      "name": "",
-      "trimmedStart": "01:00:28",
-      "trimmedEnd": "01:00:28"
+      "name": "Parker Road construction",
+      "trimmedStart": "00:59:45",
+      "trimmedEnd": "01:00:10"
     },
     {
       "mark": "01:09:02",
-      "name": "",
-      "trimmedStart": "01:04:42",
-      "trimmedEnd": "01:04:42"
+      "name": "Road rage",
+      "plate": "MA 1ZDF 38 and MA 2GWK 49",
+      "trimmedStart": "01:04:06",
+      "trimmedEnd": "01:04:21"
     },
     {
       "mark": "01:09:03",
-      "name": "",
-      "trimmedStart": "01:04:43",
-      "trimmedEnd": "01:04:43"
+      "name": "SKIP Plate",
+      "plate": "MA 58",
+      "trimmedStart": "01:04:24",
+      "trimmedEnd": "01:04:26"
     },
     {
       "mark": "01:09:35",
-      "name": "",
-      "trimmedStart": "01:05:15",
-      "trimmedEnd": "01:05:15"
+      "name": "SKIP Plate",
+      "plate": "MA MOMO 44",
+      "trimmedStart": "01:04:55",
+      "trimmedEnd": "01:04:57"
     },
     {
       "mark": "01:11:30",
-      "name": "",
-      "trimmedStart": "01:07:10",
+      "name": "SKIP Driver too lazy to clean roof",
+      "trimmedStart": "01:06:40",
       "trimmedEnd": "01:07:10"
     },
     {
       "mark": "01:12:15",
-      "name": "",
-      "trimmedStart": "01:07:55",
-      "trimmedEnd": "01:07:55"
+      "name": "Prospect Street new house",
+      "trimmedStart": "01:07:08",
+      "trimmedEnd": "01:07:36"
     },
     {
       "mark": "01:15:21",
-      "name": "",
-      "trimmedStart": "01:11:01",
-      "trimmedEnd": "01:11:01"
+      "name": "Driver has no clue",
+      "trimmedStart": "01:10:00",
+      "trimmedEnd": "01:10:44"
     },
     {
       "mark": "01:16:03",
-      "name": "",
+      "name": "SKIP Plate",
+      "plate": "MA 15196",
       "trimmedStart": "01:11:43",
       "trimmedEnd": "01:11:43"
     },
@@ -211,12 +262,6 @@
       "name": "SKIP OOB",
       "trimmedStart": "01:14:12",
       "trimmedEnd": "01:14:12"
-    },
-    {
-      "mark": "01:25:54",
-      "name": "SKIP typically this can be deleted",
-      "trimmedStart": "01:21:34",
-      "trimmedEnd": "01:21:34"
     }
   ],
   "exif": [
