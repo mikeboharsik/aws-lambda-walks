@@ -62,13 +62,17 @@
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
 
-  function download(filename) {
+  function getMarksForDownload() {
     const copy = JSON.parse(JSON.stringify(state.marks));
     copy.forEach((m) => {
       delete m.id;
       m.mark = getDisplayText(m.mark);
     });
-    const json = JSON.stringify(copy);
+    return copy;
+  }
+
+  function download(filename) {
+    const json = JSON.stringify(getMarksForDownload());
     const blob = new Blob([json], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -89,8 +93,12 @@
     updateStorage(true);
   }
 
-  function handleExportClick() {
-    download(`events_${new Date().getTime()}.json`);
+  function handleExportClick(e) {
+    if (e.ctrlKey) {
+      alert(JSON.stringify(getMarksForDownload()));
+    } else {
+      download(`events_${new Date().getTime()}.json`);
+    }
   }
 
   function handleResetClick() {
@@ -113,6 +121,26 @@
       const target = state.marks.find(e => e.id === id);
       target.name = e.target.value;
     }
+  }
+
+  function getItemDeleteHandler(id) {
+    return () => {
+      const targetIdx = state.marks.findIndex(e => e.id === id);
+      state.marks.splice(targetIdx, 1);
+    }
+  }
+
+  function getItemStyle(mark, idx) {
+    if (idx === 0) {
+      const diff = Math.floor(state.elapsed - mark.mark);
+      if (diff >= 5000) return null;
+
+      const percent = (5000 - diff) / 5000;
+      const n = Math.floor(255 - (255 * percent));
+
+      return `color: rgb(255, ${n}, ${n})`;
+    }
+    return null;
   }
 
   function update(msSinceInit) {
@@ -151,8 +179,16 @@
   </p>
 
   <ol reversed style={'text-align: left; font-size: 16px'}>
-    {#each state.marks.toReversed() as mark}
-      <li>{getDisplayText(mark.mark)} - <input type="text" value={mark.name} on:change={getNameChangeHandler(mark.id)}/></li>
+    {#each state.marks.toReversed() as mark, idx}
+      {@const itemStyle = getItemStyle(mark, idx)}
+      <li style={itemStyle}>
+        {getDisplayText(mark.mark)}
+        -
+        <input type="text" value={mark.name} on:change={getNameChangeHandler(mark.id)}/>
+        {#if itemStyle}
+          <button style={'vertical-align: middle; margin: 0; padding: 0; height: 28px; width: 32px'} on:click={getItemDeleteHandler(mark.id)}>X</button>
+        {/if}
+      </li>
     {/each}
   </ol>
 </main>
