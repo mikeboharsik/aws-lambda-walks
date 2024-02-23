@@ -4,85 +4,76 @@
   "events": [
     {
       "mark": "00:03:24.373",
-      "name": "Driver turns without signal",
-      "plate": "",
+      "name": "SKIP OOB Driver turns without signal",
+      "plate": "MA 2HNV 43",
       "trimmedStart": "-00:00:28.6270000",
       "trimmedEnd": "-00:00:28.6270000"
     },
     {
       "mark": "00:05:29.285",
       "name": "Driver changes lane without signal",
-      "plate": "",
-      "trimmedStart": "00:01:36.2850000",
-      "trimmedEnd": "00:01:36.2850000"
+      "plate": "MA 4LAG 77",
+      "trimmedStart": "00:01:16",
+      "trimmedEnd": "00:01:34"
     },
     {
       "mark": "00:06:33.104",
       "name": "SKIP Plate",
-      "plate": "",
-      "trimmedStart": "00:02:40.1040000",
-      "trimmedEnd": "00:02:40.1040000"
+      "plate": "MA 260 C",
+      "trimmedStart": "00:02:35",
+      "trimmedEnd": "00:02:35"
     },
     {
       "mark": "00:08:27.927",
       "name": "SKIP Plate",
-      "plate": "",
-      "trimmedStart": "00:04:34.9270000",
-      "trimmedEnd": "00:04:34.9270000"
+      "plate": "NEL 15",
+      "trimmedStart": "00:04:31",
+      "trimmedEnd": "00:04:31"
     },
     {
       "mark": "00:09:23.923",
-      "name": "Almost hit",
-      "plate": "",
-      "trimmedStart": "00:05:30.9230000",
-      "trimmedEnd": "00:05:30.9230000"
+      "name": "Driver almost hits pedestrian after running stop sign",
+      "plate": "MA 2XHH 53",
+      "trimmedStart": "00:05:16",
+      "trimmedEnd": "00:05:28"
     },
     {
       "mark": "00:20:39.081",
       "name": "SKIP Plate",
-      "plate": "",
-      "trimmedStart": "00:16:46.0810000",
-      "trimmedEnd": "00:16:46.0810000"
+      "plate": "MA 74657",
+      "trimmedStart": "00:16:31",
+      "trimmedEnd": "00:16:31"
     },
     {
       "mark": "00:20:52.095",
       "name": "Car parked on wrong side of road",
-      "plate": "",
-      "trimmedStart": "00:16:59.0950000",
-      "trimmedEnd": "00:16:59.0950000"
+      "plate": "5DHK 78",
+      "trimmedStart": "00:16:50",
+      "trimmedEnd": "00:16:56"
     },
     {
       "mark": "00:22:15.771",
-      "name": "Macarthur house renovation",
-      "plate": "",
-      "trimmedStart": "00:18:22.7710000",
-      "trimmedEnd": "00:18:22.7710000"
+      "name": "MacArthur Road house renovation",
+      "trimmedStart": "00:17:42",
+      "trimmedEnd": "00:18:09"
     },
     {
       "mark": "00:26:36.863",
-      "name": "Fast reverse",
-      "plate": "",
-      "trimmedStart": "00:22:43.8630000",
+      "name": "SKIP Fast reverse",
+      "trimmedStart": "00:22:20",
       "trimmedEnd": "00:22:43.8630000"
     },
     {
       "mark": "00:27:19.195",
-      "name": "SKIP Plate",
-      "plate": "",
-      "trimmedStart": "00:23:26.1950000",
-      "trimmedEnd": "00:23:26.1950000"
+      "name": "SKIP Turn without signal",
+      "plate": "MA 764 Y",
+      "trimmedStart": "00:23:14",
+      "trimmedEnd": "00:23:55"
     },
     {
-      "mark": "00:27:56.574",
-      "name": "Driver turns without signal",
-      "plate": "",
-      "trimmedStart": "00:24:03.5740000",
-      "trimmedEnd": "00:24:03.5740000"
-    },
-    {
-      "mark": "00:33:28.823",
+      "mark": "00:33:14",
       "name": "SKIP Plate",
-      "plate": "",
+      "plate": "MA 9633",
       "trimmedStart": "00:29:35.8230000",
       "trimmedEnd": "00:29:35.8230000"
     }
