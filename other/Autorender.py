@@ -11,7 +11,7 @@ import winsound
 frame_rate = 59.94
 resolution_x = 2988
 resolution_y = 2988
-meta_archive_dir = "C:\\Users\\mboha\\Documents\\GitHub\\aws-lambda-walks\\other\\meta_archive"
+meta_archive_dir = "C:\\Users\\mboha\\Documents\\GitHub\\walk-routes\\meta_archive"
 
 def get_year_month_date_from_name():
     name = Path(bpy.context.blend_data.filepath).stem
@@ -20,7 +20,7 @@ def get_year_month_date_from_name():
 
 def get_expected_meta_filename():
     [year, month, date] = get_year_month_date_from_name()
-    return f"C:\\Users\\mboha\\Documents\\GitHub\\aws-lambda-walks\\other\\meta_archive\\{year}\\{month}\\{year}-{month}-{date}.json"
+    return f"{meta_archive_dir}\\{year}\\{month}\\{year}-{month}-{date}.json"
 
 def get_blend_dir():
     blend_path = bpy.context.blend_data.filepath

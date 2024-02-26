@@ -5,7 +5,8 @@ Param(
 
 $year, $month, $date = $Date -Split '-'
 
-$filePath = "$PSScriptRoot\meta_archive\$year\$month\$year-$month-$date.json"
+$pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
+$filePath = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$year-$month-$date.json"
 
 $json = Get-Content $filePath
 	| ConvertFrom-Json -AsHashtable -NoEnumerate -Depth 10
