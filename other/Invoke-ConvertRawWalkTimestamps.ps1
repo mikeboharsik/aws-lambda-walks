@@ -12,8 +12,13 @@ $json = Get-Content $filePath
 	
 foreach ($event in $json.events) {
 	$adjustedStart = [TimeSpan]$event.mark - [TimeSpan]$json.start
-	$event['trimmedStart'] = $adjustedStart.ToString()
-	$event['trimmedEnd'] = $adjustedStart.ToString()
+
+	$event['trimmedStart'] = $adjustedStart.ToString().SubString(0, 12)
+	$event['trimmedEnd'] = $adjustedStart.ToString().SubString(0, 12)
+
+	if ($adjustedStart -lt [TimeSpan]'00:00:00') {
+		$event['name'] = 'SKIP OOB ' + $event['name']
+	}
 }
 			
 $json
