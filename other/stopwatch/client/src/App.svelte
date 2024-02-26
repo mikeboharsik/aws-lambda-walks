@@ -54,8 +54,6 @@
     { label: 'Misc', name: 'Misc' },
   ];
 
-  
-
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
 
