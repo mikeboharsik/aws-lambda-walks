@@ -8,7 +8,8 @@ $year, $month, $date2 = $Date -Split '-'
 $screenshotsFolder = Resolve-Path "D:\wip\walks\clips\$Date" -ErrorAction Stop
 Write-Verbose "`$screenshotsFolder = $screenshotsFolder"
 
-$metaFile = Resolve-Path "$PSScriptRoot\meta_archive\$year\$month\$year-$month-$date2.json" -ErrorAction Stop
+$pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
+$metaFile = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$year-$month-$date2.json" -ErrorAction Stop
 Write-Verbose "`$metaFile = $metaFile"
 
 $metaContent = Get-Content $metaFile | ConvertFrom-Json -AsHashtable

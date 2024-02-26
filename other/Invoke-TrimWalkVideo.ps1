@@ -145,7 +145,8 @@ New-Item -ItemType Directory -Path $dateDir
 Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 
 $clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
-$metaArchiveDir = Resolve-Path "$PSScriptRoot\..\meta_archive"
+$pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
+$metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
 
 if (!(Test-Path "$metaArchiveDir\$clipYear")) {
 	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear"
