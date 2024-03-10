@@ -15,10 +15,9 @@ foreach ($event in $json.events) {
 	$adjustedStart = [TimeSpan]$event.mark - [TimeSpan]$json.start
 
 	$event['trimmedStart'] = $adjustedStart.ToString().SubString(0, 12)
-	$event['trimmedEnd'] = $adjustedStart.ToString().SubString(0, 12)
 
-	if ($adjustedStart -lt [TimeSpan]'00:00:00') {
-		$event['name'] = 'SKIP OOB ' + $event['name']
+	if ($event.name -ne $null) {
+		$event['trimmedEnd'] = $adjustedStart.ToString().SubString(0, 12)
 	}
 }
 			
