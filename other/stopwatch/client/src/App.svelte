@@ -111,6 +111,9 @@
           m.plate = `NH ${m.plate}`;
           break;
         }
+        case EVENT_TYPE.TAG: {
+          break;
+        }
         default: {
           m.name = m.name.trim();
         }
@@ -187,13 +190,13 @@
           newMark.plate = '';
           break;
         }
+        case EVENT_TYPE.TAG: {
+          newMark.tag = '';
+          break;
+        }
         default: {
           newMark.name = button.name;
         }
-      }
-
-      if (button.type === EVENT_TYPE.PLATE) {
-        newMark.plate = '';
       }
 
       state.marks.push(newMark);
@@ -215,6 +218,10 @@
         case EVENT_TYPE.PLATE_ME:
         case EVENT_TYPE.PLATE_NH: {
           target.plate = e.target.value.toUpperCase();
+          break;
+        }
+        case EVENT_TYPE.TAG: {
+          target.tag = e.target.value;
           break;
         }
         default: {
@@ -300,6 +307,8 @@
           ME <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
         {:else if mark.type === EVENT_TYPE.PLATE_NH}
           NH <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
+        {:else if mark.type === EVENT_TYPE.TAG}
+          TAG <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.tag} on:input={getInputChangeHandler(mark.id)}/>
         {:else}
           <input type="text" id={`input_${mark.id}`} value={mark.name} on:input={getInputChangeHandler(mark.id)}/>
         {/if}
