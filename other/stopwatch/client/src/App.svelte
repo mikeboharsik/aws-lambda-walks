@@ -1,4 +1,6 @@
 <script>
+  import { Duration } from 'luxon';
+
   let lastTimestamp = parseInt(localStorage.getItem('lastTimestamp') ?? new Date().getTime());
 
   function getInitialState() {
@@ -24,6 +26,10 @@
   $: stopwatchText = getDisplayText(state.elapsed);
 
   function getDisplayText(timestamp, withoutMillseconds = false) {
+    if (!timestamp) {
+      return '';
+    }
+
     const hours = (Math.floor(timestamp / (1000 * 60 * 60))).toString().padStart(2, '0');
     const minutes = (Math.floor(timestamp / (1000 * 60)) % 60).toString().padStart(2, '0');
     const seconds = (Math.floor(timestamp / 1000) % 60).toString().padStart(2, '0');
@@ -84,16 +90,39 @@
   ];
 
   function getExportContent() {
-    let begin, end;
     const copy = JSON.parse(JSON.stringify(state.marks));
+
+    const begin = getDisplayText(copy.find(m => m.type === EVENT_TYPE.BEGIN)?.mark);
+    const end = getDisplayText(copy.find(m => m.type === EVENT_TYPE.END)?.mark);
+
+    const beginDuration = Duration.fromISOTime(begin);
+
     copy.forEach((m) => {
+      m.mark = getDisplayText(m.mark);
+
+      let isOutOfBounds = false;
+      if (m.mark < begin || m.mark > end) {
+        isOutOfBounds = true;
+      }
+
+      const duration = Duration.fromISOTime(m.mark);
+      const trimmedStart = duration.minus(beginDuration);
+      let trimmedStartProcessed = trimmedStart.toFormat('hh:mm:ss');
+
+      if (trimmedStartProcessed.includes('-')) {
+        trimmedStartProcessed = '-' + trimmedStartProcessed.replace('-','');
+      }
+
+      m.trimmedStart = trimmedStartProcessed;
+      if (![EVENT_TYPE.PLATE, EVENT_TYPE.PLATE_MA, EVENT_TYPE.PLATE_ME, EVENT_TYPE.PLATE_NH, EVENT_TYPE.TAG].includes(m.type)) {
+        m.trimmedEnd = m.trimmedStart;
+      }
+
       switch(m.type) {
         case EVENT_TYPE.BEGIN: {
-          begin = getDisplayText(m.mark);
           break;
         }
         case EVENT_TYPE.END: {
-          end = getDisplayText(m.mark);
           break;
         }
         case EVENT_TYPE.PLATE: {
@@ -115,12 +144,11 @@
           break;
         }
         default: {
-          m.name = m.name.trim();
+          m.name = isOutOfBounds ? `SKIP OOB ${m.name.trim()}` : m.name.trim();
         }
       }
 
       delete m.id;
-      m.mark = getDisplayText(m.mark);
     });
     const events = copy.filter(e => ![EVENT_TYPE.BEGIN, EVENT_TYPE.END].includes(e.type));
 
@@ -285,7 +313,13 @@
   </p>
   <p>
     {#each markButtons as markButton}
-      <button on:click={getAddMarkHandler(markButton)} disabled={!state.running}>{markButton.label}</button>
+      {#if markButton.type === EVENT_TYPE.BEGIN && state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
+        {''}
+      {:else if markButton.type === EVENT_TYPE.END && (!state.marks.find(m => m.type === EVENT_TYPE.BEGIN) || state.marks.find(m => m.type === EVENT_TYPE.END))}
+        {''}
+      {:else}
+        <button on:click={getAddMarkHandler(markButton)} disabled={!state.running}>{markButton.label}</button>
+      {/if}
     {/each}
   </p>
 
