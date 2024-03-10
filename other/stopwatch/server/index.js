@@ -1,4 +1,13 @@
+const fs = require('fs');
+const https = require('https');
+
 const express = require('express');
+
+var privateKey  = fs.readFileSync('./generated/server.key', 'utf8');
+var certificate = fs.readFileSync('./generated/server.crt', 'utf8');
+
+var credentials = { key: privateKey, cert: certificate };
+
 const app = express();
 app.use(express.json());
 
@@ -24,4 +33,5 @@ app.get('/', (req, res) => {
 	res.end();
 });
 
-app.listen(port, () => console.log(`Listening on [${port}]`));
+const server = https.createServer(credentials, app);
+server.listen(port, () => console.log(`Listening on [${port}]`));

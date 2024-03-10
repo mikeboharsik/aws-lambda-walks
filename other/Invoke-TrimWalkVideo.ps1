@@ -143,6 +143,7 @@ $clipsDir = Resolve-Path "..\clips"
 $dateDir = "$clipsDir\$dateStr"
 New-Item -ItemType Directory -Path $dateDir
 Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
+Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
 $clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
 $pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
