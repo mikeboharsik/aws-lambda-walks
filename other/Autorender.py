@@ -138,7 +138,9 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
         else:
             for event in metadata['events']:
                 print(f'Reading event [{json.dumps(event)}]')
-                if event['name'].upper().startswith('SKIP'):
+                if 'name' not in event:
+                    print(f'Skipping event with no name')
+                elif event['name'].upper().startswith('SKIP'):
                     print(f'Skipping event with name [{event["name"]}]')
                 else:
                     self.create_event_strip(event)
