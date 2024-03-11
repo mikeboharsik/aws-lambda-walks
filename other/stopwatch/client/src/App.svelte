@@ -85,8 +85,6 @@
     { label: 'Look bad', name: 'Bad driver does not look before turning ', type: EVENT_TYPE.LOOK_BAD },
     { label: 'Tag', type: EVENT_TYPE.TAG },
     { label: 'Misc', name: '', type: EVENT_TYPE.MISC },
-    { label: 'Begin', type: EVENT_TYPE.BEGIN },
-    { label: 'End', type: EVENT_TYPE.END },
   ];
 
   function getExportContent() {
@@ -310,18 +308,11 @@
   <h1>{stopwatchText}</h1>
 
   <p>
-    <button on:click={handleToggleClick}>{state.running ? 'Stop' : 'Start'}</button>
+    <button on:click={handleToggleClick}>Toggle</button>
     <button on:click={handleExportClick} disabled={!state.marks.length}>Export</button>
     <button on:click={handleResetClick}>Reset</button>
   </p>
   <p>
-    <!--
-    {#if markButton.type === EVENT_TYPE.BEGIN && state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
-      {''}
-    {:else if markButton.type === EVENT_TYPE.END && }
-      {''}
-    -->
-
     {#if state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
       {''}
     {:else}
