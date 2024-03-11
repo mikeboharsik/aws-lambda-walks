@@ -26,7 +26,7 @@
   $: stopwatchText = getDisplayText(state.elapsed);
 
   function getDisplayText(timestamp, withoutMillseconds = false) {
-    if (!timestamp) {
+    if (timestamp === undefined) {
       return '';
     }
 
@@ -110,7 +110,7 @@
       let trimmedStartProcessed = trimmedStart.toFormat('hh:mm:ss');
 
       if (trimmedStartProcessed.includes('-')) {
-        trimmedStartProcessed = '-' + trimmedStartProcessed.replace('-','');
+        trimmedStartProcessed = '-' + trimmedStartProcessed.replace(/-/g, '');
       }
 
       m.trimmedStart = trimmedStartProcessed;
@@ -154,7 +154,13 @@
 
     events.forEach(m => delete m.type);
 
-    return { start: begin, end, route: '', events };
+    return {
+      date: new Date().toISOString().slice(0, 10),
+      start: begin,
+      end,
+      route: '',
+      events
+    };
   }
 
   function download(filename) {
@@ -309,17 +315,28 @@
     <button on:click={handleResetClick}>Reset</button>
   </p>
   <p>
-    
+    <!--
+    {#if markButton.type === EVENT_TYPE.BEGIN && state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
+      {''}
+    {:else if markButton.type === EVENT_TYPE.END && }
+      {''}
+    -->
+
+    {#if state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
+      {''}
+    {:else}
+      <button on:click={getAddMarkHandler({ type: EVENT_TYPE.BEGIN })} disabled={!state.running}>START</button>
+    {/if}
+
+    {#if (!state.marks.find(m => m.type === EVENT_TYPE.BEGIN) || state.marks.find(m => m.type === EVENT_TYPE.END))}
+      {''}
+    {:else}
+      <button on:click={getAddMarkHandler({ type: EVENT_TYPE.END })} disabled={!state.running}>END</button>
+    {/if}
   </p>
   <p>
     {#each markButtons as markButton}
-      {#if markButton.type === EVENT_TYPE.BEGIN && state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
-        {''}
-      {:else if markButton.type === EVENT_TYPE.END && (!state.marks.find(m => m.type === EVENT_TYPE.BEGIN) || state.marks.find(m => m.type === EVENT_TYPE.END))}
-        {''}
-      {:else}
-        <button on:click={getAddMarkHandler(markButton)} disabled={!state.running}>{markButton.label}</button>
-      {/if}
+      <button on:click={getAddMarkHandler(markButton)} disabled={!state.running}>{markButton.label}</button>
     {/each}
   </p>
 
