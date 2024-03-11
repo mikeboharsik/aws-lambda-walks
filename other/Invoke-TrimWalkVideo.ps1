@@ -1,12 +1,4 @@
 Param(
-	[hashtable] $Videos,
-	[string] $Start,
-	[string] $End,
-	[hashtable] $Towns,
-	[string] $Route,
-
-	[switch] $SkipVideoLaunch,
-	[switch] $OnlyOutputBase64,
 	[switch] $WhatIf
 )
 
@@ -20,63 +12,6 @@ if ($items.Length -gt 1) {
 if ($items[0].Name -NotMatch '.*.mp4') {
 	Write-Error "Failed to find expected file in directory, halting execution"
 	exit 1
-}
-
-if (!$SkipVideoLaunch) {
-	Start-Process $items[0]
-}
-
-if (!$Videos) {
-	$Videos = @{}
-	do {
-		$VidId = Read-Host "Video ID"
-		if (!$VidId) { break }
-
-		$VidTimeCode = Read-Host "  Video Timecode"
-		$WalkTimeCode = Read-Host "  Walk Timecode"
-		if (!$VidTimeCode -and !$WalkTimeCode) {
-			$Videos[$VidId] = $null
-		} else {
-			$Videos[$VidId] = @($VidTimeCode, $WalkTimeCode)
-		}
-	} while ($VidId)
-
-	if (!$Videos.Keys.Length) {
-		$Videos = $null
-	}
-}
-
-if (!$Start) {
-	$Start = Read-Host "Start"
-}
-
-if (!$End) {
-	$End = Read-Host "End"
-}
-
-if (!$Towns) {
-	$Towns = @{}
-	do {
-		$State = Read-Host "State"
-		if (!$State) { break }
-
-		$StateTowns = [string[]]@()
-		do {
-			$Town = Read-Host "  Town"
-			if (!$Town) { break }
-
-			$StateTowns += $Town
-		} while ($Town)
-
-		$Towns[$State] = $StateTowns
-	} while ($State)
-}
-
-if (!$Route) {
-	$Route = Read-Host 'Route'
-	if ($Route.ToUpper() -eq 'NEW') {
-		$Route = [System.Guid]::NewGuid().ToString().ToUpper()
-	}
 }
 
 if ($items[0].Name -Match '\d{4}-\d{2}-\d{2}') {

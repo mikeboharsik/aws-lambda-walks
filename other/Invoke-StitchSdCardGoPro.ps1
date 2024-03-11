@@ -68,7 +68,7 @@ try {
 		Copy-Item -Path $originalFiles -Destination $outputFolderPath
 	}
 
-	$copiedFiles = Get-ChildItem $outputFolderPath
+	$copiedFiles = Get-ChildItem -File "$outputFolderPath\*.MP4"
 	foreach ($file in $copiedFiles) {
 		$name = $file.Name
 		$newName = & $SensibleGoProFilenamePath -Filename $name
