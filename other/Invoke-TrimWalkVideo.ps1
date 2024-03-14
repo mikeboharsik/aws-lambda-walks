@@ -1,4 +1,8 @@
 Param(
+	[string] $Route,
+	[hashtable] $Videos,
+	[hashtable] $Towns,
+
 	[switch] $WhatIf
 )
 
@@ -21,14 +25,61 @@ if ($items[0].Name -Match '\d{4}-\d{2}-\d{2}') {
 	exit 1
 }
 
-$data = @{
-	date = $dateStr
-	end = $End
-	start = $Start
-	towns = $Towns
-	route = $Route
-	videos = $Videos
-	events = @()
+$possibleDataPaths = @("events_$dateStr.json", "..\events_$dateStr.json")
+
+foreach ($path in $possibleDataPaths) {
+	if (Test-Path $path) {
+		$dataPath = Resolve-Path $path
+		break
+	}
+}
+
+if (!$dataPath) {
+	Write-Error "Failed to find data path"
+	exit 1
+}
+
+$data = Get-Content $dataPath | ConvertFrom-Json -AsHashtable -Depth 10
+
+if (!$data.route -and !$Route) {
+	$Route = Read-Host 'Route'
+	if ($Route.ToUpper() -eq 'NEW') {
+		$Route = [System.Guid]::NewGuid().ToString().ToUpper()
+	}
+	$data.route = $Route
+}
+if ($Route) {
+	$data.route = $Route
+}
+
+if (!$data.videos -and !$Videos) {
+	$Videos = @{}
+	do {
+		$VidId = Read-Host "Video ID"
+		if (!$VidId) { break }
+
+		$VidTimeCode = Read-Host "  Video Timecode"
+		$WalkTimeCode = Read-Host "  Walk Timecode"
+		if (!$VidTimeCode -and !$WalkTimeCode) {
+			$Videos[$VidId] = $null
+		} else {
+			$Videos[$VidId] = @($VidTimeCode, $WalkTimeCode)
+		}
+	} while ($VidId)
+
+	if (!$Videos.Keys.Length) {
+		$Videos = $null
+	}
+}
+if ($Videos) {
+	$data.videos = $Videos
+}
+
+if (!$data.towns -and !$Towns) {
+	[hashtable] $Towns = Read-Host "Towns"
+}
+if ($Towns) {
+	$data.towns = $Towns
 }
 
 if (Test-Path 'exif.json') {
@@ -38,26 +89,13 @@ if (Test-Path 'exif.json') {
 	Write-Host 'Missing exif.json'
 }
 
-$eventsQuery = Get-ChildItem -File './events*.json'
-if ($eventsQuery.Length -gt 0) {
-	$eventsParsed = Get-Content $eventsQuery[0] | ConvertFrom-Json
-	$data.events = $eventsParsed
-}
-
-$json = ConvertTo-Json $data -Compress
-
-$encoded = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($json))
-
-if ($OnlyOutputBase64) {
-	Write-Host "Encoded data = [$encoded]"
-	return
-}
+$json = ConvertTo-Json $data -Depth 10
 
 $outputName = "$($dateStr)_trimmed.mp4"
 
 $ffmpegArgs = @(
-	'-ss', $Start
-	'-to', $End
+	'-ss', $data.start
+	'-to', $data.end
 	'-i', $items[0].FullName
 	'-c', 'copy'
 	(Get-Location).Path + "\" + $outputName
@@ -68,15 +106,17 @@ Write-Host "ffmpeg arguments: [$ffmpegArgs]"
 
 if (!$WhatIf) {
 	ffmpeg @ffmpegArgs
-}
 
-if (!$SkipVideoLaunch) {
-	Start-Process $outputName
+	if (!$?) {
+		exit 1
+	}
 }
 
 $clipsDir = Resolve-Path "..\clips"
 $dateDir = "$clipsDir\$dateStr"
-New-Item -ItemType Directory -Path $dateDir
+if (!(Test-Path $dateDir)) {
+	New-Item -ItemType Directory -Path $dateDir
+}
 Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
@@ -92,8 +132,4 @@ if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
 	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear\$clipMonth"
 }
 
-Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" (ConvertTo-Json -Depth 10 $data)
-
-if ($data.events.Length -gt 0) {
-	& "$Repos\aws-lambda-walks\other\Invoke-ConvertRawWalkTimestamps.ps1" -Date $dateStr
-}
+Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
