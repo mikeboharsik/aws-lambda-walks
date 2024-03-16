@@ -139,7 +139,12 @@
 		}
 
 		const canvas = document.getElementById('canvas');
-		const ctx = canvas.getContext('2d');
+		let ctx;
+		try {
+			ctx = canvas.getContext('2d');
+		} catch (e) {
+			return;
+		}
 
 		ctx.save();
 		ctx.fillStyle = `rgba(${backgroundColor}, 255)`;

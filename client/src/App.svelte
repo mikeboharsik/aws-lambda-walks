@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Router, Route, navigate } from 'svelte-routing';
 	import { Circle } from 'svelte-loading-spinners';
 
 	import ErrorMessage from './components/ErrorMessage.svelte';
@@ -13,10 +12,9 @@
 	import { baseApiUrl, baseUrl } from './constants/api';
 	import { getPaddedDateString } from './util/date';
 
-	export let url = '/';
-
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
+	let renderRotues = false;
 
 	onMount(async() => {
 		function getApiOptions() {
@@ -78,7 +76,7 @@
 	}
 
 	if (localStorage.getItem('access_token') && altKey && shiftKey && code === 'KeyF') {
-		navigate('/routes');
+		renderRotues = !renderRotues;
 	}
 }} />
 
@@ -87,10 +85,11 @@
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
 		{:else}
-			<Router {url}>
-				<Route path="/routes" component={Routes} />
-				<Route path="/" component={Calendar} />
-			</Router>
+			{#if renderRotues}
+				<Routes />
+			{:else}
+				<Calendar />
+			{/if}
 		{/if}
 	{:else}
 		<div style="position: absolute">
