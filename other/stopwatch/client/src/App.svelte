@@ -1,6 +1,4 @@
 <script>
-  import { Duration } from 'luxon';
-
   let lastTimestamp = parseInt(localStorage.getItem('lastTimestamp') ?? new Date().getTime());
 
   function getInitialState() {
@@ -51,6 +49,7 @@
 
   const EVENT_TYPE = {
     BEGIN: 'BEGIN',
+    CROSSWALK: 'CROSSWALK',
     END: 'END',
     LANE_CHANGE_WITHOUT_SIGNAL: 'LANE_CHANGE_WITHOUT_SIGNAL',
     LOOK_BAD: 'LOOK_BAD',
@@ -62,6 +61,7 @@
     PLATE_ME: 'PLATE_ME',
     PLATE_NH: 'PLATE_NH',
     RED_LIGHT_RUN: 'RED_LIGHT_RUN',
+    SPACE: 'SPACE',
     SPEEDER: 'SPEEDER',
     STOP_SIGN_RUN: 'STOP_SIGN_RUN',
     TAG: 'TAG',
@@ -78,6 +78,8 @@
     { label: 'No signal turn', name: 'Driver turns without signal ', type: EVENT_TYPE.TURN_WITHOUT_SIGNAL },
     { label: 'Stop sign', name: 'Driver runs stop sign ', type: EVENT_TYPE.STOP_SIGN_RUN },
     { label: 'Red light', name: 'Driver runs red light ', type: EVENT_TYPE.RED_LIGHT_RUN },
+    { label: 'Space', name: 'Driver wastes space', type: EVENT_TYPE.SPACE },
+    { label: 'Crosswalk', name: 'Driver blocks crosswalk', type: EVENT_TYPE.CROSSWALK },
     { label: 'Wrong park', name: 'Car parked on wrong side of road ', type: EVENT_TYPE.PARKED_ON_WRONG_SIDE },
     { label: 'Speeder', name: 'Speeding driver ', type: EVENT_TYPE.SPEEDER },
     { label: 'Block turn', name: 'Driver blocks turn area ', type: EVENT_TYPE.TURN_AREA_BLOCK },    
@@ -93,28 +95,8 @@
     const begin = getDisplayText(copy.find(m => m.type === EVENT_TYPE.BEGIN)?.mark);
     const end = getDisplayText(copy.find(m => m.type === EVENT_TYPE.END)?.mark);
 
-    const beginDuration = Duration.fromISOTime(begin);
-
     copy.forEach((m) => {
       m.mark = getDisplayText(m.mark);
-
-      let isOutOfBounds = false;
-      if (m.mark < begin || m.mark > end) {
-        isOutOfBounds = true;
-      }
-
-      const duration = Duration.fromISOTime(m.mark);
-      const trimmedStart = duration.minus(beginDuration);
-      let trimmedStartProcessed = trimmedStart.toFormat('hh:mm:ss');
-
-      if (trimmedStartProcessed.includes('-')) {
-        trimmedStartProcessed = '-' + trimmedStartProcessed.replace(/-/g, '');
-      }
-
-      m.trimmedStart = trimmedStartProcessed;
-      if (![EVENT_TYPE.PLATE, EVENT_TYPE.PLATE_MA, EVENT_TYPE.PLATE_ME, EVENT_TYPE.PLATE_NH, EVENT_TYPE.TAG].includes(m.type)) {
-        m.trimmedEnd = m.trimmedStart;
-      }
 
       switch(m.type) {
         case EVENT_TYPE.BEGIN: {
@@ -142,7 +124,7 @@
           break;
         }
         default: {
-          m.name = isOutOfBounds ? `SKIP OOB ${m.name.trim()}` : m.name.trim();
+          m.name = m.name.trim();
         }
       }
 
