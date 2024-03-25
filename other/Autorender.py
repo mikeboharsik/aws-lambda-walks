@@ -28,7 +28,7 @@ def get_blend_dir():
 
 def get_output_dir():
     blend_dir = get_blend_dir()
-    return abspath(blend_dir + '\\..')
+    return abspath(blend_dir + '\\..\\output')
 
 def get_date():
     return os.path.basename(get_blend_dir())
