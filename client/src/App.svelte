@@ -14,7 +14,7 @@
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
-	let renderRotues = false;
+	let renderRoutes = false;
 
 	onMount(async() => {
 		function getApiOptions() {
@@ -76,7 +76,7 @@
 	}
 
 	if (localStorage.getItem('access_token') && altKey && shiftKey && code === 'KeyF') {
-		renderRotues = !renderRotues;
+		renderRoutes = !renderRoutes;
 	}
 }} />
 
@@ -85,7 +85,7 @@
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
 		{:else}
-			{#if renderRotues}
+			{#if renderRoutes}
 				<Routes />
 			{:else}
 				<Calendar />
