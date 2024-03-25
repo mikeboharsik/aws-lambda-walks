@@ -144,7 +144,7 @@
   }
 
   function download(filename) {
-    const json = JSON.stringify(getExportContent());
+    const json = JSON.stringify(getExportContent(), null, '  ');
     const blob = new Blob([json], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
