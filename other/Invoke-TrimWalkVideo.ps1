@@ -1,7 +1,8 @@
 Param(
 	[string] $Route,
 	[hashtable] $Videos,
-	[hashtable] $Towns,
+
+	[switch] $SkipTimestampConversion,
 
 	[switch] $WhatIf
 )
@@ -75,12 +76,8 @@ if ($Videos) {
 	$data.videos = $Videos
 }
 
-if (!$data.towns -and !$Towns) {
-	[hashtable] $Towns = Read-Host "Towns"
-}
-if ($Towns) {
-	$data.towns = $Towns
-}
+$citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
+$data.towns = @{ MA = ConvertFrom-Json (& node $citiesScriptPath $Route) }
 
 if (Test-Path 'exif.json') {
 	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
@@ -92,6 +89,13 @@ if (Test-Path 'exif.json') {
 $json = ConvertTo-Json $data -Depth 10
 
 $outputName = "$($dateStr)_trimmed.mp4"
+
+if ($WhatIf) {
+	Write-Host "Generated JSON:`n$json"
+	Write-Host "Output name: $outputName"
+
+	exit 0
+}
 
 $ffmpegArgs = @(
 	'-ss', $data.start
@@ -133,3 +137,9 @@ if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
 }
 
 Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
+
+if ($SkipTimestampConversion) {
+	Write-Host "Skipping timestamp conversion"
+} else {
+	& "$PSScriptRoot\Invoke-ConvertRawWalkTimestamps.ps1"	-Date $dateStr
+}
