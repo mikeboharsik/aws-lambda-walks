@@ -77,7 +77,7 @@ if ($Videos) {
 }
 
 $citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
-$data.towns = @{ MA = ConvertFrom-Json (& node $citiesScriptPath $Route) }
+$data.towns = @{ MA = [string[]](ConvertFrom-Json (& node $citiesScriptPath $Route)) }
 
 if (Test-Path 'exif.json') {
 	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
@@ -141,5 +141,5 @@ Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
 if ($SkipTimestampConversion) {
 	Write-Host "Skipping timestamp conversion"
 } else {
-	& "$PSScriptRoot\Invoke-ConvertRawWalkTimestamps.ps1"	-Date $dateStr
+	& "$PSScriptRoot\..\Invoke-ConvertRawWalkTimestamps.ps1"	-Date $dateStr
 }
