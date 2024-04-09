@@ -3,6 +3,7 @@ Param(
 	[hashtable] $Videos,
 
 	[switch] $SkipTimestampConversion,
+	[switch] $SkipCitiesPopulation,
 
 	[switch] $WhatIf
 )
@@ -52,6 +53,7 @@ if (!$data.route -and !$Route) {
 if ($Route) {
 	$data.route = $Route
 }
+$Route = $data.route
 
 if (!$data.videos -and !$Videos) {
 	$Videos = @{}
@@ -76,8 +78,10 @@ if ($Videos) {
 	$data.videos = $Videos
 }
 
-$citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
-$data.towns = @{ MA = [string[]](ConvertFrom-Json (& node $citiesScriptPath $Route)) }
+if (!$SkipCitiesPopulation) {
+	$citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
+	$data.towns = @{ MA = ConvertFrom-Json (& node $citiesScriptPath $Route) }
+}
 
 if (Test-Path 'exif.json') {
 	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
