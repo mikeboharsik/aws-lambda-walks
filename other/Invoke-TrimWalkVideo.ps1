@@ -80,7 +80,7 @@ if ($Videos) {
 
 if (!$SkipCitiesPopulation) {
 	$citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
-	$data.towns = @{ MA = ConvertFrom-Json (& node $citiesScriptPath $Route) }
+	$data.towns = @{ MA = [string[]](ConvertFrom-Json (& node $citiesScriptPath $Route)) }
 }
 
 if (Test-Path 'exif.json') {
