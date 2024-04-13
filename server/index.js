@@ -61,17 +61,13 @@ function logResult(result) {
 
 function makeFeatureSafeForUnauthed(feature) {
 	if (feature.properties.isPrivate) {
+		const midpoint = feature.geometry.coordinates[Math.floor(feature.geometry.coordinates.length / 2)];
+
 		feature.geometry = {
 			type: "LineString",
 			coordinates: [
-				[
-					-71.10051625598281,
-					42.49499639596356
-				],
-				[
-					-71.10051625598281,
-					42.49499639596356
-				]
+				midpoint,
+				midpoint
 			]
 		};
 	}
