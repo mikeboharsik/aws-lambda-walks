@@ -74,17 +74,17 @@
     { label: 'Plate NH', type: EVENT_TYPE.PLATE_NH },
     { label: 'Plate ME', type: EVENT_TYPE.PLATE_ME },
     { label: 'Plate', type: EVENT_TYPE.PLATE },
-    { label: 'Lane change', name: 'Driver changes lane without signal ', type: EVENT_TYPE.LANE_CHANGE_WITHOUT_SIGNAL },
-    { label: 'No signal turn', name: 'Driver turns without signal ', type: EVENT_TYPE.TURN_WITHOUT_SIGNAL },
-    { label: 'Stop sign', name: 'Driver runs stop sign ', type: EVENT_TYPE.STOP_SIGN_RUN },
-    { label: 'Red light', name: 'Driver runs red light ', type: EVENT_TYPE.RED_LIGHT_RUN },
+    { label: 'Lane change', name: 'Driver changes lane without signal', type: EVENT_TYPE.LANE_CHANGE_WITHOUT_SIGNAL },
+    { label: 'No signal turn', name: 'Driver turns without signal', type: EVENT_TYPE.TURN_WITHOUT_SIGNAL },
+    { label: 'Stop sign', name: 'Driver runs stop sign', type: EVENT_TYPE.STOP_SIGN_RUN },
+    { label: 'Red light', name: 'Driver runs red light', type: EVENT_TYPE.RED_LIGHT_RUN },
     { label: 'Space', name: 'Driver wastes space', type: EVENT_TYPE.SPACE },
     { label: 'Crosswalk', name: 'Driver blocks crosswalk', type: EVENT_TYPE.CROSSWALK },
-    { label: 'Wrong park', name: 'Car parked on wrong side of road ', type: EVENT_TYPE.PARKED_ON_WRONG_SIDE },
-    { label: 'Speeder', name: 'Speeding driver ', type: EVENT_TYPE.SPEEDER },
-    { label: 'Block turn', name: 'Driver blocks turn area ', type: EVENT_TYPE.TURN_AREA_BLOCK },    
-    { label: 'Look good', name: 'Good driver looks before turning ', type: EVENT_TYPE.LOOK_GOOD },
-    { label: 'Look bad', name: 'Bad driver does not look before turning ', type: EVENT_TYPE.LOOK_BAD },
+    { label: 'Wrong park', name: 'Car parked on wrong side of road', type: EVENT_TYPE.PARKED_ON_WRONG_SIDE },
+    { label: 'Speeder', name: 'Speeding driver', type: EVENT_TYPE.SPEEDER },
+    { label: 'Block turn', name: 'Driver blocks turn area', type: EVENT_TYPE.TURN_AREA_BLOCK },    
+    { label: 'Look good', name: 'Good driver looks before turning', type: EVENT_TYPE.LOOK_GOOD },
+    { label: 'Look bad', name: 'Bad driver does not look before turning', type: EVENT_TYPE.LOOK_BAD },
     { label: 'Tag', type: EVENT_TYPE.TAG },
     { label: 'Misc', name: '', type: EVENT_TYPE.MISC },
   ];
@@ -209,7 +209,7 @@
           break;
         }
         default: {
-          newMark.name = button.name;
+          newMark.name = button.name + ' ';
         }
       }
 
