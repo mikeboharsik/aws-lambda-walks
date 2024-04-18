@@ -3,6 +3,7 @@ Param(
 	[string] $Date,
 	[hashtable] $SourceJson,
 
+	[switch] $PrintSegments,
 	[switch] $ReturnData,
 	[switch] $WhatIf
 )
@@ -10,6 +11,11 @@ Param(
 $ErrorActionPreference = "Stop"
 
 $zeroDuration = [TimeSpan]"00:00:00"
+
+$year, $month, $date = $Date -Split '-'
+
+$pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
+$filePath = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$year-$month-$date.json"
 
 function Copy-Array($array) {
 	$newArray = @()
@@ -24,11 +30,6 @@ function Copy-Array($array) {
 }
 
 function Get-Json {
-	$year, $month, $date = $Date -Split '-'
-
-	$pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
-	$filePath = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$year-$month-$date.json"
-
 	if ($SourceJson) {
 		$json = $SourceJson
 	} else {
@@ -42,10 +43,10 @@ function Get-Json {
 function Get-SegmentsFromExif {
 	param($exif)
 
-	[hashtable[]]$segments = $exif
+	[ordered[]]$segments = $exif
 		| Select-Object -Unique CreateDate -ExpandProperty CreateDate
 		| ForEach-Object {
-			return [hashtable]@{
+			return [ordered]@{
 				createDate = $_
 				startDate = [DateTime]($_ -Replace '(\d{4}):(\d{2}):(\d{2})','$1-$2-$3')
 			}
@@ -64,15 +65,15 @@ function Get-SegmentsFromExif {
 }
 
 function Get-CalculatedSegmentData {
-	param($segments)
+	param([ordered[]]$segments)
 
 	$jsonStart = [TimeSpan]$json.start
 
 	for ($i = 0; $i -lt $segments.Length; $i++) {
 		$cur = $segments[$i]
 		if ($i -eq 0) {
-			$cur.effectiveTrimmedStart = $zeroDuration
-			$cur.effectiveTrimmedEnd = $cur.duration - $jsonStart
+			$cur.trimmedStart = $zeroDuration
+			$cur.trimmedEnd = $cur.duration - $jsonStart
 			$cur.totalGap = $zeroDuration
 		} else {
 			$last = $segments[$i - 1]
@@ -100,8 +101,8 @@ function Get-CalculatedSegmentData {
 			$cur.totalDuration = $totalDuration - $jsonStart
 			$cur.totalDurationWithoutGaps = $totalDurationWithoutGaps - $jsonStart
 	
-			$cur.effectiveTrimmedStart = $last.effectiveTrimmedEnd + $cur.gapFromPrevious
-			$cur.effectiveTrimmedEnd = $cur.effectiveTrimmedStart + $cur.duration - $cur.gapFromPrevious
+			$cur.trimmedStart = $last.trimmedEnd
+			$cur.trimmedEnd = $cur.trimmedStart + $cur.duration
 		}
 	}
 
@@ -124,8 +125,8 @@ function Print-Nice {
 
 	foreach ($segment in $copy) {
 		$segment.duration = $segment.duration.ToString()
-		$segment.effectiveTrimmedStart = $segment.effectiveTrimmedStart.ToString()
-		$segment.effectiveTrimmedEnd = $segment.effectiveTrimmedEnd.ToString()
+		$segment.trimmedStart = $segment.trimmedStart.ToString()
+		$segment.trimmedEnd = $segment.trimmedEnd.ToString()
 		$segment.Remove('createDate')
 	}
 	
@@ -151,7 +152,10 @@ function Print-Segments {
 $json = Get-json
 $jsonStart = [TimeSpan]$json.start
 $segments = Get-Segments $json
-# Print-Segments $segments
+
+if ($PrintSegments) {
+	Print-Segments $segments
+}
 
 foreach ($event in $json.events) {
 	if (!$event.mark) { continue }
@@ -163,10 +167,10 @@ foreach ($event in $json.events) {
 
 	$mark = [TimeSpan]$event.mark
 
-	$targetSegment = $segments | Where-Object { $mark -ge $_.effectiveTrimmedStart -and $mark -lt $_.effectiveTrimmedEnd }
+	$targetSegment = $segments | Where-Object { $mark -ge $_.trimmedStart -and $mark -lt $_.trimmedEnd }
 	if (!$targetSegment) {
-		Write-Error "Failed to find segment for event"
-		exit 1
+		# Write-Error "Failed to find segment for event [$($event | ConvertTo-Json)]"
+		continue
 	}
 
 	$adjustedStart = $mark - $jsonStart - $targetSegment.totalGap
@@ -180,12 +184,15 @@ foreach ($event in $json.events) {
 }
 
 if ($WhatIf) {
-	$json.Remove("exif")
 	return $json | ConvertTo-Json -Depth 10
 }
 
 if ($ReturnData) {
 	return $json
 } else {
-	$json | ConvertTo-Json -Depth 10 | Set-Content $filePath $serialized
+	try {
+		$json | ConvertTo-Json -Depth 10 | Set-Content $filePath
+	} catch {
+		Write-Error "Failed to write to file [$filePath]: $_"
+	}
 }
