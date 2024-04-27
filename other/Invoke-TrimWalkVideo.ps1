@@ -37,7 +37,7 @@ foreach ($path in $possibleDataPaths) {
 }
 
 if (!$dataPath) {
-	Write-Error "Failed to find data path"
+	Write-Error "Failed to find data path from possible [$($possibleDataPaths -Join ', ')]"
 	exit 1
 }
 
