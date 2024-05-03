@@ -45,9 +45,6 @@ try {
 		gsutil cp $outputFilename $remoteArchiveDir
 		Write-Host "Done."
 	}
-
-	Add-Type -AssemblyName PresentationCore,PresentationFramework
-	[System.Windows.MessageBox]::Show("Backup has completed", "Invoke-StitchLocalGoPro.ps1", 0) | Out-Null
 } finally {
 	Remove-Item "files.txt" -ErrorAction SilentlyContinue
 }
