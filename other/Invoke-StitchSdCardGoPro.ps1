@@ -81,7 +81,7 @@ try {
 	$files = Get-ChildItem "$outputFolderPath\*.MP4"
 		| Sort-Object { $_.Name }
 
-	exiftool.exe -api largefilesupport=1 -json $files > exif.json
+	exiftool.exe -api largefilesupport=1 -CreateDate -Duration -json $files > exif.json
 
 	$initialFile = $files[0]
 
@@ -102,6 +102,9 @@ try {
 			(New-Object -ComObject Shell.Application).NameSpace(17).ParseName($SdCardPath).InvokeVerb("Eject")
 		}
 	}
+
+	Add-Type -AssemblyName PresentationCore,PresentationFramework
+	[System.Windows.MessageBox]::Show("Backup has completed", "Invoke-StitchSdCardGoPro.ps1", 0) | Out-Null
 } finally {
 	Set-Location $originalPath
 }
