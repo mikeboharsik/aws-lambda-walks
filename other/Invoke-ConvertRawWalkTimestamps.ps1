@@ -169,7 +169,7 @@ foreach ($event in $json.events) {
 
 	$targetSegment = $segments | Where-Object { $mark -ge $_.trimmedStart -and $mark -lt $_.trimmedEnd }
 	if (!$targetSegment) {
-		# Write-Error "Failed to find segment for event [$($event | ConvertTo-Json)]"
+		Write-Warning "Failed to find segment for event [$($event | ConvertTo-Json)]"
 		continue
 	}
 
@@ -178,7 +178,7 @@ foreach ($event in $json.events) {
 
 	$event['trimmedStart'] = $adjustedStart
 
-	if ($event.name -ne $null) {
+	if ($null -ne $event.name) {
 		$event['trimmedEnd'] = $adjustedStart
 	}
 }
