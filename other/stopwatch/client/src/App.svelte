@@ -97,15 +97,15 @@
 
     copy.forEach((m) => {
       m.mark = getDisplayText(m.mark);
+      if (m.name) {
+        m.name = m.name.trim();
+      }
 
       switch(m.type) {
-        case EVENT_TYPE.BEGIN: {
-          break;
-        }
-        case EVENT_TYPE.END: {
-          break;
-        }
-        case EVENT_TYPE.PLATE: {
+        case EVENT_TYPE.BEGIN:
+        case EVENT_TYPE.END:
+        case EVENT_TYPE.PLATE:
+        case EVENT_TYPE.TAG: {
           break;
         }
         case EVENT_TYPE.PLATE_MA: {
@@ -120,11 +120,11 @@
           m.plate = `NH ${m.plate}`;
           break;
         }
-        case EVENT_TYPE.TAG: {
+        case EVENT_TYPE.MISC: {
           break;
         }
         default: {
-          m.name = m.name.trim();
+          m.plate = '';
         }
       }
 
@@ -313,7 +313,7 @@
     {/each}
   </p>
 
-  <ol reversed style={'text-align: left; font-size: 16px'}>
+  <ol reversed style={'text-align: left; font-size: 16px; max-height: 145px; overflow-y: scroll'}>
     {#each state.marks.toReversed() as mark, idx}
       {@const itemStyle = getItemStyle(mark, idx)}
       <li style={itemStyle}>
