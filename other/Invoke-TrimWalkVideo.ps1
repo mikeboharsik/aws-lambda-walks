@@ -4,6 +4,7 @@ Param(
 
 	[switch] $SkipTimestampConversion,
 	[switch] $SkipCitiesPopulation,
+	[switch] $SkipJson,
 
 	[switch] $WhatIf
 )
@@ -140,10 +141,12 @@ if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
 	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear\$clipMonth"
 }
 
-Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
+if (!$SkipJson) {
+	Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
 
-if ($SkipTimestampConversion) {
-	Write-Host "Skipping timestamp conversion"
-} else {
-	& "$PSScriptRoot\..\Invoke-ConvertRawWalkTimestamps.ps1"	-Date $dateStr
+	if ($SkipTimestampConversion) {
+		Write-Host "Skipping timestamp conversion"
+	} else {
+		& "$PSScriptRoot\..\Invoke-ConvertRawWalkTimestamps.ps1" -Date $dateStr
+	}
 }
