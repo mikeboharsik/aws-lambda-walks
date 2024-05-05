@@ -98,13 +98,29 @@ $outputName = "$($dateStr)_trimmed.mp4"
 if ($WhatIf) {
 	Write-Host "Generated JSON:`n$json"
 	Write-Host "Output name: $outputName"
-
-	exit 0
 }
+
+$totalGap = [TimeSpan]"00:00:00"
+$data.exif | ForEach-Object { $i = 0 } {
+	if ($i -gt 0) {
+		$last = $data.exif[$i-1]
+		$created = [DateTime]($_.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
+		$lastCreated = [DateTime]($last.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
+		$lastDuration = [TimeSpan]$last.Duration
+		$gap = $created - ($lastCreated + $lastDuration)
+		$totalGap += $gap
+	}
+	$i++
+}
+Write-Host "`Total gap between segments = $totalGap"
+
+Write-Host "Unadjusted end: $($data.start)"
+$adjustedEnd = ([TimeSpan]$data.end - $totalGap).ToString().Substring(0, 12)
+Write-Host "Adjusted end: $adjustedEnd"
 
 $ffmpegArgs = @(
 	'-ss', $data.start
-	'-to', $data.end
+	'-to', $adjustedEnd
 	'-i', $items[0].FullName
 	'-c', 'copy'
 	(Get-Location).Path + "\" + $outputName
@@ -119,6 +135,10 @@ if (!$WhatIf) {
 	if (!$?) {
 		exit 1
 	}
+}
+
+if ($WhatIf) {
+	exit 0
 }
 
 $clipsDir = Resolve-Path "..\clips"
