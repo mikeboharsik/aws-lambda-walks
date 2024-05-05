@@ -69,41 +69,26 @@ function Get-CalculatedSegmentData {
 
 	$jsonStart = [TimeSpan]$json.start
 
-	for ($i = 0; $i -lt $segments.Length; $i++) {
-		$cur = $segments[$i]
-		if ($i -eq 0) {
-			$cur.trimmedStart = $zeroDuration
-			$cur.trimmedEnd = $cur.duration - $jsonStart
-			$cur.totalGap = $zeroDuration
+	$segments | ForEach-Object { $idx = 0 } {
+		$_.startDate = [DateTime]($_.createDate -Replace '(\d{4}):(\d{2}):(\d{2})','$1-$2-$3')
+		$_.endDate = $_.startDate + $_.duration
+		if ($idx -eq 0) {
+			$_.trimmedStart = $zeroDuration - $jsonStart
+			$_.trimmedEnd = $_.duration - $jsonStart
+			$_.gapFromPrevious = $zeroDuration
+			$_.sumOfPreviousGaps = $zeroDuration
 		} else {
-			$last = $segments[$i - 1]
+			$last = $segments[$idx - 1]
 
-			$cur.gapFromPrevious = $cur.startDate - ($last.startDate + $last.duration)
-	
-			$totalGap = $zeroDuration
-			for ($j = 1; $j -le $i; $j++) {
-				$t = $segments[$j]
-				$totalGap += $t.gapFromPrevious
+			$_.gapFromPrevious = $_.startDate - $last.endDate
+
+			$_.sumOfPreviousGaps = $_.gapFromPrevious
+			for ($i = $idx - 1; $i -ge 0; $i--) {
+				$_.sumOfPreviousGaps += $segments[$i].gapFromPrevious
 			}
-			$cur.totalGap = $totalGap
-	
-			$totalDuration = $zeroDuration
-			$totalDurationWithoutGaps = $zeroDuration
-			for ($j = 0; $j -le $i; $j++) {
-				$t = $segments[$j]
-				$totalDuration += [TimeSpan]$t.duration
-				$totalDurationWithoutGaps += [TimeSpan]$t.duration
-	
-				if ($t.gapFromPrevious) {
-					$totalDuration -= $t.gapFromPrevious
-				}
-			}
-			$cur.totalDuration = $totalDuration - $jsonStart
-			$cur.totalDurationWithoutGaps = $totalDurationWithoutGaps - $jsonStart
-	
-			$cur.trimmedStart = $last.trimmedEnd
-			$cur.trimmedEnd = $cur.trimmedStart + $cur.duration
 		}
+
+		$idx++
 	}
 
 	return $segments
@@ -139,7 +124,7 @@ function Print-Segments {
 	Write-Host ($segments | ForEach-Object {
 		$n = @{}
 		foreach ($key in $_.Keys) {
-			if ($_[$key].GetType() -eq [TimeSpan]) {
+			if ($_[$key] -and $_[$key].GetType() -eq [TimeSpan]) {
 				$n[$key] = $_[$key].ToString()
 			} else {
 				$n[$key] = $_[$key]
@@ -157,6 +142,8 @@ if ($PrintSegments) {
 	Print-Segments $segments
 }
 
+$startDate = $segments[0].startDate
+
 foreach ($event in $json.events) {
 	if (!$event.mark) { continue }
 
@@ -165,21 +152,24 @@ foreach ($event in $json.events) {
 		continue
 	}
 
-	$mark = [TimeSpan]$event.mark
+	$markDate = $startDate + [TimeSpan]$event.mark
 
-	$targetSegment = $segments | Where-Object { $mark -ge $_.trimmedStart -and $mark -lt $_.trimmedEnd }
+	$targetSegment = $segments
+		| Where-Object {
+			$markDate -ge $_.startDate -and $markDate -le $_.endDate
+		}
 	if (!$targetSegment) {
-		Write-Warning "Failed to find segment for event [$($event | ConvertTo-Json)]"
+		Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
 		continue
 	}
 
-	$adjustedStart = $mark - $jsonStart - $targetSegment.totalGap
-	$adjustedStart = $adjustedStart.ToString() -Replace '([\d]{3})\d+','$1'
+	$mark = [TimeSpan]$event.mark
+	$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
+	$trimmedEnd = $trimmedStart
 
-	$event['trimmedStart'] = $adjustedStart
-
+	$event['trimmedStart'] = $trimmedStart.ToString().Substring(0, 12)
 	if ($null -ne $event.name) {
-		$event['trimmedEnd'] = $adjustedStart
+		$event['trimmedEnd'] = $trimmedEnd.ToString().Substring(0, 12)
 	}
 }
 
