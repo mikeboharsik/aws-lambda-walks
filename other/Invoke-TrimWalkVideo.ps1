@@ -113,8 +113,11 @@ $data.exif | ForEach-Object { $i = 0 } {
 	$i++
 }
 Write-Host "`Total gap between segments = $totalGap"
+if ($totalGap -lt [TimeSpan]"00:00:00") {
+	$totalGap = [TimeSpan]"00:00:00"
+}
 
-Write-Host "Unadjusted end: $($data.start)"
+Write-Host "Unadjusted end: $($data.end)"
 $adjustedEnd = ([TimeSpan]$data.end - $totalGap).ToString().Substring(0, 12)
 Write-Host "Adjusted end: $adjustedEnd"
 
