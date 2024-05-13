@@ -136,13 +136,13 @@ function Print-Segments {
 
 $json = Get-json
 $jsonStart = [TimeSpan]$json.start
-$segments = Get-Segments $json
+[hashtable[]]$segments = Get-Segments $json
 
 if ($PrintSegments) {
 	Print-Segments $segments
 }
 
-$startDate = $segments[0].startDate
+[DateTime]$startDate = $segments[0].startDate
 
 foreach ($event in $json.events) {
 	if (!$event.mark) { continue }
@@ -152,7 +152,7 @@ foreach ($event in $json.events) {
 		continue
 	}
 
-	$markDate = $startDate + [TimeSpan]$event.mark
+	[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
 
 	$targetSegment = $segments
 		| Where-Object {
