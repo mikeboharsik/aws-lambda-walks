@@ -95,11 +95,6 @@ $json = ConvertTo-Json $data -Depth 10
 
 $outputName = "$($dateStr)_trimmed.mp4"
 
-if ($WhatIf) {
-	Write-Host "Generated JSON:`n$json"
-	Write-Host "Output name: $outputName"
-}
-
 $totalGap = [TimeSpan]"00:00:00"
 $data.exif | ForEach-Object { $i = 0 } {
 	if ($i -gt 0) {
@@ -132,16 +127,17 @@ $ffmpegArgs = @(
 
 Write-Host "ffmpeg arguments: [$ffmpegArgs]"
 
-if (!$WhatIf) {
+if ($WhatIf) {
+	Write-Host "Generated JSON:`n$json"
+	Write-Host "Output name: $outputName"
+
+	exit 0
+} else {
 	ffmpeg @ffmpegArgs
 
 	if (!$?) {
 		exit 1
 	}
-}
-
-if ($WhatIf) {
-	exit 0
 }
 
 $clipsDir = Resolve-Path "..\clips"
