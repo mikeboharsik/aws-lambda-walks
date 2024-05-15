@@ -152,24 +152,30 @@ foreach ($event in $json.events) {
 		continue
 	}
 
-	[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
+	try {
+		[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
 
-	$targetSegment = $segments
-		| Where-Object {
-			$markDate -ge $_.startDate -and $markDate -le $_.endDate
+		$targetSegment = $segments
+			| Where-Object {
+				$markDate -ge $_.startDate -and $markDate -le $_.endDate
+			}
+		if (!$targetSegment) {
+			Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
+			continue
 		}
-	if (!$targetSegment) {
-		Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
-		continue
-	}
 
-	$mark = [TimeSpan]$event.mark
-	$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
-	$trimmedEnd = $trimmedStart
+		$mark = [TimeSpan]$event.mark
+		Write-Verbose "`$mark = $mark"
+		$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
+		Write-Verbose "`$trimmedStart = $trimmedStart"
+		$trimmedEnd = $trimmedStart
 
-	$event['trimmedStart'] = $trimmedStart.ToString().Substring(0, 12)
-	if ($null -ne $event.name) {
-		$event['trimmedEnd'] = $trimmedEnd.ToString().Substring(0, 12)
+		$event['trimmedStart'] = $trimmedStart.ToString() -Replace '(\d{3})\d{4}','$1'
+		if ($null -ne $event.name) {
+			$event['trimmedEnd'] = $trimmedEnd.ToString() -Replace '(\d{3})\d{4}','$1'
+		}
+	} catch {
+		Write-Error "Error processing event $($event | ConvertTo-Json -Depth 10)`n$($_)"
 	}
 }
 
