@@ -21,14 +21,19 @@ if ($items[0].Name -NotMatch '.*.mp4') {
 	exit 1
 }
 
-if ($items[0].Name -Match '\d{4}-\d{2}-\d{2}') {
+if ($items[0].Name -Match '(\d{4})-(\d{2})-(\d{2})') {
 	$dateStr = $Matches[0]
 } else {
 	Write-Error "Failed to match date from filename [$($items[0].Name)]"
 	exit 1
 }
 
-$possibleDataPaths = @("events_$dateStr.json", "..\events_$dateStr.json")
+$clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
+$pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
+$metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
+$expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json"
+
+$possibleDataPaths = @($expectedTargetFilePath)
 
 foreach ($path in $possibleDataPaths) {
 	if (Test-Path $path) {
@@ -38,7 +43,7 @@ foreach ($path in $possibleDataPaths) {
 }
 
 if (!$dataPath) {
-	Write-Error "Failed to find data path from possible [$($possibleDataPaths -Join ', ')]"
+	Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')]"
 	exit 1
 }
 
@@ -106,6 +111,7 @@ $data.exif | ForEach-Object { $i = 0 } {
 		$created = [DateTime]($_.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
 		$lastCreated = [DateTime]($last.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
 		$lastDuration = [TimeSpan]$last.Duration
+
 		$gap = $created - ($lastCreated + $lastDuration)
 		$totalGap += $gap
 	}
@@ -116,12 +122,12 @@ if ($totalGap -lt [TimeSpan]"00:00:00") {
 	$totalGap = [TimeSpan]"00:00:00"
 }
 
-Write-Host "Unadjusted end: $($data.end)"
-$adjustedEnd = ([TimeSpan]$data.end - $totalGap).ToString().Substring(0, 12)
+Write-Host "Unadjusted end: $($data.endMark)"
+$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
 Write-Host "Adjusted end: $adjustedEnd"
 
 $ffmpegArgs = @(
-	'-ss', $data.start
+	'-ss', $data.startMark
 	'-to', $adjustedEnd
 	'-i', $items[0].FullName
 	'-c', 'copy'
@@ -152,20 +158,8 @@ if (!(Test-Path $dateDir)) {
 Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
-$clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
-$pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
-$metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
-
-if (!(Test-Path "$metaArchiveDir\$clipYear")) {
-	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear"
-}
-
-if (!(Test-Path "$metaArchiveDir\$clipYear\$clipMonth")) {
-	New-Item -ItemType Directory -Path "$metaArchiveDir\$clipYear\$clipMonth"
-}
-
 if (!$SkipJson) {
-	Set-Content "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json" $json
+	Set-Content $expectedTargetFilePath $json
 
 	if ($SkipTimestampConversion) {
 		Write-Host "Skipping timestamp conversion"
