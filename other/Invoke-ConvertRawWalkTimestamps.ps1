@@ -67,7 +67,7 @@ function Get-SegmentsFromExif {
 function Get-CalculatedSegmentData {
 	param([ordered[]]$segments)
 
-	$jsonStart = [TimeSpan]$json.start
+	$jsonStart = [TimeSpan]$json.startMark
 
 	$segments | ForEach-Object { $idx = 0 } {
 		$_.startDate = [DateTime]($_.createDate -Replace '(\d{4}):(\d{2}):(\d{2})','$1-$2-$3')
@@ -135,7 +135,7 @@ function Print-Segments {
 }
 
 $json = Get-json
-$jsonStart = [TimeSpan]$json.start
+$jsonStart = [TimeSpan]$json.startMark
 [hashtable[]]$segments = Get-Segments $json
 
 if ($PrintSegments) {
