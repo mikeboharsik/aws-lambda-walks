@@ -10,6 +10,7 @@
     return {
       running: false,
       marks: [],
+      coords: [],
       elapsed: 0
     };
   }
@@ -18,10 +19,22 @@
     state.elapsed += (new Date().getTime() - lastTimestamp);
   }
 
+  function geoSuccess(position) {
+    if (state.running) {
+      const latLon = { t: position.timestamp, lat: position.coords.latitude, lon: position.coords.longitude };
+      state.coords.push(latLon);
+    }
+  }
+	function geoFailure(error) { console.error(error) }
+	const geoOptions = { enableHighAccuracy: true, maximumAge: 0, timeout: Infinity };
+
+  navigator.geolocation.watchPosition(geoSuccess, geoFailure, geoOptions);
+
   let lastMsSinceInit = 0;
 
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
+  $: isUploading = false;
 
   function getDisplayText(timestamp, withoutMillseconds = false) {
     if (timestamp === undefined) {
@@ -87,13 +100,19 @@
     { label: 'Look bad', name: 'Bad driver does not look before turning', type: EVENT_TYPE.LOOK_BAD },
     { label: 'Tag', type: EVENT_TYPE.TAG },
     { label: 'Misc', name: '', type: EVENT_TYPE.MISC },
-  ];
+  ].toReversed();
 
   function getExportContent() {
     const copy = JSON.parse(JSON.stringify(state.marks));
 
-    const begin = getDisplayText(copy.find(m => m.type === EVENT_TYPE.BEGIN)?.mark);
-    const end = getDisplayText(copy.find(m => m.type === EVENT_TYPE.END)?.mark);
+    const beginEvent = copy.find(m => m.type === EVENT_TYPE.BEGIN);
+    const endEvent = copy.find(m => m.type === EVENT_TYPE.END);
+
+    const startMark = getDisplayText(beginEvent?.mark);
+    const endMark = getDisplayText(endEvent?.mark);
+
+    const startTime = beginEvent?.datetime;
+    const endTime = endEvent?.datetime;
 
     copy.forEach((m) => {
       m.mark = getDisplayText(m.mark);
@@ -136,21 +155,22 @@
 
     return {
       date: new Date().toISOString().slice(0, 10),
-      start: begin,
-      end,
+      startMark,
+      endMark,
       route: '',
-      events
+      events,
+      coords: state.coords,
+      startTime,
+      endTime,
     };
   }
 
-  function download(filename) {
-    const json = JSON.stringify(getExportContent(), null, '  ');
-    const blob = new Blob([json], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
+  function backup() {
+    const maxBackupCount = 5;
+    for (let i = maxBackupCount - 1; i >= 0; i--) {
+      localStorage.setItem(`Backup_${i}`, localStorage.getItem(`Backup_${i-1}`));
+    }
+    localStorage.setItem('Backup_0', JSON.stringify(state));
   }
 
   function updateStorage(ignoreRunning = false) {
@@ -165,15 +185,23 @@
     updateStorage(true);
   }
 
-  function handleExportClick(e) {
+  async function handleUploadClick(e) {
     if (e.ctrlKey) {
       console.log(JSON.stringify(getExportContent(), null, '  '));
     } else {
-      download(`events_${new Date().toISOString().slice(0, 10)}.json`);
+      try {
+        isUploading = true;
+        await fetch('https://mike-desktop/events', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(getExportContent()) });
+      } catch (e) {
+        alert(`Encountered an error during upload: ${e.message}`);
+      } finally {
+        isUploading = false;
+      }
     }
   }
 
   function resetStorage() {
+    state.coords = [];
     state.marks = [];
     state.elapsed = 0;
     state.running = false;
@@ -181,6 +209,7 @@
   }
 
   function handleResetClick() {
+    backup();
     resetStorage();
   }
 
@@ -191,10 +220,9 @@
       const newMark = { id, mark: state.elapsed, type: button.type };
 
       switch (button.type) {
-        case EVENT_TYPE.BEGIN: {
-          break;
-        }
+        case EVENT_TYPE.BEGIN: 
         case EVENT_TYPE.END: {
+          newMark.datetime = new Date().toISOString();
           break;
         }
         case EVENT_TYPE.PLATE:
@@ -291,7 +319,7 @@
 
   <p>
     <button on:click={handleToggleClick}>Toggle</button>
-    <button on:click={handleExportClick} disabled={!state.marks.length}>Export</button>
+    <button on:click={handleUploadClick} disabled={!state.marks.length || isUploading}>Upload</button>
     <button on:click={handleResetClick}>Reset</button>
   </p>
   <p>
@@ -313,7 +341,7 @@
     {/each}
   </p>
 
-  <ol reversed style={'text-align: left; font-size: 16px; max-height: 145px; overflow-y: scroll'}>
+  <ol reversed style={'text-align: left; font-size: 16px;'}>
     {#each state.marks.toReversed() as mark, idx}
       {@const itemStyle = getItemStyle(mark, idx)}
       <li style={itemStyle}>
