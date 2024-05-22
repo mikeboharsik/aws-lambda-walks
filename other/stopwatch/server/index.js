@@ -16,7 +16,7 @@ var certificate = fss.readFileSync('./generated/cert.pem', 'utf8');
 var credentials = { key: privateKey, cert: certificate };
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 const port = 443;
 
