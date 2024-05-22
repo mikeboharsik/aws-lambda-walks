@@ -1,6 +1,8 @@
 <script>
   let lastTimestamp = parseInt(localStorage.getItem('lastTimestamp') ?? new Date().getTime());
 
+  let isTestUpload = false;
+
   function getInitialState() {
     const init = localStorage.getItem('state');
     if (init) {
@@ -10,7 +12,6 @@
     return {
       running: false,
       marks: [],
-      coords: [],
       elapsed: 0
     };
   }
@@ -18,17 +19,6 @@
   if (state.running) {
     state.elapsed += (new Date().getTime() - lastTimestamp);
   }
-
-  function geoSuccess(position) {
-    if (state.running) {
-      const latLon = { t: position.timestamp, lat: position.coords.latitude, lon: position.coords.longitude };
-      state.coords.push(latLon);
-    }
-  }
-	function geoFailure(error) { console.error(error) }
-	const geoOptions = { enableHighAccuracy: true, maximumAge: 0, timeout: Infinity };
-
-  navigator.geolocation.watchPosition(geoSuccess, geoFailure, geoOptions);
 
   let lastMsSinceInit = 0;
 
@@ -102,7 +92,7 @@
     { label: 'Misc', name: '', type: EVENT_TYPE.MISC },
   ].toReversed();
 
-  function getExportContent() {
+  async function getExportContent(coords) {
     const copy = JSON.parse(JSON.stringify(state.marks));
 
     const beginEvent = copy.find(m => m.type === EVENT_TYPE.BEGIN);
@@ -155,13 +145,13 @@
 
     return {
       date: new Date().toISOString().slice(0, 10),
+      route: '',
       startMark,
       endMark,
-      route: '',
-      events,
-      coords: state.coords,
       startTime,
       endTime,
+      events,
+      coords,
     };
   }
 
@@ -185,23 +175,50 @@
     updateStorage(true);
   }
 
-  async function handleUploadClick(e) {
-    if (e.ctrlKey) {
-      console.log(JSON.stringify(getExportContent(), null, '  '));
-    } else {
-      try {
-        isUploading = true;
-        await fetch('https://mike-desktop/events', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(getExportContent()) });
-      } catch (e) {
-        alert(`Encountered an error during upload: ${e.message}`);
-      } finally {
-        isUploading = false;
+  async function handleUploadClick(fileInputChangeEvent) {
+    const reader = new FileReader();
+    const [file] = fileInputChangeEvent.target.files;
+    reader.addEventListener('load', async () => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(reader.result, 'text/html');
+      const coords = Array.from(doc.querySelectorAll('trkpt'))
+        .map(e => {
+          const lat = e.attributes['lat'];
+          const lon = e.attributes['lon'];
+          const ele = e.querySelector('ele');
+          const speed = e.querySelector('speed');
+          const sat = e.querySelector('sat');
+          const time = e.querySelector('time');
+
+          return {
+            lat: parseFloat(lat.value),
+            lon: parseFloat(lon.value),
+            ele: parseFloat(ele.textContent),
+            speed: speed ? parseFloat(speed.textContent) : undefined,
+            sat: sat ? parseInt(sat.textContent) : undefined,
+            time: new Date(time.textContent).getTime(),
+          };
+        });
+
+      const exportContent = await getExportContent(coords);
+      if (isTestUpload) {
+        console.log(JSON.stringify(exportContent, null, '  '));
+      } else {
+        try {
+          isUploading = true;
+          await fetch('https://mike-desktop/events', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(exportContent) });
+        } catch (e) {
+          alert(`Encountered an error during upload: ${e.message}`);
+        } finally {
+          isUploading = false;
+        }
       }
-    }
+    });
+
+    reader.readAsText(file);    
   }
 
   function resetStorage() {
-    state.coords = [];
     state.marks = [];
     state.elapsed = 0;
     state.running = false;
@@ -215,7 +232,7 @@
 
   function getAddMarkHandler(button) {
     return () => {
-      const id = crypto.randomUUID().toUpperCase();
+      const id = crypto.randomUUID?.().toUpperCase() ?? Math.floor(Math.random() * 1e10);
 
       const newMark = { id, mark: state.elapsed, type: button.type };
 
@@ -319,7 +336,7 @@
 
   <p>
     <button on:click={handleToggleClick}>Toggle</button>
-    <button on:click={handleUploadClick} disabled={!state.marks.length || isUploading}>Upload</button>
+    <button on:click={e => { isTestUpload = e.ctrlKey; document.querySelector('#gps_file').click(); }} disabled={!state.marks.length || isUploading}>Upload</button>
     <button on:click={handleResetClick}>Reset</button>
   </p>
   <p>
@@ -371,6 +388,8 @@
       </li>
     {/each}
   </ol>
+
+  <input style="display: none" type="file" id="gps_file" on:change={handleUploadClick}>
 </main>
 
 <style>
