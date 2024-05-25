@@ -1,3 +1,4 @@
+[CmdletBinding()]
 Param(
 	[string] $Route,
 	[hashtable] $Videos,
@@ -49,7 +50,7 @@ if (!$dataPath) {
 
 $data = Get-Content $dataPath | ConvertFrom-Json -AsHashtable -Depth 10
 
-if (!$data.route -and !$Route) {
+if (!$data.route -and !$data.coords -and !$Route) {
 	$Route = Read-Host 'Route'
 	if ($Route.ToUpper() -eq 'NEW') {
 		$Route = [System.Guid]::NewGuid().ToString().ToUpper()
@@ -84,13 +85,48 @@ if ($Videos) {
 	$data.videos = $Videos
 }
 
-if (!$SkipCitiesPopulation) {
-	try {
-		$citiesScriptPath = Resolve-Path "$PSScriptRoot\..\..\..\walk-routes\utility\getCitiesForRoute.js" -ErrorAction Stop
-		$data.towns = @{ MA = [string[]](ConvertFrom-Json (& node $citiesScriptPath $Route)) }
-	} catch {
-		$data.towns = @{ MA = [string[]]@() }
+if ($data.coords -and !$SkipCitiesPopulation) {
+	$testPoints =	($data.coords[0].lat, $data.coords[0].lon),
+		($data.coords[[int]($data.coords.Length / 4)].lat, $data.coords[[int]($data.coords.Length / 4)].lon),
+		($data.coords[[int]($data.coords.Length / 4) * 2].lat, $data.coords[[int]($data.coords.Length / 4) * 2].lon),
+		($data.coords[[int]($data.coords.Length / 4) * 3].lat, $data.coords[[int]($data.coords.Length / 4) * 3].lon),
+		($data.coords[$data.coords.Length - 1].lat, $data.coords[$data.coords.Length - 1].lon)
+
+	$results = [System.Collections.Generic.List[string[]]]@()
+
+	$testPoints | ForEach-Object -ThrottleLimit 5 -Parallel {
+			$lat, $lon = $_
+			$url = "https://www.google.com/maps/place/$lat,$lon"
+			$data = Invoke-RestMethod $url
+				| Select-String '([\w ]+), (\w{2}) \d{5}'
+				| Select-Object -ExpandProperty matches
+				| Select-Object -ExpandProperty groups
+				| Select-Object -Skip 1 -ExpandProperty Value
+				| ForEach { $_.Trim() }
+
+			($using:results).Add($data)
+		}
+
+	Write-Verbose "Cities results: $($results | ConvertTo-Json)"
+
+	if (!$data.towns) { $data.towns = @{} }
+
+	foreach ($result in $results) {
+		$city, $state = $result
+		if (!$data.towns[$state]) {
+			$data.towns[$state] = [string[]]@($city)
+		} else {
+			if (!$data.towns[$state].Contains($city)) {
+				$data.towns[$state] += $city
+			}
+		}
 	}
+
+	$newTowns = @{}
+	foreach ($stateName in $data.towns.Keys) {
+		$newTowns[$stateName] = $data.towns[$stateName] | Sort-Object
+	}
+	$data.towns = $newTowns
 }
 
 if (Test-Path 'exif.json') {
@@ -147,7 +183,8 @@ $ffmpegArgs = @(
 Write-Host "ffmpeg arguments: [$ffmpegArgs]"
 
 if ($WhatIf) {
-	Write-Host "Generated JSON:`n$json"
+	$data.coords = "<truncated $($data.coords.Length) elements>"
+	Write-Host "Generated JSON:`n$($data | ConvertTo-Json -Depth 10)"
 	Write-Host "Output name: $outputName"
 
 	exit 0
