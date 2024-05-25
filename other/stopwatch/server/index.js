@@ -3,6 +3,9 @@ const fss = require('fs');
 const path = require('path');
 const https = require('https');
 
+let builtInLog = console.log;
+console.log = (...args) => builtInLog(`[${new Date().toISOString()}] ${args}`);
+
 const expectedMetaPath = path.resolve(`${__dirname}/../../../../walk-routes/meta_archive`);
 if (!fss.existsSync(expectedMetaPath)) {
 	throw new Error(`Expected directory [${expectedMetaPath}] does not exist`);
@@ -39,6 +42,39 @@ app.post('/events', async (req, res) => {
 	} finally {
 		res.end();
 	}
+});
+
+app.get('/events', async (req, res) => {
+	const { date } = req.query;
+	if (!date || !date.match(/\d{4}-\d{2}-\d{2}/)) {
+		res.status(400);
+		return res.end();
+	}
+
+	const [year, month] = date.split('-');
+
+	const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
+	if (!fss.existsSync(expectedYearPath)) {
+		res.status(404);
+		return res.end();
+	}
+
+	const expectedMonthPath = path.resolve(`${expectedYearPath}/${month}`);
+	if (!fss.existsSync(expectedMonthPath)) {
+		res.status(404);
+		return res.end();
+	}
+
+	const expectedFilePath = path.resolve(`${expectedMonthPath}/${date}.json`);
+	if (!fss.existsSync(expectedFilePath)) {
+		res.status(404);
+		return res.end();
+	}
+
+	const content = await fs.readFile(expectedFilePath, 'utf8');
+	res.set('Content-Type', 'application/json');
+	res.send(content);
+	res.end();
 });
 
 app.get('/', (req, res) => {
