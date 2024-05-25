@@ -1,12 +1,15 @@
 Param(
 	[string] $DistributionId,
 	[string] $GeoJsonFilePath = "../../walk-routes/geo.json",
+	[string] $EventsPath = "../../walk-routes/events",
 
-	[string[]] $InvalidationPaths = @("/build/*", "/global.css"),
+	[string[]] $InvalidationPaths = @("/build/*", "/api/events*", "/events.json", "/global.css", "/index.html"),
 
 	[switch] $DeployClient,
 	[switch] $SkipUpload
 )
+
+$ErrorActionPreference = 'Stop'
 
 if (!$DistributionId) {
 	$DistributionId = Read-Host "No CloudFront distribution ID provided, please enter one or hit Enter to skip cache invalidation"
@@ -24,6 +27,10 @@ if ($DeployClient) {
 
 $geojson = Get-Content $GeoJsonFilePath | ConvertFrom-Json | ConvertTo-Json -Depth 10 -Compress
 Set-Content "./build/public/geo.json" $geojson -Force
+
+Copy-Item $EventsPath "./build/events" -Recurse
+
+Write-Host (tree "./build/public") /f
 
 Compress-Archive -Path "./build/**" -DestinationPath "./build/deployable.zip" -Force
 

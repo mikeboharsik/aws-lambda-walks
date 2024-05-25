@@ -77,6 +77,12 @@ function makeFeatureSafeForUnauthed(feature) {
 	delete feature.properties.path;
 }
 
+function makeEventsSafeForUnauthed(events) {
+	for (let e of events) {
+		delete e.coords;
+	}
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -142,6 +148,7 @@ async function handleApiRequest(event) {
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/webhooks/video': handleWebhookVideo,
 		'/api/route': handleWalkRouteRequest,
+		'/api/events': handleEventsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
 	};
 
@@ -192,16 +199,27 @@ async function handleCacheInvalidate(event) {
 }
 
 async function handleWalkRouteRequest(event) {
-	const { isAuthed, queryStringParameters: { id } } = event;
+	const { isAuthed, queryStringParameters: { date, id } } = event;
 
-	if (!id) {
+	if (!date && !id) {
 		return {
 			statusCode: 400,
 		};
 	}
 
-	const json = JSON.parse(await fsPromises.readFile('./public/geo.json', { encoding: 'utf8' }));
-	const route = json.features.find(f => f.properties.id === id);
+	const [geojson, events] = await Promise.all([
+		fsPromises.readFile('./public/geo.json', { encoding: 'utf8' }),
+		fsPromises.readFile('./public/events.json', { encoding: 'utf8' })
+	]);
+
+	let route;
+
+	if (date) {
+		route = events.find(e => e.date === date);
+	} else {
+		route = geojson.features.find(f => f.properties.id === id);
+	}
+
 	if (!route) {
 		return {
 			statusCode: 404,
@@ -214,25 +232,70 @@ async function handleWalkRouteRequest(event) {
 
 	const updatedRouteData = {
 		type: "FeatureCollection",
-		features: [route],
+		features: [],
 	};
-	route.properties.commonFeatureIds?.forEach((fid) => {
-		const feature = json.features.find(r => r.properties.id === fid);
-		if (feature?.geometry) {
-			if (!isAuthed) {
-				makeFeatureSafeForUnauthed(feature);
+
+	if (date) {
+		const feature = {
+			type: "Feature",
+			geometry: {
+				coordinates: [],
+				type: "LineString"
 			}
-			updatedRouteData.features.push(feature);
-		}
-	});
+		};
+		feature.coordinates = route.coords.map(coord => [coord.lat, coord.lon]);
+		updatedRouteData.features = [feature];
+	} else {
+		updatedRouteData.features.push(route);
+		route.properties.commonFeatureIds?.forEach((fid) => {
+			const feature = geojson.features.find(r => r.properties.id === fid);
+			if (feature?.geometry) {
+				if (!isAuthed) {
+					makeFeatureSafeForUnauthed(feature);
+				}
+				updatedRouteData.features.push(feature);
+			}
+		});
+	}
 
 	const encodedRouteData = encodeURIComponent(JSON.stringify(updatedRouteData));
 
+	const body = `
+	<html>
+		<body>
+			<script>
+				window.location = 'https://geojson.io/#data=data:application/json,${encodedRouteData}';
+			</script>
+		</body>
+	</html>`;
+
 	return {
-		statusCode: 301,
-		headers: {
-			Location: `https://geojson.io/#data=data:application/json,${encodedRouteData}`,
-		}
+		statusCode: 200,
+		body,
+	};
+}
+
+async function handleEventsRequest(event) {
+	const { isAuthed, queryStringParameters: { q } } = event;
+
+	const parts = q.split('-');
+	const target = parts.filter(e => e).join('-');
+
+	const allFiles = fs.readdirSync('./events');
+
+	const targetFiles = allFiles.filter(e => e.match(target));
+
+	const reads = targetFiles.map(e => fs.promises.readFile(`./events/${e}`, { encoding: 'utf8' }));
+
+	const results = (await Promise.all(reads)).map(e => JSON.parse(e));
+
+	if (!isAuthed) {
+		makeEventsSafeForUnauthed(results);
+	}
+
+	return {
+		statusCode: 200,
+		body: JSON.stringify(results),
 	};
 }
 
@@ -262,6 +325,11 @@ async function handleContentRequest(event) {
 				if (rawPath.endsWith('geo.json') && !isAuthed) {
 					const parsed = JSON.parse(body);
 					parsed.features.forEach(makeFeatureSafeForUnauthed);
+					body = JSON.stringify(parsed);
+				}
+				if (rawPath.endsWith('events.json' && !isAuthed)) {
+					const parsed = JSON.parse(body);
+					parsed.forEach(makeEventsSafeForUnauthed);
 					body = JSON.stringify(parsed);
 				}
 				break;
