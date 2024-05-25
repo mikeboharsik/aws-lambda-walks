@@ -90,7 +90,7 @@
     { label: 'Look bad', name: 'Bad driver does not look before turning', type: EVENT_TYPE.LOOK_BAD },
     { label: 'Tag', type: EVENT_TYPE.TAG },
     { label: 'Misc', name: '', type: EVENT_TYPE.MISC },
-  ].toReversed();
+  ];
 
   async function getExportContent(coords) {
     const copy = JSON.parse(JSON.stringify(state.marks));

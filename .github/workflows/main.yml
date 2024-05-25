@@ -84,6 +84,7 @@ jobs:
           DeployClient = $true
           DistributionId = $distId
           GeoJsonFilePath = "../walk-routes/geo.json"
+          EventsPath = "../walk-routes/events"
         }
 
         if ($invalidationPaths) {
