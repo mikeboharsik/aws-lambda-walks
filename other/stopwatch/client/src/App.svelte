@@ -145,7 +145,6 @@
 
     return {
       date: new Date().toISOString().slice(0, 10),
-      route: '',
       startMark,
       endMark,
       startTime,
