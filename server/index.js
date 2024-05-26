@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const fsPromises = require('fs/promises');
+const geolib = require('geolib');
 
 const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 
@@ -9,6 +10,7 @@ const fetch = require('node-fetch');
 
 const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
 const authUrl = process.env.AUTH_URL;
+const privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]');
 
 const minuteInSeconds = 60;
 const hourInSeconds = minuteInSeconds * 60;
@@ -83,12 +85,23 @@ function makeEventsSafeForUnauthed(events) {
 	}
 }
 
-function getGeoJsonFromCoords(coords) {
+function getGeoJsonFromCoords(coords, isAuthed) {
+	let coordinates = coords.map(({ lat, lon }) => [lon, lat]);
+
+	if (!isAuthed) {
+		coordinates = coordinates.filter(([longitude, latitude]) => {
+			return !privacyZones.some((zone) => {
+				return geolib.isPointWithinRadius({ latitude, longitude }, zone.coords, zone.radius);
+			});
+		});
+	}
+
 	return {
 		type: "Feature",
+		properties: {},
 		geometry: {
 			type: "LineString",
-			coordinates: coords.map(({ lat, lon }) => [lon, lat]),
+			coordinates,
 		}
 	};
 }
@@ -300,7 +313,7 @@ async function handleEventsRequest(event) {
 	const results = (await Promise.all(reads)).map(e => {
 		let result = JSON.parse(e);
 
-		result.geo = getGeoJsonFromCoords(result.coords);
+		result.geo = getGeoJsonFromCoords(result.coords, isAuthed);
 
 		return result;
 	});
