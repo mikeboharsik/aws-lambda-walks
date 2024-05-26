@@ -117,7 +117,7 @@ async function addDate(body) {
 function addDistance(body) {
 	const copy = JSON.parse(JSON.stringify(body));
 
-	copy.distance = copy.coords.reduce((acc, cur, idx, arr) => {
+	copy.distance = parseFloat(copy.coords.reduce((acc, cur, idx, arr) => {
 		if (idx < arr.length - 1) {
 			const next = arr[idx + 1];
 			return acc + geolib.getDistance(
@@ -127,7 +127,7 @@ function addDistance(body) {
 			);
 		}
 		return acc;
-	}, 0).toFixed(3);
+	}, 0).toFixed(3));
 
 	return copy;
 }
