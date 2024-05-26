@@ -97,12 +97,17 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 	}
 
 	return {
-		type: "Feature",
-		properties: {},
-		geometry: {
-			type: "LineString",
-			coordinates,
-		}
+		type: "FeatureCollection",
+		features: [
+			{
+				type: "Feature",
+				properties: {},
+				geometry: {
+					type: "LineString",
+					coordinates,
+				}
+			}
+		]
 	};
 }
 
