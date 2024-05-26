@@ -83,6 +83,16 @@ function makeEventsSafeForUnauthed(events) {
 	}
 }
 
+function getGeoJsonFromCoords(coords) {
+	return {
+		type: "Feature",
+		geometry: {
+			type: "LineString",
+			coordinates: coords.map(({ lat, lon }) => [lon, lat]),
+		}
+	};
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -287,7 +297,13 @@ async function handleEventsRequest(event) {
 
 	const reads = targetFiles.map(e => fs.promises.readFile(`./events/${e}`, { encoding: 'utf8' }));
 
-	const results = (await Promise.all(reads)).map(e => JSON.parse(e));
+	const results = (await Promise.all(reads)).map(e => {
+		let result = JSON.parse(e);
+
+		result.geo = getGeoJsonFromCoords(result.coords);
+
+		return result;
+	});
 
 	if (!isAuthed) {
 		makeEventsSafeForUnauthed(results);

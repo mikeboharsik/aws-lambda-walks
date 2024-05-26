@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 const fss = require('fs');
 const path = require('path');
 const https = require('https');
+const geolib = require('geolib');
 
 let builtInLog = console.log;
 console.log = (...args) => builtInLog(`[${new Date().toISOString()}] ${args}`);
@@ -87,7 +88,7 @@ const server = https.createServer(credentials, app);
 server.listen(port, () => console.log(`Listening on [${port}]`));
 
 async function addDate(body) {
-	const [year, month, date] = body.date.split('-');
+	const [year, month] = body.date.split('-');
 
 	const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
 	if (fss.existsSync(expectedYearPath)) {
@@ -108,5 +109,25 @@ async function addDate(body) {
 		throw new Error(`File already exists at [${expectedFilePath}]`);
 	}
 
-	await fs.writeFile(expectedFilePath, JSON.stringify(body, null, '  '));
+	const bodyWithDistance = addDistance(body);
+
+	await fs.writeFile(expectedFilePath, JSON.stringify(bodyWithDistance, null, '  '));
+}
+
+function addDistance(body) {
+	const copy = JSON.parse(JSON.stringify(body));
+
+	copy.distance = copy.coords.reduce((acc, cur, idx, arr) => {
+		if (idx < arr.length - 1) {
+			const next = arr[idx + 1];
+			return acc + geolib.getDistance(
+				{ latitude: cur.lat, longitude: cur.lon },
+				{ latitude: next.lat, longitude: next.lon },
+				1e-3,
+			);
+		}
+		return acc;
+	}, 0).toFixed(3);
+
+	return copy;
 }
