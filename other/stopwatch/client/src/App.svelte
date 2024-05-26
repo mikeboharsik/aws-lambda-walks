@@ -210,6 +210,7 @@
           alert(`Encountered an error during upload: ${e.message}`);
         } finally {
           isUploading = false;
+          fileInputChangeEvent.target.value = null;
         }
       }
     });
