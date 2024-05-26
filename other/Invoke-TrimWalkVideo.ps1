@@ -114,7 +114,7 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 	foreach ($result in $results) {
 		$city, $state = $result
 		if (!$data.towns[$state]) {
-			$data.towns[$state] = [string[]]@($city)
+			$data.towns[$state] = @($city)
 		} else {
 			if (!$data.towns[$state].Contains($city)) {
 				$data.towns[$state] += $city
@@ -124,7 +124,7 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 	$newTowns = @{}
 	foreach ($stateName in $data.towns.Keys) {
-		$newTowns[$stateName] = $data.towns[$stateName] | Sort-Object
+		[string[]]$newTowns[$stateName] = $data.towns[$stateName] | Sort-Object
 	}
 	$data.towns = $newTowns
 }
