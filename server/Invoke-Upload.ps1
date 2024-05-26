@@ -3,7 +3,13 @@ Param(
 	[string] $GeoJsonFilePath = "../../walk-routes/geo.json",
 	[string] $EventsPath = "../../walk-routes/events",
 
-	[string[]] $InvalidationPaths = @("/build/*", "/api/events*", "/events.json", "/global.css", "/index.html"),
+	[string[]] $InvalidationPaths = @(
+		"/build/*"
+		"/api/events*"
+		"/events.json"
+		"/global.css"
+		"/index.html"
+	),
 
 	[switch] $DeployClient,
 	[switch] $SkipUpload
