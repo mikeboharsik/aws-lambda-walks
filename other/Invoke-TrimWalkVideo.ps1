@@ -97,27 +97,36 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 	$testPoints | ForEach-Object -ThrottleLimit 5 -Parallel {
 			$lat, $lon = $_
 			$url = "https://www.google.com/maps/place/$lat,$lon"
-			$data = Invoke-RestMethod $url
-				| Select-String '([\w ]+), (\w{2}) \d{5}'
-				| Select-Object -ExpandProperty matches
-				| Select-Object -ExpandProperty groups
-				| Select-Object -Skip 1 -ExpandProperty Value
-				| ForEach { $_.Trim() }
+			try {
+				$data = Invoke-RestMethod $url -Headers @{ 'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36' }
+					| Select-String '([\w ]+), (\w{2}) \d{5}'
+					| Select-Object -ExpandProperty matches
+					| Select-Object -ExpandProperty groups
+					| Select-Object -Skip 1 -ExpandProperty Value
+					| ForEach-Object { $_.Trim() }
+			} catch {
+				Write-Error $_.Exception
+				exit 1
+			}
 
 			($using:results).Add($data)
 		}
 
 	Write-Verbose "Cities results: $($results | ConvertTo-Json)"
 
-	if (!$data.towns) { $data.towns = @{} }
+	if (!$data.towns) {
+		$data.towns = @{}
+	}
 
 	foreach ($result in $results) {
-		$city, $state = $result
-		if (!$data.towns[$state]) {
-			$data.towns[$state] = @($city)
-		} else {
-			if (!$data.towns[$state].Contains($city)) {
-				$data.towns[$state] += $city
+		if ($result) {
+			$city, $state = $result
+			if (!$data.towns[$state]) {
+				$data.towns[$state] = @($city)
+			} else {
+				if (!$data.towns[$state].Contains($city)) {
+					$data.towns[$state] += $city
+				}
 			}
 		}
 	}
