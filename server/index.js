@@ -235,17 +235,21 @@ async function handleWalkRouteRequest(event) {
 		};
 	}
 
-	const [geojson, events] = await Promise.all([
-		fsPromises.readFile('./public/geo.json', { encoding: 'utf8' }),
-		fsPromises.readFile('./public/events.json', { encoding: 'utf8' })
-	]);
-
 	let route;
 
 	if (date) {
-		route = events.find(e => e.date === date);
+		if (!date.match(/\d{4}-\d{2}-\d{2}/)) {
+			return {
+				statusCode: 400,
+			};
+		}
+		route = JSON.parse(await fs.promises.readFile(`./events/${date}.json`, { encoding: 'utf8' }));
 	} else {
+		const geojson = fsPromises.readFile('./public/geo.json', { encoding: 'utf8' });
 		route = geojson.features.find(f => f.properties.id === id);
+		if (!isAuthed) {
+			makeFeatureSafeForUnauthed(route);
+		}
 	}
 
 	if (!route) {
@@ -254,25 +258,13 @@ async function handleWalkRouteRequest(event) {
 		};
 	}
 
-	if (!isAuthed) {
-		makeFeatureSafeForUnauthed(route);
-	}
-
-	const updatedRouteData = {
+	let updatedRouteData = {
 		type: "FeatureCollection",
 		features: [],
 	};
 
 	if (date) {
-		const feature = {
-			type: "Feature",
-			geometry: {
-				coordinates: [],
-				type: "LineString"
-			}
-		};
-		feature.coordinates = route.coords.map(coord => [coord.lat, coord.lon]);
-		updatedRouteData.features = [feature];
+		updatedRouteData = getGeoJsonFromCoords(route.coords, isAuthed);
 	} else {
 		updatedRouteData.features.push(route);
 		route.properties.commonFeatureIds?.forEach((fid) => {
@@ -300,6 +292,9 @@ async function handleWalkRouteRequest(event) {
 	return {
 		statusCode: 200,
 		body,
+		headers: { 
+			'content-type': 'text/html'
+		}
 	};
 }
 
