@@ -73,7 +73,7 @@
 	}
 </script>
 
-{#if !navigator.userAgentData.mobile}
+{#if !navigator?.userAgentData?.mobile}
 	<ThumbnailGrid data={youtubeData} />
 {/if}
 
