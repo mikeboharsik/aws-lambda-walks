@@ -1,4 +1,4 @@
-{
+(async () => {
 	try {
 			const originalFileName = document.querySelector('#original-filename').textContent.trim();
 			const [,dateFromFileName] = originalFileName.match(/(\d{4}-\d{2}-\d{2})/);
@@ -83,4 +83,4 @@
 	} catch (e) {
 			console.error(e);
 	}
-};
+})();
