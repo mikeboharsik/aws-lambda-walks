@@ -41,9 +41,11 @@ try {
 		Copy-Item $outputFilename $localArchiveDir
 		Write-Host "Done."
 
+		<#
 		Write-Host "Writing to [$remoteArchiveDir]..."
 		gsutil cp $outputFilename $remoteArchiveDir
 		Write-Host "Done."
+		#>
 	}
 } finally {
 	Remove-Item "files.txt" -ErrorAction SilentlyContinue
