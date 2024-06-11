@@ -141,7 +141,13 @@
     });
     const events = copy.filter(e => ![EVENT_TYPE.BEGIN, EVENT_TYPE.END].includes(e.type));
 
-    events.forEach(m => delete m.type);
+    events.forEach(m => { 
+      delete m.type;
+
+      Object.keys(m).forEach(key => {
+        m[key] = m[key].trim();
+      });
+    });
 
     return {
       date: new Date().toISOString().slice(0, 10),
@@ -272,13 +278,6 @@
     return (e) => {
       const target = state.marks.find(e => e.id === id);
       switch (target.type) {
-        case EVENT_TYPE.PLATE:
-        case EVENT_TYPE.PLATE_MA:
-        case EVENT_TYPE.PLATE_ME:
-        case EVENT_TYPE.PLATE_NH: {
-          target.plate = e.target.value.toUpperCase();
-          break;
-        }
         case EVENT_TYPE.TAG: {
           target.tag = e.target.value;
           break;
@@ -286,6 +285,22 @@
         default: {
           target.name = e.target.value;
         }
+      }
+    }
+  }
+
+  function getInputBlurHandler(id) {
+    return (e) => {
+      const target = state.marks.find(e => e.id === id);
+      switch (target.type) {
+        case EVENT_TYPE.PLATE:
+        case EVENT_TYPE.PLATE_MA:
+        case EVENT_TYPE.PLATE_ME:
+        case EVENT_TYPE.PLATE_NH: {
+          target.plate = e.target.value.toUpperCase();
+          break;
+        }
+        default: {}
       }
     }
   }
@@ -361,6 +376,8 @@
   <ol reversed style={'text-align: left; font-size: 16px;'}>
     {#each state.marks.toReversed() as mark, idx}
       {@const itemStyle = getItemStyle(mark, idx)}
+      {@const inputChangeHandler = getInputChangeHandler(mark.id)}
+      {@const inputBlurHandler = getInputBlurHandler(mark.id)}
       <li style={itemStyle}>
         {getDisplayText(mark.mark)}
         -
@@ -369,17 +386,17 @@
         {:else if mark.type === EVENT_TYPE.END}
           END
         {:else if mark.type === EVENT_TYPE.PLATE}
-          PLATE <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
+          PLATE <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {:else if mark.type === EVENT_TYPE.PLATE_MA}
-          MA <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
+          MA <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {:else if mark.type === EVENT_TYPE.PLATE_ME}
-          ME <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
+          ME <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {:else if mark.type === EVENT_TYPE.PLATE_NH}
-          NH <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:input={getInputChangeHandler(mark.id)}/>
+          NH <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.plate} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {:else if mark.type === EVENT_TYPE.TAG}
-          TAG <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.tag} on:input={getInputChangeHandler(mark.id)}/>
+          TAG <input type="text" style={'width: 122px'} id={`input_${mark.id}`} value={mark.tag} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {:else}
-          <input type="text" id={`input_${mark.id}`} value={mark.name} on:input={getInputChangeHandler(mark.id)}/>
+          <input type="text" id={`input_${mark.id}`} value={mark.name} on:blur={inputBlurHandler} on:input={inputChangeHandler}/>
         {/if}
 
         {#if itemStyle}
