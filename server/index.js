@@ -348,6 +348,9 @@ async function handlePlatesRequest(event) {
 				?.replace(/ /g, '');
 			if (plate) {
 				if (!q || (q && plate.match(q))) {
+					name = name
+						?.replace('SKIP', '')
+						?.replace('OOB ', '');
 					if (acc[plate]) {
 						acc[plate].push({ date, name });
 					} else {
