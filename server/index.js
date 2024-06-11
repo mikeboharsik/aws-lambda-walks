@@ -175,8 +175,9 @@ async function handleApiRequest(event) {
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/webhooks/video': handleWebhookVideo,
-		'/api/route': handleWalkRouteRequest,
+		'/api/routes': handleWalkRouteRequest,
 		'/api/events': handleEventsRequest,
+		'/api/plates': handlePlatesRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
 	};
 
@@ -325,6 +326,53 @@ async function handleEventsRequest(event) {
 	return {
 		statusCode: 200,
 		body: JSON.stringify(results),
+	};
+}
+
+async function handlePlatesRequest(event) {
+	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
+
+	const filenames = fs.readdirSync('./events').filter(fn => fn.match(/\d{4}-\d{2}-\d{2}\.json/));
+	console.log(JSON.stringify(filenames));
+
+	const allFiles = await Promise.all(filenames.map(fn => fs.promises.readFile(`./events/${fn}`, 'utf8')));
+
+	const results = allFiles.reduce((acc, cur) => {
+		const { date, events } = JSON.parse(cur);
+
+		events?.forEach(({ name, plate }) => {
+			plate = plate?.replace('TINT', '')?.replace(/ /g, '');
+			if (plate) {
+				if (!q || (q && plate.match(q))) {
+					if (acc[plate]) {
+						acc[plate].push({ date, name });
+					} else {
+						acc[plate] = [{ date, name }];
+					}
+				}
+			}
+		});
+
+		return acc;
+	}, {});
+
+	const copy = {};
+	const keys = Object.keys(results);
+	keys.sort();
+	keys.forEach((key) => {
+		copy[key] = results[key];
+	});
+
+	/*
+	if (!isAuthed) {
+		makeEventsSafeForUnauthed(results);
+	}
+	*/
+
+	return {
+		statusCode: 200,
+		body: JSON.stringify(copy),
+		headers: { 'content-type': 'application/json' }
 	};
 }
 
