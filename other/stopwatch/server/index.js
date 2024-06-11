@@ -78,6 +78,46 @@ app.get('/events', async (req, res) => {
 	res.end();
 });
 
+app.post('/setYoutubeId', async (req, res) => {
+	try {
+		const { body: { date, id } } = req;
+
+		const [year, month] = date.split('-');
+
+		const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
+		if (!fss.existsSync(expectedYearPath)) {
+			res.status(404);
+			return res.end();
+		}
+
+		const expectedMonthPath = path.resolve(`${expectedYearPath}/${month}`);
+		if (!fss.existsSync(expectedMonthPath)) {
+			res.status(404);
+			return res.end();
+		}
+
+		const expectedFilePath = path.resolve(`${expectedMonthPath}/${date}.json`);
+		if (!fss.existsSync(expectedFilePath)) {
+			res.status(404);
+			return res.end();
+		}
+
+		const content = await fs.readFile(expectedFilePath, 'utf8');
+		const parsed = JSON.parse(content);
+		parsed.youtubeId = id;
+		await fs.writeFile(expectedFilePath, JSON.stringify(parsed, null, '  '));
+
+		res.status(200);
+		res.send('OK');
+		res.end();
+	} catch (e) {
+		console.error(e);
+		res.status(400);
+		res.send(e.message);
+		res.end();
+	}
+});
+
 app.get('/', (req, res) => {
 	res.status(200);
 	res.send('OK');
