@@ -341,7 +341,11 @@ async function handlePlatesRequest(event) {
 		const { date, events } = JSON.parse(cur);
 
 		events?.forEach(({ name, plate }) => {
-			plate = plate?.replace('TINT', '')?.replace(/ /g, '');
+			plate = plate
+				?.replace('SKIP', '')
+				?.replace('OOB ', '')
+				?.replace('TINT', '')
+				?.replace(/ /g, '');
 			if (plate) {
 				if (!q || (q && plate.match(q))) {
 					if (acc[plate]) {
