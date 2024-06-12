@@ -326,6 +326,9 @@ async function handleEventsRequest(event) {
 	return {
 		statusCode: 200,
 		body: JSON.stringify(results),
+		headers: {
+			'content-type': 'application/json'
+		}
 	};
 }
 
