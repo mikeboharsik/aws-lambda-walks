@@ -52,7 +52,7 @@ app.get('/events', async (req, res) => {
 		return res.end();
 	}
 
-	const [year, month] = date.split('-');
+	const [year, month, day] = date.split('-');
 
 	const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
 	if (!fss.existsSync(expectedYearPath)) {
@@ -66,7 +66,7 @@ app.get('/events', async (req, res) => {
 		return res.end();
 	}
 
-	const expectedFilePath = path.resolve(`${expectedMonthPath}/${date}.json`);
+	const expectedFilePath = path.resolve(`${expectedMonthPath}/${day}.json`);
 	if (!fss.existsSync(expectedFilePath)) {
 		res.status(404);
 		return res.end();
@@ -128,7 +128,7 @@ const server = https.createServer(credentials, app);
 server.listen(port, () => console.log(`Listening on [${port}]`));
 
 async function addDate(body) {
-	const [year, month] = body.date.split('-');
+	const [year, month, day] = body.date.split('-');
 
 	const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
 	if (fss.existsSync(expectedYearPath)) {
@@ -144,7 +144,7 @@ async function addDate(body) {
 		await fs.mkdir(expectedMonthPath);
 	}
 
-	const expectedFilePath = path.resolve(`${expectedMonthPath}/${body.date}.json`);
+	const expectedFilePath = path.resolve(`${expectedMonthPath}/${day}.json`);
 	if (fss.existsSync(expectedFilePath)) {
 		throw new Error(`File already exists at [${expectedFilePath}]`);
 	}
