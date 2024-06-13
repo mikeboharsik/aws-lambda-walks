@@ -12,10 +12,10 @@ $ErrorActionPreference = "Stop"
 
 $zeroDuration = [TimeSpan]"00:00:00"
 
-$year, $month, $date = $Date -Split '-'
+$year, $month, $day = $Date -Split '-'
 
 $pathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes"
-$filePath = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$year-$month-$date.json"
+$filePath = Resolve-Path "$pathToWalkRoutes\meta_archive\$year\$month\$day.json"
 
 function Copy-Array($array) {
 	$newArray = @()

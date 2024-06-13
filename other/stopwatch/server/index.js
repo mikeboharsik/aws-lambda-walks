@@ -82,7 +82,7 @@ app.post('/setYoutubeId', async (req, res) => {
 	try {
 		const { body: { date, id } } = req;
 
-		const [year, month] = date.split('-');
+		const [year, month, day] = date.split('-');
 
 		const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
 		if (!fss.existsSync(expectedYearPath)) {
@@ -96,7 +96,7 @@ app.post('/setYoutubeId', async (req, res) => {
 			return res.end();
 		}
 
-		const expectedFilePath = path.resolve(`${expectedMonthPath}/${date}.json`);
+		const expectedFilePath = path.resolve(`${expectedMonthPath}/${day}.json`);
 		if (!fss.existsSync(expectedFilePath)) {
 			res.status(404);
 			return res.end();
