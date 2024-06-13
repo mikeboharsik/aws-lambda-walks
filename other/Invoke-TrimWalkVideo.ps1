@@ -29,10 +29,10 @@ if ($items[0].Name -Match '(\d{4})-(\d{2})-(\d{2})') {
 	exit 1
 }
 
-$clipYear, $clipMonth, $clipDate = $dateStr -Split '-'
+$clipYear, $clipMonth, $clipDay = $dateStr -Split '-'
 $pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
 $metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
-$expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$dateStr.json"
+$expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$clipDay.json"
 
 $possibleDataPaths = @($expectedTargetFilePath)
 
