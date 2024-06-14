@@ -314,7 +314,7 @@ async function handleEventsRequest(event) {
 	const results = (await Promise.all(reads)).map(e => {
 		let result = JSON.parse(e);
 
-		result.geo = getGeoJsonFromCoords(result.coords, isAuthed);
+		// result.geo = getGeoJsonFromCoords(result.coords, isAuthed);
 
 		return result;
 	});
