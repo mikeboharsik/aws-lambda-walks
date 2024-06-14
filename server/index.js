@@ -82,6 +82,7 @@ function makeFeatureSafeForUnauthed(feature) {
 function makeEventsSafeForUnauthed(events) {
 	for (let e of events) {
 		delete e.coords;
+		delete e.events;
 		delete e.exif;
 	}
 }
