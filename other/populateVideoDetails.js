@@ -3,7 +3,19 @@
 			const originalFileName = document.querySelector('#original-filename').textContent.trim();
 			const [,dateFromFileName] = originalFileName.match(/(\d{4}-\d{2}-\d{2})/);
 			
-			const data = await fetch(`https://localhost/events?date=${dateFromFileName}`).then(res => res.json())
+			const data = await fetch(`https://localhost/events?date=${dateFromFileName}`).then(res => res.json());
+
+			const [,id] = document.querySelector('a.ytcp-video-info').href.match(/https:\/\/youtu.be\/(\S+)/);
+			await fetch(
+				'https://localhost/setYoutubeId', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						date: dateFromFileName,
+						id,
+					}),
+				}
+			);
 
 			const titleInput = document.querySelector("[aria-label ^= 'Add']")
 			const descriptionInput = document.querySelector("[aria-label ^= 'Tell']")
