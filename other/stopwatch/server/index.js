@@ -107,6 +107,8 @@ app.post('/setYoutubeId', async (req, res) => {
 		parsed.youtubeId = id;
 		await fs.writeFile(expectedFilePath, JSON.stringify(parsed, null, '  '));
 
+		console.log(`Write [${expectedFilePath}] with youtubeId added [${id}]`);
+
 		res.status(200);
 		res.send('OK');
 		res.end();
@@ -132,14 +134,12 @@ async function addDate(body) {
 
 	const expectedYearPath = path.resolve(`${expectedMetaPath}/${year}`);
 	if (fss.existsSync(expectedYearPath)) {
-		console.log(`${expectedYearPath} exists`);
 	} else {
 		await fs.mkdir(expectedYearPath);
 	}
 
 	const expectedMonthPath = path.resolve(`${expectedYearPath}/${month}`);
 	if (fss.existsSync(expectedMonthPath)) {
-		console.log(`${expectedMonthPath} exists`);
 	} else {
 		await fs.mkdir(expectedMonthPath);
 	}
@@ -152,6 +152,8 @@ async function addDate(body) {
 	const bodyWithDistance = addDistance(body);
 
 	await fs.writeFile(expectedFilePath, JSON.stringify(bodyWithDistance, null, '  '));
+
+	console.log(`Wrote [${expectedFilePath}}] with distance added`);
 }
 
 function addDistance(body) {
