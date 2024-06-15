@@ -7,7 +7,7 @@
 	import Calendar from './views/Calendar.svelte';
 	import Routes from './views/Routes.svelte';
 
-	import { ORIGINAL_ROUTES_DATA, ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from './stores.js';
+	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from './stores.js';
 
 	import { baseApiUrl, baseUrl } from './constants/api';
 
@@ -28,6 +28,7 @@
 		const tomorrowDateStr = getPaddedDateString(tomorrowDate);
 
 		const initialDataJobs = [
+			fetch(`${baseApiUrl}/events`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/yt-data`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
@@ -38,12 +39,14 @@
 			const results = await Promise.allSettled(initialDataJobs);
 			
 			const [
+				{ value: { data: eventsDataResult } },
 				{ value: { data: youtubeDataResult } },
 				{ value: { results: sunxTodayResult } },
 				{ value: { results: sunxTomorrowResult } },
 				{ value: routesDataResult }
 			] = results;
 
+			EVENTS_DATA.update(() => eventsDataResult);
 			YOUTUBE_DATA.update(() => youtubeDataResult);
 			ORIGINAL_ROUTES_DATA.update(() => routesDataResult);
 			ROUTES_DATA.update(() => routesDataResult.features);
