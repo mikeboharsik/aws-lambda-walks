@@ -5,7 +5,6 @@
 	import ErrorMessage from './components/ErrorMessage.svelte';
 
 	import Calendar from './views/Calendar.svelte';
-	import Routes from './views/Routes.svelte';
 
 	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from './stores.js';
 
@@ -16,7 +15,6 @@
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
-	let renderRoutes = false;
 
 	onMount(async() => {
 		const options = getApiOptions();
@@ -68,10 +66,6 @@
 		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
 		window.open(`https://geojson.io/#data=data:application/json,${encodedRouteData}`, '_blank', 'noopener');
 	}
-
-	if (localStorage.getItem('access_token') && altKey && shiftKey && code === 'KeyF') {
-		renderRoutes = !renderRoutes;
-	}
 }} />
 
 <div id="container-app">
@@ -79,11 +73,7 @@
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
 		{:else}
-			{#if renderRoutes}
-				<Routes />
-			{:else}
-				<Calendar />
-			{/if}
+			<Calendar />
 		{/if}
 	{:else}
 		<div style="position: absolute">
