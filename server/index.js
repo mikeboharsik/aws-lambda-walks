@@ -302,10 +302,15 @@ async function handleWalkRouteRequest(event) {
 }
 
 async function handleEventsRequest(event) {
-	const { isAuthed, queryStringParameters: { q } } = event;
+	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
 
-	const parts = q.split('-');
-	const target = parts.filter(e => e).join('-');
+	let target;
+	if (q) {
+		const parts = q.split('-');
+		target = parts.filter(e => e).join('-');
+	} else {
+		target = '.*';
+	}
 
 	const allFiles = fs.readdirSync('./events');
 
