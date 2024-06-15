@@ -10,6 +10,8 @@
 	import { ORIGINAL_ROUTES_DATA, ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from './stores.js';
 
 	import { baseApiUrl, baseUrl } from './constants/api';
+
+	import { getApiOptions } from './util/api';
 	import { getPaddedDateString } from './util/date';
 
 	let isLoaded = false;
@@ -17,17 +19,6 @@
 	let renderRoutes = false;
 
 	onMount(async() => {
-		function getApiOptions() {
-			let options = {};
-
-			let accessToken = localStorage.getItem('access_token');
-			if (accessToken) {
-				options.headers = { 'Authorization': `Bearer ${accessToken}` };
-			}
-
-			return options;
-		}
-
 		const options = getApiOptions();
 
 		const dateStr = getPaddedDateString(new Date());
