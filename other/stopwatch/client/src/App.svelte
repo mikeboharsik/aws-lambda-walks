@@ -297,7 +297,11 @@
         case EVENT_TYPE.PLATE_MA:
         case EVENT_TYPE.PLATE_ME:
         case EVENT_TYPE.PLATE_NH: {
-          target.plate = e.target.value.toUpperCase();
+          const upper = e.target.value.toUpperCase();
+          if (target.plate !== upper) {
+            target.plate = upper;
+            delete target.name;
+          }
           break;
         }
         default: {}
