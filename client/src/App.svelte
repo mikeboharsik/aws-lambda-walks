@@ -27,27 +27,20 @@
 
 		const initialDataJobs = [
 			fetch(`${baseApiUrl}/events`, options).then(res => res.json()),
-			fetch(`${baseApiUrl}/yt-data`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
-			fetch(`${baseUrl}/geo.json`, options).then(res => res.json()),
 		];
 
 		try {
 			const results = await Promise.allSettled(initialDataJobs);
 			
 			const [
-				{ value: { data: eventsDataResult } },
-				{ value: { data: youtubeDataResult } },
+				{ value: eventsDataResult },
 				{ value: { results: sunxTodayResult } },
 				{ value: { results: sunxTomorrowResult } },
-				{ value: routesDataResult }
 			] = results;
 
 			EVENTS_DATA.update(() => eventsDataResult);
-			YOUTUBE_DATA.update(() => youtubeDataResult);
-			ORIGINAL_ROUTES_DATA.update(() => routesDataResult);
-			ROUTES_DATA.update(() => routesDataResult.features);
 			SUNX_DATA.update(() => ({ today: sunxTodayResult, tomorrow: sunxTomorrowResult }));
 		} catch(e) {
 			console.error(e);

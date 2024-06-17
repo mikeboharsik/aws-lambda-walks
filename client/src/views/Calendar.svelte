@@ -1,5 +1,5 @@
 <script>
-	import { ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from '../stores.js';
+	import { EVENTS_DATA, SUNX_DATA, YOUTUBE_DATA } from '../stores.js';
 
 	import StatusBar from '../components/StatusBar.svelte';
 	import SunsetApiSourceAttribution from '../components/SunsetApiSourceAttribution.svelte';
@@ -27,7 +27,7 @@
 			const newCurrentMonthData = Array.from(new Array(daysInMonth + firstDayOffset + toAdd));
 
 			const searchPattern = new RegExp(`${now.getFullYear()}-${currentMonth}-\\d{2}`);
-			const matches = youtubeData.filter(e => e.date.match(searchPattern));
+			const matches = eventsData.filter(e => e.date.match(searchPattern));
 
 			newCurrentMonthData.forEach((e, i, a) => {
 				const dayIsInMonth = i > (firstDayOffset - 1);
@@ -53,11 +53,8 @@
 	let daysInMonth;
 	let isRealMonth;
 
-	let routesData = null;
-	ROUTES_DATA.subscribe(val => routesData = val);
-
-	let youtubeData = null;
-	YOUTUBE_DATA.subscribe(val => youtubeData = val);
+	let eventsData = null;
+	EVENTS_DATA.subscribe(val => eventsData = val);
 
 	let sunxData = null;
 	SUNX_DATA.subscribe(val => sunxData = val);
@@ -74,11 +71,11 @@
 </script>
 
 {#if !navigator?.userAgentData?.mobile}
-	<ThumbnailGrid data={youtubeData} />
+	<ThumbnailGrid data={eventsData} />
 {/if}
 
-<StatusBar bind:now {currentMonthData} {routesData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
+<StatusBar bind:now {currentMonthData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
 
-<WalkCalendar {currentMonthData} {routesData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunxData} />
+<WalkCalendar {currentMonthData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunxData} />
 
 <SunsetApiSourceAttribution />
