@@ -5,7 +5,6 @@
 
 	export let currentMonth;
 	export let currentMonthData;
-	export let routesData;
 	export let monthNames;
 	export let now;
 	export let realMonth;
@@ -41,12 +40,7 @@
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
 		const monthDistanceInMeters = currentMonthData.reduce((monthTotal, curDay, idx) => {
-			const distance = curDay?.walks?.reduce((acc, cur) => {
-				let walkDistance = routesData.find(r => r?.properties?.id === cur?.routeId)?.properties?.distance ?? 0;
-				if (isNaN(walkDistance)) walkDistance = 0;
-				return acc + walkDistance;
-			}, 0) ?? 0;
-			return monthTotal + distance;
+			return monthTotal + (curDay?.distance ?? 0);
 		}, 0);
 
 		currentMonthTotalDistance = (monthDistanceInMeters / 1609).toFixed(toFixedDefault);

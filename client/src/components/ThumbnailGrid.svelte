@@ -239,7 +239,7 @@
 
 		populateImageArray();
 
-		allVideoIds = data.reduce((acc1, day) => [...acc1, ...day.walks.reduce((acc2, walk) => [...acc2, walk.videoId], [])], []);
+		allVideoIds = data.reduce((acc, cur) => { if (cur.youtubeId) { acc.push(cur.youtubeId); } return acc; }, []);
 
 		window.requestAnimationFrame(draw);
 
