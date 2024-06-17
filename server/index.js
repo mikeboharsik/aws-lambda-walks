@@ -309,13 +309,13 @@ async function handleEventsRequest(event) {
 		const parts = q.split('-');
 		target = parts.filter(e => e).join('-');
 	} else {
-		target = '\d{4}-\d{2}-\d{2}';
+		target = '\\\d{4}-\\\d{2}-\\\d{2}';
 	}
 
 	const allFiles = fs.readdirSync('./events');
-	console.log(allFiles);
 
 	const targetFiles = allFiles.filter(e => e.match(target));
+	console.log({ allFiles, target, targetFiles });
 
 	const reads = targetFiles.map(e => fs.promises.readFile(`./events/${e}`, { encoding: 'utf8' }));
 
