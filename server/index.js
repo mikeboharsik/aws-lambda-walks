@@ -398,7 +398,7 @@ async function handlePlatesRequest(event) {
 async function handleContentRequest(event) {
 	const { isAuthed, rawPath } = event;
 
-	console.log('handle content request', rawPath);
+	console.log('handle content request', rawPath, event.queryStringParameters);
 
 	let target = `./public/${rawPath}`;
 	if (['/', '/routes'].includes(rawPath)) {
