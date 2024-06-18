@@ -129,7 +129,7 @@ exports.handler = async (event) => {
 			console.warn('Body seems to exist but it failed to parse', e);
 		}
 
-		if (event?.headers?.authorization) {
+		if (event?.headers?.authentication) {
 			await authenticate(event);
 		}
 
