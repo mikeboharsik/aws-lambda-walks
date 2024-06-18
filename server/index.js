@@ -30,6 +30,7 @@ async function authenticate(event) {
 		const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
 		event.authExpires = content.exp;
 	} catch { }
+	console.log({ isAuthed: !!event.authExpires });
 }
 
 function verifyBodyIsString(result) {
