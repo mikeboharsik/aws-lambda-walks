@@ -39,22 +39,20 @@ function verifyBodyIsString(result) {
 }
 
 function verifyCacheValue(event, result, rawPath) {
-	if (!result['cache-control']) {
-		if (event.authExpires) {
-			const nowInSeconds = Math.floor(new Date().getTime() / 1000);
-			const maxAge = Math.max(0, event.authExpires - nowInSeconds);
-			console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
-			result['cache-control'] = `max-age=${maxAge}`;
+	if (event.authExpires) {
+		const nowInSeconds = Math.floor(new Date().getTime() / 1000);
+		const maxAge = Math.max(0, event.authExpires - nowInSeconds);
+		console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
+		result['cache-control'] = `max-age=${maxAge}`;
+	}	else if (!result['cache-control']) {
+		if (routeCacheValues[rawPath]) {
+			const cacheValue = routeCacheValues[rawPath];
+			result['cache-control'] = `max-age=${cacheValue}`;
 		} else {
-			if (routeCacheValues[rawPath]) {
-				const cacheValue = routeCacheValues[rawPath];
-				result['cache-control'] = `max-age=${cacheValue}`;
-			} else {
-				result['cache-control'] = `max-age=${yearInSeconds}`;
-			}
+			result['cache-control'] = `max-age=${yearInSeconds}`;
 		}
-		console.log(`Set cache-control header to [${result['cache-control']}]`);
 	}
+	console.log(`Set cache-control header to [${result['cache-control']}]`);
 }
 
 function logResult(result) {
