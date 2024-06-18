@@ -41,7 +41,9 @@ function verifyBodyIsString(result) {
 function verifyCacheValue(event, result, rawPath) {
 	if (!result['cache-control']) {
 		if (event.authExpires) {
-			const maxAge = event.authExpires - Math.floor(new Date().getTime() / 1000);
+			const nowInSeconds = Math.floor(new Date().getTime() / 1000);
+			const maxAge = Math.max(0, event.authExpires - nowInSeconds);
+			console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
 			result['cache-control'] = `max-age=${maxAge}`;
 		} else {
 			if (routeCacheValues[rawPath]) {
