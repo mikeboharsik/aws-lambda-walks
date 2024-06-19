@@ -1,0 +1,4 @@
+node_modules
+gen/barcode.png
+gen/*thumbnail.png
+gen/target_frame.png
