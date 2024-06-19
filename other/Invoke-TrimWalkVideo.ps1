@@ -222,3 +222,5 @@ if (!$SkipJson) {
 		& "$PSScriptRoot\..\Invoke-ConvertRawWalkTimestamps.ps1" -Date $dateStr
 	}
 }
+
+& "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr

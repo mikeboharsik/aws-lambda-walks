@@ -61,6 +61,10 @@
 			return null;
 		}
 	}
+
+	$: {
+		console.log({ currentMonthData });
+	}
 </script>
 
 <div transition:fade id="container-walkcalendar">
