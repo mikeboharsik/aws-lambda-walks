@@ -23,12 +23,14 @@ const routeCacheValues = {
 
 async function authenticate(event) {
 	try {
-		await fetch(authUrl, { headers: { authorization: event.headers.authorization }});
-		event.isAuthed = true;
+		const res = await fetch(authUrl, { headers: { authorization: event.headers.authorization }});
 
-		const [, token] = event.headers.authorization.split('Bearer ');
-		const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
-		event.authExpires = content.exp;
+		if (res.ok) {
+			event.isAuthed = true;
+			const [, token] = event.headers.authorization.split('Bearer ');
+			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
+			event.authExpires = content.exp;
+		}
 	} catch { }
 	console.log({ isAuthed: !!event.authExpires });
 }
