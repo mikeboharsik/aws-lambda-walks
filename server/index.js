@@ -336,9 +336,9 @@ async function handlePlatesRequest(event) {
 		const parsed = JSON.parse(cur);
 
 		parsed.forEach(dayWalk => {
-			const { date, events } = dayWalk;
+			const { date, events, youtubeId } = dayWalk;
 
-			events?.forEach(({ name, plate }) => {
+			events?.forEach(({ name, plate, trimmedStart }) => {
 				plate = plate
 					?.replace('SKIP', '')
 					?.replace('OOB ', '')
@@ -349,10 +349,22 @@ async function handlePlatesRequest(event) {
 						name = name
 							?.replace('SKIP', '')
 							?.replace('OOB ', '');
+
+						const entry = { date, name };
+						if (youtubeId) {
+							if (trimmedStart) {
+								const [hours, minutes, seconds] = trimmedStart.split(':').map(e => parseInt(e));
+								const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+								entry.link = `https://youtu.be/${youtubeId}?t=${totalSeconds}`;
+							} else {
+								entry.link = `https://youtu.be/${youtubeId}`;
+							}
+						}
+
 						if (acc[plate]) {
-							acc[plate].push({ date, name });
+							acc[plate].push(entry);
 						} else {
-							acc[plate] = [{ date, name }];
+							acc[plate] = [entry];
 						}
 					}
 				}
