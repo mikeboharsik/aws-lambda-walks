@@ -20,7 +20,7 @@
 
 	const isPastTodaySunrise = now > todaySunrise;
 
-	const didWalkToday = !!currentMonthData.find((d) => d?.date === getPaddedDateString(now));
+	const didWalkToday = !!currentMonthData.find((dayData) => dayData?.date === getPaddedDateString(now));
 
 	const dayNames = [
 		'Su',
@@ -54,7 +54,7 @@
 	function getDateDistanceSum(date) {
 		try {
 			return ((currentMonthData
-				.filter(d => d?.date === date)
+				.find(dayData => dayData?.some(e => e.date === date))
 				.reduce((acc, { distance }) => { return acc + (distance ?? 0); }, 0)) / 1609).toFixed(toFixedDefault);
 		}	catch(e) {
 			console.error(e);
@@ -72,7 +72,7 @@
 		<h5>{day}</h5>
 	{/each}
 
-	{#each currentMonthData as d, idx}
+	{#each currentMonthData as dayData, idx}
 		{@const dateNumber = idx - firstDayOffset + 1}
 		{@const currentDateIdx = currentDate + firstDayOffset - 1}
 		{@const isCurrentDate = idx === currentDateIdx}
@@ -80,13 +80,13 @@
 		{@const isEmptyDay = idx < firstDayOffset}
 		{@const isFutureDay = isRealMonth && idx > currentDateIdx}
 		{@const isTomorrow = isRealMonth && idx === currentDateIdx + 1}
-		{@const isPendingDay = isRealMonth && isCurrentDate && !d?.date}
-		{@const isWalkDay = !!d?.date}
+		{@const isPendingDay = isRealMonth && isCurrentDate && !dayData?.length}
+		{@const isWalkDay = !!dayData?.length}
 		{@const isFuturePaddingDay = idx > daysInMonth + firstDayOffset - 1}
 
 		{@const classes = getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay })}
 
-		{@const dateDistanceSum = d?.date ? getDateDistanceSum(d.date) : null}
+		{@const dateDistanceSum = dayData?.[0]?.date ? getDateDistanceSum(dayData?.[0]?.date) : null}
 		{@const walkDayContent = dateDistanceSum === null ? null : `${dateDistanceSum} miles`}
 
 		<div class={classes}>
@@ -96,9 +96,10 @@
 			{#if isWalkDay}
 				<div style={`opacity: ${walkDayContent ? 1 : 0}`}>{walkDayContent}</div>
 				<div style="display: flex">
+					{#each dayData as walk}
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
 							<a
-								href={`https://walks.mikeboharsik.com/api/routes?date=${d.date}`}
+								href={`https://walks.mikeboharsik.com/api/routes?date=${walk.date}`}
 								noreferrer
 								noopener
 								style="text-decoration: none"
@@ -108,9 +109,9 @@
 								🗺️
 							</a>
 
-							{#if d.youtubeId}
+							{#if walk.youtubeId}
 								<a
-									href={`https://youtu.be/${d.youtubeId}`}
+									href={`https://youtu.be/${walk.youtubeId}`}
 									noreferrer
 									noopener
 									style="text-decoration: none"
@@ -121,6 +122,7 @@
 								</a>
 							{/if}
 						</div>
+					{/each}
 				</div>
 			{:else if isPendingDay && !isPastTodaySunrise}
 				{`Sun rises at ${getPaddedTimeString(todaySunrise)}`}
