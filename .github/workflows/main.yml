@@ -6,6 +6,7 @@ on:
     paths:
       - 'client/**'
       - 'server/**'
+      - '.github/**'
   workflow_dispatch:
     inputs:
       invalidationPaths:
@@ -46,44 +47,41 @@ jobs:
       shell: pwsh
       run: |
         $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
-        Write-Host "Deploying to CF distribution $($distId)"
+        Write-Host "Deploying to CF distribution $($distId)`n"
         
-        Write-Host "Generating geo.json from geo.jsonc"
         Push-Location ./walk-routes
-        
         if (Test-Path "./utility") {
           ./utility/Invoke-GenerateJson.ps1
         } else {
           ./Invoke-GenerateJson.ps1
         }
-        
         Pop-Location
-        Write-Host "Finished generating geo.json"
+        Write-Host "Finished generating JSON`n"
 
         Write-Host "Building client"          
         Push-Location ./client
         npm install
         npm run build
         Pop-Location
-        Write-Host "Finished building client"
+        Write-Host "Finished building client`n"
 
         Push-Location ./server
         Write-Host "Installing server packages"
         npm install
-        Write-Host "Installed server packages"
+        Write-Host "Installed server packages`n"
 
         $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
         if ($invalidationPaths) {
           $invalidationPaths = $invalidationPaths -Split " "
         }
-        Write-Host "`$invalidationPaths = [$invalidationPaths]"
+        Write-Host "`$invalidationPaths = [$invalidationPaths]`n"
 
         Write-Host "Invoking upload script"
 
         $scriptArgs = @{
           DeployClient = $true
           DistributionId = $distId
-          EventsPath = "../../walk-routes/events"
+          EventsPath = "../events"
         }
 
         if ($invalidationPaths) {
@@ -94,4 +92,4 @@ jobs:
 
         .\Invoke-Upload.ps1 @scriptArgs
 
-        Write-Host "Invoke-Upload.ps1 completed with result [$?]"
+        Write-Host "Invoke-Upload.ps1 completed with result [$?]`n"
