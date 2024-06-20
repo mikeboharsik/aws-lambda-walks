@@ -223,4 +223,8 @@ if (!$SkipJson) {
 	}
 }
 
-& "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr
+if (Test-Path "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1") {
+	& "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr
+} else {
+	& "$PSScriptRoot\..\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr
+}
