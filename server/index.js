@@ -271,6 +271,9 @@ async function handleWalkRouteRequest(event) {
 
 	if (date) {
 		updatedRouteData = getGeoJsonFromCoords(route.coords, isAuthed);
+		if (route.route) {
+			updatedRouteData.route = route.route;
+		}
 	} else {
 		updatedRouteData.features.push(route);
 		route.properties.commonFeatureIds?.forEach((fid) => {
