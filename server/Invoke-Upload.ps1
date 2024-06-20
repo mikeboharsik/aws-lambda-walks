@@ -5,9 +5,9 @@ Param(
 
 	[string[]] $InvalidationPaths = @(
 		"/build/*"
+		"/api/routes*"
 		"/api/events*"
 		"/api/plates*"
-		"/events.json"
 		"/global.css"
 		"/index.html"
 	),
