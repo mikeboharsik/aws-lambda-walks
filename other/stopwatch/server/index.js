@@ -144,16 +144,18 @@ async function addDate(body) {
 		await fs.mkdir(expectedMonthPath);
 	}
 
-	const expectedFilePath = path.resolve(`${expectedMonthPath}/${day}.json`);
-	if (fss.existsSync(expectedFilePath)) {
-		throw new Error(`File already exists at [${expectedFilePath}]`);
-	}
-
 	const bodyWithDistance = addDistance(body);
 
-	await fs.writeFile(expectedFilePath, JSON.stringify(bodyWithDistance, null, '  '));
+	const expectedFilePath = path.resolve(`${expectedMonthPath}/${day}.json`);
+	if (fss.existsSync(expectedFilePath)) {
+		const parsed = JSON.parse(await fs.readFile(expectedFilePath));
+		parsed.push(bodyWithDistance);
+		await fs.writeFile(expectedFilePath, JSON.stringify(parsed, null, '  '));
+	} else {
+		await fs.writeFile(expectedFilePath, JSON.stringify([bodyWithDistance], null, '  '));
+	}
 
-	console.log(`Wrote [${expectedFilePath}}] with distance added`);
+	console.log(`Wrote to [${expectedFilePath}}]`);
 }
 
 function addDistance(body) {

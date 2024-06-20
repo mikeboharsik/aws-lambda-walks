@@ -251,7 +251,7 @@ async function handleWalkRouteRequest(event) {
 
 	let geojson = dayWalks.reduce((acc, walk) => {
 		const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
-		
+
 		newEntry.properties.date = walk.date;
 		if (walk.route) {
 			newEntry.properties.route = walk.route;
@@ -333,26 +333,30 @@ async function handlePlatesRequest(event) {
 	const allFiles = await Promise.all(filenames.map(fn => fs.promises.readFile(`./events/${fn}`, 'utf8')));
 
 	const results = allFiles.reduce((acc, cur) => {
-		const { date, events } = JSON.parse(cur);
+		const parsed = JSON.parse(cur);
 
-		events?.forEach(({ name, plate }) => {
-			plate = plate
-				?.replace('SKIP', '')
-				?.replace('OOB ', '')
-				?.replace('TINT', '')
-				?.replace(/ /g, '');
-			if (plate) {
-				if (!q || (q && plate.match(q))) {
-					name = name
-						?.replace('SKIP', '')
-						?.replace('OOB ', '');
-					if (acc[plate]) {
-						acc[plate].push({ date, name });
-					} else {
-						acc[plate] = [{ date, name }];
+		parsed.forEach(dayWalk => {
+			const { date, events } = dayWalk;
+
+			events?.forEach(({ name, plate }) => {
+				plate = plate
+					?.replace('SKIP', '')
+					?.replace('OOB ', '')
+					?.replace('TINT', '')
+					?.replace(/ /g, '');
+				if (plate) {
+					if (!q || (q && plate.match(q))) {
+						name = name
+							?.replace('SKIP', '')
+							?.replace('OOB ', '');
+						if (acc[plate]) {
+							acc[plate].push({ date, name });
+						} else {
+							acc[plate] = [{ date, name }];
+						}
 					}
 				}
-			}
+			});
 		});
 
 		return acc;
