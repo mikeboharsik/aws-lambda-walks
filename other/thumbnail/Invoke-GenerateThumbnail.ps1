@@ -6,6 +6,9 @@ Param(
 	[int] $ThumbnailWidth = 1280,
 	[int] $ThumbnailHeight = 720,
 
+	[int] $BorderThicknessX = 32,
+	[int] $BorderThicknessY = 32,
+
 	[TimeSpan] $TargetTimestamp = "00:00:00"
 )
 
@@ -48,14 +51,31 @@ Write-Host "Overlaying border and barcode"
 $barcodePositionX = ($ThumbnailWidth / 2) - ($barcodeImageData.ImageWidth / 2)
 $barcodePositionY = $ThumbnailHeight - 30
 
+$filters = @(
+	# overlay frame on top of border
+	"[0][1]overlay=$($BorderThicknessX):$($BorderThicknessY)[frameOverBorder]"
+
+	# shrink frame
+	"[1]scale=$($ThumbnailWidth - ($BorderThicknessX * 2)):$($ThumbnailHeight - ($BorderThicknessY * 2))[shrunkFrame]"
+
+	# overlay shrunk frame over border
+	"[frameOverBorder][shrunkFrame]overlay=$($BorderThicknessX):$($BorderThicknessY)[shrunkenFrameOverBorder]"
+
+	# overlay border over shrunk frame
+	"[shrunkenFrameOverBorder][0]overlay=0:0[borderOverFrame]"
+
+	# overload barcode over borderOverFrame
+	"[borderOverFrame][2]overlay=$($barcodePositionX):$($barcodePositionY)"
+)
+
 $ffmpegArgs = @(
-	'-i', "$PSScriptRoot/gen/target_frame.png"
 	'-i', "$PSScriptRoot/gen/border_white.png"
+	'-i', "$PSScriptRoot/gen/target_frame.png"
 	'-i', "$PSScriptRoot/gen/barcode.png"
-	'-filter_complex', "[0:v][1:v]overlay=0:0[withBorder];[withBorder][2]overlay=$($barcodePositionX):$($barcodePositionY)"
+	'-filter_complex', ($filters -Join ';')
 	"$PSScriptRoot/gen/$($Date)_thumbnail.png"
 	'-y'
 	'-loglevel', 'error'
 )
-Write-Verbose "Executing [ffmmpeg $ffmpegArgs]"
+Write-Verbose "Executing [ffmpeg $ffmpegArgs]"
 ffmpeg @ffmpegArgs
