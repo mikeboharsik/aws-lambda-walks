@@ -1,6 +1,5 @@
 Param(
 	[string] $DistributionId,
-	[string] $GeoJsonFilePath = "../../walk-routes/geo.json",
 	[string] $EventsPath = "../../walk-routes/events",
 
 	[string[]] $InvalidationPaths = @(
@@ -16,33 +15,39 @@ Param(
 	[switch] $SkipUpload
 )
 
+Write-Host "Using arguments:`n" 
+	` "    `$DistributionId = [$DistributionId]"
+	` "    `$EventsPath = [$EventsPath]"
+	` "    `$InvalidationPaths = [$InvalidationPaths]"
+	` "    `$DeployClient = [$DeployClient]"
+	` "    `$SkipUpload = [$SkipUpload]"
+	` "    `Get-Location = [$(Get-Location)]"
+
 $ErrorActionPreference = 'Stop'
 
 if (!$DistributionId) {
 	$DistributionId = Read-Host "No CloudFront distribution ID provided, please enter one or hit Enter to skip cache invalidation"
 }
 
-New-Item -Path "./build" -ItemType Directory -Force | Out-Null
+New-Item -Path "$PSScriptRoot/build" -ItemType Directory -Force | Out-Null
 
-Remove-Item -Path "./build/*" -Recurse -Force | Out-Null
+Remove-Item -Path "$PSScriptRoot/build/*" -Recurse -Force | Out-Null
 
-Copy-Item -Path @("./index.js", "./node_modules") -Recurse -Destination "./build" -Force | Out-Null
+Copy-Item -Path @("$PSScriptRoot/index.js", "$PSScriptRoot/node_modules") -Recurse -Destination "$PSScriptRoot/build" -Force | Out-Null
 
 if ($DeployClient) {
-	Copy-Item -Path "../client/public" -Recurse -Destination "./build/public" -Force | Out-Null
+	Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
 }
 
-$geojson = Get-Content $GeoJsonFilePath | ConvertFrom-Json | ConvertTo-Json -Depth 10 -Compress
-Set-Content "./build/public/geo.json" $geojson -Force
+Copy-Item $EventsPath "$PSScriptRoot/build/events" -Recurse
 
-Copy-Item $EventsPath "./build/events" -Recurse
+Write-Host (tree "$PSScriptRoot/build/public") /f
+Write-Host (tree "$PSScriptRoot/build/events") /f
 
-Write-Host (tree "./build/public") /f
-
-Compress-Archive -Path "./build/**" -DestinationPath "./build/deployable.zip" -Force
+Compress-Archive -Path "$PSScriptRoot/build/**" -DestinationPath "$PSScriptRoot/build/deployable.zip" -Force
 
 if (!$SkipUpload) {
-	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://./build/deployable.zip"
+	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/build/deployable.zip"
 
 	if ($DistributionId) {
 		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths

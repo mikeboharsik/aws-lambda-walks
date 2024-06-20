@@ -298,13 +298,12 @@ async function handleEventsRequest(event) {
 
 	const reads = targetFiles.map(e => fs.promises.readFile(`./events/${e}`, { encoding: 'utf8' }));
 
-	const results = (await Promise.all(reads)).map(e => {
-		let result = JSON.parse(e);
-
-		// result.geo = getGeoJsonFromCoords(result.coords, isAuthed);
-
-		return result;
-	});
+	const results = (await Promise.all(reads)).reduce((acc, fileContent) => {
+		console.log({ fileContent });
+		const dayEvents = JSON.parse(fileContent);
+		dayEvents.forEach(e => acc.push(e));
+		return acc;
+	}, []);
 
 	if (!isAuthed) {
 		makeEventsSafeForUnauthed(results);

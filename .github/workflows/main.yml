@@ -71,7 +71,7 @@ jobs:
         Write-Host "Installing server packages"
         npm install
         Write-Host "Installed server packages"
-        
+
         $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
         if ($invalidationPaths) {
           $invalidationPaths = $invalidationPaths -Split " "
@@ -83,8 +83,7 @@ jobs:
         $scriptArgs = @{
           DeployClient = $true
           DistributionId = $distId
-          GeoJsonFilePath = "../walk-routes/geo.json"
-          EventsPath = "../walk-routes/events"
+          EventsPath = "../../walk-routes/events"
         }
 
         if ($invalidationPaths) {
