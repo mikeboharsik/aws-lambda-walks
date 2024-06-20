@@ -102,17 +102,12 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 	}
 
 	return {
-		type: "FeatureCollection",
-		features: [
-			{
-				type: "Feature",
-				properties: {},
-				geometry: {
-					type: "LineString",
-					coordinates,
-				}
-			}
-		]
+		type: "Feature",
+		properties: {},
+		geometry: {
+			type: "LineString",
+			coordinates,
+		}
 	};
 }
 
@@ -246,19 +241,30 @@ async function handleWalkRouteRequest(event) {
 			statusCode: 400,
 		};
 	}
-	const route = JSON.parse(await fs.promises.readFile(`./events/${date}.json`, { encoding: 'utf8' }));
 
-	if (!route) {
+	const dayWalks = JSON.parse(await fs.promises.readFile(`./events/${date}.json`, { encoding: 'utf8' }));
+	if (!dayWalks) {
 		return {
 			statusCode: 404,
 		};
 	}
 
-	const geojson = getGeoJsonFromCoords(route.coords, isAuthed);
-	geojson.features[0].properties.date = date;
-	if (route.route) {
-		geojson.features[0].properties.route = route.route;
-	}
+	let geojson = dayWalks.reduce((acc, walk) => {
+		const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
+		
+		newEntry.properties.date = walk.date;
+		if (walk.route) {
+			newEntry.properties.route = walk.route;
+		}
+
+		acc.push(newEntry);
+		return acc;
+	}, []);
+
+	geojson = {
+		type: "FeatureCollection",
+		features: geojson,
+	};
 
 	const encodedRouteData = encodeURIComponent(JSON.stringify(geojson));
 
