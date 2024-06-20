@@ -32,7 +32,7 @@
 			newCurrentMonthData.forEach((e, i, a) => {
 				const dayIsInMonth = i > (firstDayOffset - 1);
 				if (dayIsInMonth) {
-					const corresponding = matches.find(e => parseInt(e.date.slice(-2)) === (i - (firstDayOffset - 1)));
+					const corresponding = matches.filter(e => parseInt(e.date.slice(-2)) === (i - (firstDayOffset - 1)));
 					if (corresponding) {
 						a[i] = corresponding;
 					}
