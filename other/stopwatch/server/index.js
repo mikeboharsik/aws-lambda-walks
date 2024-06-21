@@ -104,7 +104,8 @@ app.post('/setYoutubeId', async (req, res) => {
 
 		const content = await fs.readFile(expectedFilePath, 'utf8');
 		const parsed = JSON.parse(content);
-		parsed.youtubeId = id;
+		const [mostRecentWalk] = parsed.slice(-1);
+		mostRecentWalk.youtubeId = id;
 		await fs.writeFile(expectedFilePath, JSON.stringify(parsed, null, '  '));
 
 		console.log(`Write [${expectedFilePath}] with youtubeId added [${id}]`);
