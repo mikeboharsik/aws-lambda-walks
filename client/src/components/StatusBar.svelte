@@ -40,7 +40,7 @@
 		shouldHideRightRightButton = currentMonth >= realMonth - 1 && now.getFullYear() === new Date().getFullYear();
 
 		const monthDistanceInMeters = currentMonthData.reduce((monthTotal, curDay, idx) => {
-			return monthTotal + (curDay?.distance ?? 0);
+			return monthTotal + (curDay?.reduce((acc, cur) => acc + cur.distance, 0) ?? 0);
 		}, 0);
 
 		currentMonthTotalDistance = (monthDistanceInMeters / 1609).toFixed(toFixedDefault);
