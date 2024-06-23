@@ -81,7 +81,6 @@ jobs:
         $scriptArgs = @{
           DeployClient = $true
           DistributionId = $distId
-          EventsPath = "../events"
         }
 
         if ($invalidationPaths) {

@@ -111,6 +111,10 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 	};
 }
 
+async function getAllEvents() {
+	return JSON.parse(await fsPromises.readFile('./events.json'));
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -242,14 +246,10 @@ async function handleWalkRouteRequest(event) {
 		};
 	}
 
-	const dayWalks = JSON.parse(await fs.promises.readFile(`./events/${date}.json`, { encoding: 'utf8' }));
-	if (!dayWalks) {
-		return {
-			statusCode: 404,
-		};
-	}
+	const parsed = await getAllEvents();
+	const target = parsed.filter(e => e.date === date);
 
-	let geojson = dayWalks.reduce((acc, walk) => {
+	let geojson = target.reduce((acc, walk) => {
 		const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
 
 		newEntry.properties.date = walk.date;
@@ -289,27 +289,18 @@ async function handleWalkRouteRequest(event) {
 async function handleEventsRequest(event) {
 	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
 
-	let target;
+	let target = null;
 	if (q) {
 		const parts = q.split('-');
 		target = parts.filter(e => e).join('-');
-	} else {
-		target = '\\\d{4}-\\\d{2}-\\\d{2}';
 	}
 
-	const allFiles = fs.readdirSync('./events');
-
-	const targetFiles = allFiles.filter(e => e.match(target));
-	console.log({ allFiles, target, targetFiles });
-
-	const reads = targetFiles.map(e => fs.promises.readFile(`./events/${e}`, { encoding: 'utf8' }));
-
-	const results = (await Promise.all(reads)).reduce((acc, fileContent) => {
-		console.log({ fileContent });
-		const dayEvents = JSON.parse(fileContent);
-		dayEvents.forEach(e => acc.push(e));
-		return acc;
-	}, []);
+	const parsed = await getAllEvents();
+	console.log({ parsed });
+	let results = parsed;
+	if (target) {
+		results = parsed.filter(e => e.date.match(target));
+	}
 
 	if (!isAuthed) {
 		makeEventsSafeForUnauthed(results);
@@ -327,48 +318,41 @@ async function handleEventsRequest(event) {
 async function handlePlatesRequest(event) {
 	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
 
-	const filenames = fs.readdirSync('./events').filter(fn => fn.match(/\d{4}-\d{2}-\d{2}\.json/));
-	console.log(JSON.stringify(filenames));
+	const parsed = await getAllEvents();
 
-	const allFiles = await Promise.all(filenames.map(fn => fs.promises.readFile(`./events/${fn}`, 'utf8')));
+	const results = parsed.reduce((acc, dayWalk) => {
+		const { date, events, youtubeId } = dayWalk;
 
-	const results = allFiles.reduce((acc, cur) => {
-		const parsed = JSON.parse(cur);
+		events?.forEach(({ name, plate, trimmedStart }) => {
+			plate = plate
+				?.replace('SKIP', '')
+				?.replace('OOB ', '')
+				?.replace('TINT', '')
+				?.replace(/ /g, '');
+			if (plate) {
+				if (!q || (q && plate.match(q))) {
+					name = name
+						?.replace('SKIP', '')
+						?.replace('OOB ', '');
 
-		parsed.forEach(dayWalk => {
-			const { date, events, youtubeId } = dayWalk;
-
-			events?.forEach(({ name, plate, trimmedStart }) => {
-				plate = plate
-					?.replace('SKIP', '')
-					?.replace('OOB ', '')
-					?.replace('TINT', '')
-					?.replace(/ /g, '');
-				if (plate) {
-					if (!q || (q && plate.match(q))) {
-						name = name
-							?.replace('SKIP', '')
-							?.replace('OOB ', '');
-
-						const entry = { date, name };
-						if (youtubeId) {
-							if (trimmedStart) {
-								const [hours, minutes, seconds] = trimmedStart.split(':').map(e => parseInt(e));
-								const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-								entry.link = `https://youtu.be/${youtubeId}?t=${totalSeconds}`;
-							} else {
-								entry.link = `https://youtu.be/${youtubeId}`;
-							}
-						}
-
-						if (acc[plate]) {
-							acc[plate].push(entry);
+					const entry = { date, name };
+					if (youtubeId) {
+						if (trimmedStart) {
+							const [hours, minutes, seconds] = trimmedStart.split(':').map(e => parseInt(e));
+							const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+							entry.link = `https://youtu.be/${youtubeId}?t=${totalSeconds}`;
 						} else {
-							acc[plate] = [entry];
+							entry.link = `https://youtu.be/${youtubeId}`;
 						}
 					}
+
+					if (acc[plate]) {
+						acc[plate].push(entry);
+					} else {
+						acc[plate] = [entry];
+					}
 				}
-			});
+			}
 		});
 
 		return acc;
