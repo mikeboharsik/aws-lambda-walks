@@ -1,6 +1,6 @@
 Param(
 	[string] $DistributionId,
-	[string] $EventsPath = "../../walk-routes/events",
+	[string] $EventsPath = "../walk-routes/events.json",
 
 	[string[]] $InvalidationPaths = @(
 		"/build/*"
@@ -39,10 +39,9 @@ if ($DeployClient) {
 	Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
 }
 
-Copy-Item $EventsPath "$PSScriptRoot/build/events" -Recurse
+Copy-Item $EventsPath "$PSScriptRoot/build/events.json"
 
-Write-Host (tree "$PSScriptRoot/build/public") /f
-Write-Host (tree "$PSScriptRoot/build/events") /f
+Write-Host (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10)
 
 Compress-Archive -Path "$PSScriptRoot/build/**" -DestinationPath "$PSScriptRoot/build/deployable.zip" -Force
 
