@@ -48,7 +48,8 @@ if (!$dataPath) {
 	exit 1
 }
 
-$data = Get-Content $dataPath | ConvertFrom-Json -AsHashtable -Depth 10
+$dayWalks = Get-Content $dataPath | ConvertFrom-Json -Depth 10 -AsHashtable
+[hashtable]$data = $daysWalks.Length -gt 1 ? $dayWalks[-1] : $dayWalks
 
 if (!$data.route -and !$data.coords -and !$Route) {
 	$Route = Read-Host 'Route'
@@ -154,8 +155,6 @@ if (Test-Path 'exif.json') {
 	Write-Host 'Missing exif.json'
 }
 
-$json = ConvertTo-Json $data -Depth 10
-
 $outputName = "$($dateStr)_trimmed.mp4"
 
 $totalGap = [TimeSpan]"00:00:00"
@@ -192,8 +191,10 @@ $ffmpegArgs = @(
 Write-Host "ffmpeg arguments: [$ffmpegArgs]"
 
 if ($WhatIf) {
-	$data.coords = "<truncated $($data.coords.Length) elements>"
-	Write-Host "Generated JSON:`n$($data | ConvertTo-Json -Depth 10)"
+	foreach ($walk in $dayWalks) {
+		$walk.coords = "<truncated $($walk.coords.Length) elements>"
+	}
+	Write-Host "Generated JSON:`n$($dayWalks | ConvertTo-Json -Depth 10 -AsArray)"
 	Write-Host "Output name: $outputName"
 
 	exit 0
@@ -214,7 +215,7 @@ Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
 Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
 if (!$SkipJson) {
-	Set-Content $expectedTargetFilePath $json
+	$dayWalks | ConvertTo-Json -Depth 10 -AsArray | Set-Content $expectedTargetFilePath
 
 	if ($SkipTimestampConversion) {
 		Write-Host "Skipping timestamp conversion"

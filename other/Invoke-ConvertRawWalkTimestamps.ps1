@@ -134,60 +134,63 @@ function Print-Segments {
 	} | ConvertTo-Json)
 }
 
-$json = Get-json
-$jsonStart = [TimeSpan]$json.startMark
-[hashtable[]]$segments = Get-Segments $json
+$walks = Get-json
 
-if ($PrintSegments) {
-	Print-Segments $segments
-}
+foreach ($json in $walks) {
+	$jsonStart = [TimeSpan]$json.startMark
+	[hashtable[]]$segments = Get-Segments $json
 
-[DateTime]$startDate = $segments[0].startDate
-
-foreach ($event in $json.events) {
-	if (!$event.mark) { continue }
-
-	if ($event.trimmedStart -and $event.trimmedEnd -and $event.trimmedStart -ne $event.trimmedEnd) {
-		Write-Host "Skipping event that has already been adjusted"
-		continue
+	if ($PrintSegments) {
+		Print-Segments $segments
 	}
 
-	try {
-		[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
+	[DateTime]$startDate = $segments[0].startDate
 
-		$targetSegment = $segments
-			| Where-Object {
-				$markDate -ge $_.startDate -and $markDate -le $_.endDate
-			}
-		if (!$targetSegment) {
-			Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
+	foreach ($event in $json.events) {
+		if (!$event.mark) { continue }
+
+		if ($event.trimmedStart -and $event.trimmedEnd -and $event.trimmedStart -ne $event.trimmedEnd) {
+			Write-Host "Skipping event that has already been adjusted"
 			continue
 		}
 
-		$mark = [TimeSpan]$event.mark
-		Write-Verbose "`$mark = $mark"
-		$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
-		Write-Verbose "`$trimmedStart = $trimmedStart"
-		$trimmedEnd = $trimmedStart
+		try {
+			[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
 
-		$event['trimmedStart'] = $trimmedStart.ToString() -Replace '(\d{3})\d{4}','$1'
-		if ($null -ne $event.name) {
-			$event['trimmedEnd'] = $trimmedEnd.ToString() -Replace '(\d{3})\d{4}','$1'
+			$targetSegment = $segments
+				| Where-Object {
+					$markDate -ge $_.startDate -and $markDate -le $_.endDate
+				}
+			if (!$targetSegment) {
+				Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
+				continue
+			}
+
+			$mark = [TimeSpan]$event.mark
+			Write-Verbose "`$mark = $mark"
+			$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
+			Write-Verbose "`$trimmedStart = $trimmedStart"
+			$trimmedEnd = $trimmedStart
+
+			$event['trimmedStart'] = $trimmedStart.ToString() -Replace '(\d{3})\d{4}','$1'
+			if ($null -ne $event.name) {
+				$event['trimmedEnd'] = $trimmedEnd.ToString() -Replace '(\d{3})\d{4}','$1'
+			}
+		} catch {
+			Write-Error "Error processing event $($event | ConvertTo-Json -Depth 10)`n$($_)"
 		}
-	} catch {
-		Write-Error "Error processing event $($event | ConvertTo-Json -Depth 10)`n$($_)"
 	}
 }
 
 if ($WhatIf) {
-	return $json | ConvertTo-Json -Depth 10
+	return $walks | ConvertTo-Json -Depth 10 -AsArray
 }
 
 if ($ReturnData) {
-	return $json
+	return $walks
 } else {
 	try {
-		$json | ConvertTo-Json -Depth 10 | Set-Content $filePath
+		$walks | ConvertTo-Json -Depth 10 -AsArray | Set-Content $filePath
 	} catch {
 		Write-Error "Failed to write to file [$filePath]: $_"
 	}
