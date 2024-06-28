@@ -20,7 +20,7 @@ def get_year_month_date_from_name():
 
 def get_expected_meta_filename():
     [year, month, date] = get_year_month_date_from_name()
-    return f"{meta_archive_dir}\\{year}\\{month}\\{year}-{month}-{date}.json"
+    return f"{meta_archive_dir}\\{year}\\{month}\\{date}.json"
 
 def get_blend_dir():
     blend_path = bpy.context.blend_data.filepath
@@ -87,7 +87,7 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
             metadataContent = metadataFile.read()
             metadata = json.loads(metadataContent)
             
-            return metadata
+            return metadata[-1]
         else:
             print(f'Failed to load meta file with name [{jsonFilename}]')
             return None
