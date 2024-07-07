@@ -25,6 +25,17 @@
   $: clockText = getClockText();
   $: stopwatchText = getDisplayText(state.elapsed);
   $: isUploading = false;
+  $: uploadStatusEndTime = 0;
+  $: lastUploadStatus = null;
+  $: curTime = new Date().getTime();
+  $: isRunning = false;
+
+  function setUploadStatus(message, seconds) {
+    const d = new Date();
+    d.setSeconds(d.getSeconds() + 3);
+    uploadStatusEndTime = d.getTime();
+    lastUploadStatus = message;
+  }
 
   function getDisplayText(timestamp, withoutMillseconds = false) {
     if (timestamp === undefined) {
@@ -176,7 +187,7 @@
   }
 
   function handleToggleClick() {
-    state.running = !state.running;
+    state.running = !state.running;    
     updateStorage(true);
   }
 
@@ -211,9 +222,12 @@
       } else {
         try {
           isUploading = true;
+          setUploadStatus('Upload started', 3);
           await fetch('https://mike-desktop/events', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(exportContent) });
+          setUploadStatus('Success', 3);
         } catch (e) {
-          alert(`Encountered an error during upload: ${e.message}`);
+          console.log(e);
+          setUploadStatus('Failure', 3);
         } finally {
           isUploading = false;
           fileInputChangeEvent.target.value = null;
@@ -264,7 +278,9 @@
         }
       }
 
+      console.log(state.marks);
       state.marks.push(newMark);
+      console.log(state.marks);
 
       if (![EVENT_TYPE.BEGIN, EVENT_TYPE.END].includes(button.type)) {
         setTimeout(() => {
@@ -341,6 +357,8 @@
 
     clockText = getClockText();
     stopwatchText = getDisplayText(state.elapsed);
+    curTime = new Date().getTime();
+    isRunning = state.running;
 
     updateStorage();
     requestAnimationFrame(update);
@@ -352,11 +370,16 @@
 <main>
   <h1>{clockText}</h1>
   <h1>{stopwatchText}</h1>
+  {#if curTime < uploadStatusEndTime}
+    <h1>{lastUploadStatus}</h1>
+  {/if}
 
   <p>
     <button on:click={handleToggleClick}>Toggle</button>
     <button on:click={e => { isTestUpload = e.ctrlKey; document.querySelector('#gps_file').click(); }} disabled={!state.marks.length || isUploading}>Upload</button>
-    <button on:click={handleResetClick}>Reset</button>
+    {#if !isRunning}
+      <button on:click={handleResetClick}>Reset</button>
+    {/if}
   </p>
   <p>
     {#if state.marks.find(m => m.type === EVENT_TYPE.BEGIN)}
