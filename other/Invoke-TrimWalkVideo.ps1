@@ -143,7 +143,7 @@ if (Test-Path 'exif.json') {
 	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
 
 	foreach ($section in $exif) {
-		if ($section.Duration -Match "(\d{2})\.(\d{2}) s") {
+		if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
 			$section.Duration = "00:00:$($Matches[1]).$($Matches[2])"
 		}
 
