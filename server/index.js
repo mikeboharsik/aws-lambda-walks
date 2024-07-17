@@ -296,10 +296,9 @@ async function handleEventsRequest(event) {
 	}
 
 	const parsed = await getAllEvents();
-	console.log({ parsed });
 	let results = parsed;
 	if (target) {
-		results = parsed.filter(e => e.date.match(target));
+		results = parsed.filter(e => e.date?.match(target));
 	}
 
 	if (!isAuthed) {
