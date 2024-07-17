@@ -112,7 +112,10 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 }
 
 async function getAllEvents() {
-	return JSON.parse(await fsPromises.readFile('./events.json'));
+	const s = new Date().getTime();
+	const result = JSON.parse(await fsPromises.readFile('./events.json'));
+	console.log(`getAllEvents completed in ${new Date().getTime() - s} ms`);
+	return result;
 }
 
 exports.handler = async (event) => {
