@@ -176,7 +176,12 @@ if ($totalGap -lt [TimeSpan]"00:00:00") {
 }
 
 Write-Host "Unadjusted end: $($data.endMark)"
-$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
+try {
+	$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
+} catch {
+	$adjustedEnd = $data.endMark
+}
+
 Write-Host "Adjusted end: $adjustedEnd"
 
 $ffmpegArgs = @(
