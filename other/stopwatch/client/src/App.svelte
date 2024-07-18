@@ -179,6 +179,10 @@
     localStorage.setItem('Backup_0', JSON.stringify(state));
   }
 
+  function updateTempData() {
+    localStorage.setItem('tempData', JSON.stringify(state));
+  }
+
   function updateStorage(ignoreRunning = false) {
     localStorage.setItem('lastTimestamp', lastTimestamp);
     if (state.running || ignoreRunning) {
@@ -302,6 +306,7 @@
           target.name = e.target.value;
         }
       }
+      updateTempData();
     }
   }
 
@@ -322,6 +327,7 @@
         }
         default: {}
       }
+      updateTempData();
     }
   }
 
