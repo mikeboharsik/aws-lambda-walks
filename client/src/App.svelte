@@ -25,8 +25,11 @@
 		tomorrowDate.setDate(tomorrowDate.getDate() + 1);
 		const tomorrowDateStr = getPaddedDateString(tomorrowDate);
 
+		const today = new Date();
+		const todayYearAndMonth = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`;
+
 		const initialDataJobs = [
-			fetch(`${baseApiUrl}/events`, options).then(res => res.json()),
+			fetch(`${baseApiUrl}/events?q=${todayYearAndMonth}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
 		];
