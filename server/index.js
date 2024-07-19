@@ -125,6 +125,13 @@ async function getEventsByMonth(month) {
 	return result;
 }
 
+async function getCoordsByMonth(month) {
+	const s = new Date().getTime();
+	const result = JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
+	console.log(`getCoordsByMonth completed in ${new Date().getTime() - s} ms`);
+	return result;
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -256,7 +263,9 @@ async function handleWalkRouteRequest(event) {
 		};
 	}
 
-	const parsed = await getAllEvents();
+	const [month] = date.match(/\d{4}-\d{2}/);
+
+	const parsed = await getCoordsByMonth(month);
 	const target = parsed.filter(e => e.date === date);
 
 	let geojson = target.reduce((acc, walk) => {
