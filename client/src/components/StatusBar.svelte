@@ -1,7 +1,11 @@
 <script>
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	import { getApiOptions } from '../util/api';
+	import { baseApiUrl } from '../constants/api';
 	import { firstMonth, toFixedDefault } from '../constants/config';
+	import { EVENTS_DATA } from '../stores.js';
 
 	export let currentMonth;
 	export let currentMonthData;
@@ -17,21 +21,36 @@
 	let shouldHideLeftLeftButton;
 	let shouldHideRightRightButton;
 
+	async function updateEvents() {
+		const month = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}`;
+		const options = getApiOptions();
+		const monthEvents = await fetch(`${baseApiUrl}/events?q=${month}`, options).then(res => res.json());
+		EVENTS_DATA.update(() => monthEvents);
+	}
+
 	function subtractMonth() {
 		now = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+		updateEvents();
 	}
 
 	function addMonth() {
 		now = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+		updateEvents();
 	}
 
 	function setFirstMonth() {
 		now = firstMonth;
+		updateEvents();
 	}
 
 	function setLastMonth() {
 		now = new Date();
+		updateEvents();
 	}
+
+	onMount(async() => {
+		
+	});
 
 	$: {
 		shouldHideLeftLeftButton = parseInt(currentMonth) <= 8 && now.getFullYear() === 2022;
