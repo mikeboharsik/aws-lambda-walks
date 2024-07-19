@@ -118,6 +118,13 @@ async function getAllEvents() {
 	return result;
 }
 
+async function getEventsByMonth(month) {
+	const s = new Date().getTime();
+	const result = JSON.parse(await fsPromises.readFile(`./walks/${month}.json`));
+	console.log(`getEventsByMonth completed in ${new Date().getTime() - s} ms`);
+	return result;
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -292,17 +299,12 @@ async function handleWalkRouteRequest(event) {
 async function handleEventsRequest(event) {
 	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
 
-	let target = null;
-	if (q) {
-		const parts = q.split('-');
-		target = parts.filter(e => e).join('-');
+	if (!q.match(/\d{4}-\d{2}/)) {
+		throw new Error("Query must be in yyyy-MM format");
 	}
 
-	const parsed = await getAllEvents();
+	const parsed = await getEventsByMonth(q);
 	let results = parsed;
-	if (target) {
-		results = parsed.filter(e => e.date?.match(target));
-	}
 
 	if (!isAuthed) {
 		makeEventsSafeForUnauthed(results);
