@@ -6,9 +6,9 @@
 
 	import Calendar from './views/Calendar.svelte';
 
-	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, ROUTES_DATA, SUNX_DATA, YOUTUBE_DATA } from './stores.js';
+	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
 
-	import { baseApiUrl, baseUrl } from './constants/api';
+	import { baseApiUrl } from './constants/api';
 
 	import { getApiOptions } from './util/api';
 	import { getPaddedDateString } from './util/date';

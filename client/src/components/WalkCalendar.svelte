@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { toFixedDefault } from '../constants/config';
+	import { SUNX_DATA } from '../stores.js';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
 
@@ -11,7 +12,8 @@
 	export let isRealMonth;
 	export let daysInMonth;
 
-	export let sunxData;
+	let sunxData = null;
+	SUNX_DATA.subscribe(val => sunxData = val);
 
 	const now = new Date();
 	const todaySunrise = new Date(sunxData.today.sunrise);
@@ -63,7 +65,7 @@
 	}
 
 	$: {
-		console.log({ currentMonthData });
+		// console.log({ currentMonthData });
 	}
 </script>
 

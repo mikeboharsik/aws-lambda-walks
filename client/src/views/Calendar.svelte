@@ -1,5 +1,5 @@
 <script>
-	import { EVENTS_DATA, SUNX_DATA, YOUTUBE_DATA } from '../stores.js';
+	import { EVENTS_DATA } from '../stores.js';
 
 	import StatusBar from '../components/StatusBar.svelte';
 	import SunsetApiSourceAttribution from '../components/SunsetApiSourceAttribution.svelte';
@@ -56,10 +56,8 @@
 	let eventsData = null;
 	EVENTS_DATA.subscribe(val => eventsData = val);
 
-	let sunxData = null;
-	SUNX_DATA.subscribe(val => sunxData = val);
-
 	$: {
+		eventsData = eventsData;
 		let tempHumanMonthNumber = now.getMonth() + 1;
 		currentMonth = tempHumanMonthNumber < 10 ? '0' + tempHumanMonthNumber : tempHumanMonthNumber.toString();
 		firstDayOffset = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
@@ -76,6 +74,6 @@
 
 <StatusBar bind:now {currentMonthData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />
 
-<WalkCalendar {currentMonthData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} {sunxData} />
+<WalkCalendar {currentMonthData} {currentDate} {firstDayOffset} {isRealMonth} {daysInMonth} />
 
 <SunsetApiSourceAttribution />
