@@ -1,6 +1,8 @@
 Param(
 	[string] $DistributionId,
 	[string] $EventsPath = "../walk-routes/events.json",
+	[string] $WalksPath = "../walk-routes/generated/walks",
+	[string] $CoordsPath = "../walk-routes/generated/coords",
 
 	[string[]] $InvalidationPaths = @(
 		"/build/*"
@@ -30,6 +32,8 @@ if (!$DistributionId) {
 }
 
 New-Item -Path "$PSScriptRoot/build" -ItemType Directory -Force | Out-Null
+New-Item -Path "$PSScriptRoot/build/coords" -ItemType Directory -Force | Out-Null
+New-Item -Path "$PSScriptRoot/build/walks" -ItemType Directory -Force | Out-Null
 
 Remove-Item -Path "$PSScriptRoot/build/*" -Recurse -Force | Out-Null
 
@@ -39,7 +43,8 @@ if ($DeployClient) {
 	Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
 }
 
-Copy-Item $EventsPath "$PSScriptRoot/build/events.json"
+Copy-Item -Recurse $CoordsPath "$PSScriptRoot/build/coords"
+Copy-Item -Recurse $WalksPath "$PSScriptRoot/build/walks"
 
 Write-Host (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10)
 
