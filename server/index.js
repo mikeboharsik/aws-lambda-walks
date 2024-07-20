@@ -367,20 +367,6 @@ async function handleContentRequest(event) {
 			case 'html':
 				contentType = 'text/html';
 				break;
-			case 'json':
-				contentType = 'application/json';
-
-				if (rawPath.endsWith('geo.json') && !isAuthed) {
-					const parsed = JSON.parse(body);
-					parsed.features.forEach(makeFeatureSafeForUnauthed);
-					body = JSON.stringify(parsed);
-				}
-				if (rawPath.endsWith('events.json' && !isAuthed)) {
-					const parsed = JSON.parse(body);
-					parsed.forEach(makeEventsSafeForUnauthed);
-					body = JSON.stringify(parsed);
-				}
-				break;
 			case 'js':
 				contentType = 'text/javascript';
 				break;
