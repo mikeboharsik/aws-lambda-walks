@@ -132,6 +132,13 @@ async function getCoordsByMonth(month) {
 	return result;
 }
 
+async function getAllEventsByPlate() {
+	const s = new Date().getTime();
+	const result = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
+	console.log(`getAllEventsByPlate completed in ${new Date().getTime() - s} ms`);
+	return result;
+}
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -331,62 +338,11 @@ async function handleEventsRequest(event) {
 async function handlePlatesRequest(event) {
 	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
 
-	const parsed = await getAllEvents();
-
-	const results = parsed.reduce((acc, dayWalk) => {
-		const { date, events, youtubeId } = dayWalk;
-
-		events?.forEach(({ name, plate, trimmedStart }) => {
-			plate = plate
-				?.replace('SKIP', '')
-				?.replace('OOB ', '')
-				?.replace('TINT', '')
-				?.replace(/ /g, '');
-			if (plate) {
-				if (!q || (q && plate.match(q))) {
-					name = name
-						?.replace('SKIP', '')
-						?.replace('OOB ', '');
-
-					const entry = { date, name };
-					if (youtubeId) {
-						if (trimmedStart) {
-							const [hours, minutes, seconds] = trimmedStart.split(':').map(e => parseInt(e));
-							const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-							entry.link = `https://youtu.be/${youtubeId}?t=${totalSeconds}`;
-						} else {
-							entry.link = `https://youtu.be/${youtubeId}`;
-						}
-					}
-
-					if (acc[plate]) {
-						acc[plate].push(entry);
-					} else {
-						acc[plate] = [entry];
-					}
-				}
-			}
-		});
-
-		return acc;
-	}, {});
-
-	const copy = {};
-	const keys = Object.keys(results);
-	keys.sort();
-	keys.forEach((key) => {
-		copy[key] = results[key];
-	});
-
-	/*
-	if (!isAuthed) {
-		makeEventsSafeForUnauthed(results);
-	}
-	*/
+	const parsed = await getAllEventsByPlate();
 
 	return {
 		statusCode: 200,
-		body: JSON.stringify(copy),
+		body: JSON.stringify(parsed),
 		headers: { 'content-type': 'application/json' }
 	};
 }
