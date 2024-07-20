@@ -178,28 +178,12 @@ exports.handler = async (event) => {
 	}
 };
 
-function formatYouTubeDataResponse(result, isAuthed = false) {
-	if (!isAuthed) {
-		delete result.playlistId;
-
-		const parsedData = JSON.parse(result.data);
-		result.data = parsedData;
-	}
-
-	if (typeof result.data === 'string') {
-		result.data = JSON.parse(result.data);
-	}
-
-	return result;
-}
-
 async function handleApiRequest(event) {
 	const { rawPath } = event;
 
 	console.log(`handle api request for ${rawPath}`);
 
 	const routeMap = {
-		'/api/yt-data': handleYouTubeDataRequest,
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/webhooks/video': handleWebhookVideo,
@@ -417,78 +401,6 @@ function getMissingConfigs(expected) {
 			'cache-control': 'no-store',
 		};
 	}
-}
-
-async function handleYouTubeDataRequest(event) {
-	const { isAuthed } = event;
-
-	const expectedConfigs = [
-		'API_KEY_REFERER',
-		'YOUTUBE_API_KEY',
-		'YOUTUBE_PLAYLIST_ID',
-	];
-
-	const missingConfigsResponse = getMissingConfigs(expectedConfigs);
-	if (missingConfigsResponse) {
-		return missingConfigsResponse;
-	}
-
-	const baseUri = 'https://www.googleapis.com/youtube/v3/playlistItems';
-	const params = {
-		key: process.env.YOUTUBE_API_KEY,
-		maxResults: 50,
-		part: 'snippet',
-		playlistId,
-	};
-
-	let items = [];
-	do {
-		const uri = `${baseUri}?${Object.entries(params).map(([k, v]) => k + '=' + v).join('&')}`;
-
-		const res = await fetch(uri, { headers: { 'Referer': process.env.API_KEY_REFERER } }).then(r => r.json());
-
-		items = items.concat(res.items);
-
-		params.pageToken = res.nextPageToken;
-	} while(params.pageToken);
-
-	const relevantData = items.map((item) => {
-		const { snippet: { description, resourceId: { videoId }, title } } = item;
-
-		const date = title.match(/(\d{4}-\d{2}-\d{2})/)?.[1] ?? null;
-		const routeId = description.match(/Route: (.*)/)?.[1] ?? null;
-
-		return {
-			date,
-			routeId,
-			videoId,
-		};
-	});
-
-	const normalized = relevantData.reduce((acc, { date, routeId, videoId }) => {
-		if (date) {
-			const exists = acc.find(d => d.date === date);
-			if (exists) {
-				exists.walks.push({ routeId, videoId });
-			} else {
-				acc.push({ date, walks: [{ routeId, videoId }] });
-			}
-		}
-
-		return acc;
-	}, []);
-
-	const now = new Date().toISOString()
-	const body = {
-		data: JSON.stringify(normalized),
-		datetime: now,
-		playlistId // whether this is included in the response will be handled by the formatter function below
-	};
-
-	return setJsonContentType({
-		body: formatYouTubeDataResponse(body, isAuthed),
-		statusCode: 200
-	});
 }
 
 async function handleYouTubeThumbnailRequest(event) {
