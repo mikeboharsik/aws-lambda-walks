@@ -186,7 +186,6 @@ async function handleApiRequest(event) {
 	const routeMap = {
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
-		'/api/webhooks/video': handleWebhookVideo,
 		'/api/routes': handleWalkRouteRequest,
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
@@ -455,72 +454,4 @@ async function handleSunxDataRequest(event) {
 			statusCode: 400,
 		});
 	}
-}
-
-// https://pubsubhubbub.appspot.com/subscribe
-async function handleWebhookVideo(event) {
-	const {
-		body,
-		queryStringParameters: {
-			'hub.topic': topic,
-			'hub.challenge': challenge,
-			'hub.mode': mode,
-			'hub.lease_seconds': lease_seconds
-		} = {}
-	} = event;
-
-	if (mode) {
-		console.log(`Received webhook ${mode} request`, JSON.stringify({ topic, challenge, mode, lease_seconds }));
-	} else if (body) {
-		console.log('Webhook body', event.body);
-
-		let shouldInvalidateYouTubeDataAfter = new Date();
-		shouldInvalidateYouTubeDataAfter.setHours(shouldInvalidateYouTubeDataAfter.getHours() - 1);
-
-		let [,videoPublishedAt] = body.match(/<published>(.*?)<\/published>/);
-		if (videoPublishedAt) {
-			videoPublishedAt = new Date(videoPublishedAt);
-
-			if (videoPublishedAt >= shouldInvalidateYouTubeDataAfter) {
-				const cfInput = {
-					DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-					InvalidationBatch: {
-						CallerReference: new Date().getTime().toString(),
-						Paths: {
-							Items: ['/api/yt-data'],
-							Quantity: 1,
-						}
-					}
-				};
-				const cfClient = new CloudFrontClient({ region: process.env.AWS_REGION });
-				const cfCommand = new CreateInvalidationCommand(cfInput);
-	
-				console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
-				const result = await cfClient.send(cfCommand);
-				console.log('Invalidation result', JSON.stringify(result));
-
-				return {
-					body: 'did update',
-					statusCode: 200,
-					'cache-control': 'no-store,max-age=0',
-				};
-			} else {
-				console.log('Updated an old video, no reason to invalidate the cache');
-
-				return {
-					body: 'no update',
-					statusCode: 200,
-					'cache-control': 'no-store,max-age=0',
-				};
-			}
-		}
-	} else {
-		console.error('Did not find expected data in the webhook request payload', JSON.stringify(event));
-	}
-
-	return {
-		body: challenge,
-		statusCode: 200,
-		'cache-control': 'no-store,max-age=0',
-	};
 }
