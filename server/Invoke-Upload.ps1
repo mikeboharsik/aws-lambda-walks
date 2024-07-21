@@ -37,8 +37,6 @@ New-Item -Path "$PSScriptRoot/build/coords" -ItemType Directory -Force | Out-Nul
 New-Item -Path "$PSScriptRoot/build/walks" -ItemType Directory -Force | Out-Null
 New-Item -Path "$PSScriptRoot/build/plates" -ItemType Directory -Force | Out-Null
 
-Remove-Item -Path "$PSScriptRoot/build/*" -Recurse -Force | Out-Null
-
 Copy-Item -Path @("$PSScriptRoot/index.js", "$PSScriptRoot/node_modules") -Recurse -Destination "$PSScriptRoot/build" -Force | Out-Null
 
 if ($DeployClient) {

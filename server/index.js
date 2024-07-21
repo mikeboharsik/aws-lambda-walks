@@ -190,11 +190,23 @@ async function handleApiRequest(event) {
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
+		'/api/git': handleGitRequest,
 	};
 
 	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
 
 	return await func(event);
+}
+
+async function handleGitRequest() {
+	const content = await fsPromises.readFile('./git.json', 'utf8');
+	return {
+		statusCode: 400,
+		body: content,
+		headers: {
+			'content-type': 'application/json'
+		}
+	};
 }
 
 async function handleCacheInvalidate(event) {
