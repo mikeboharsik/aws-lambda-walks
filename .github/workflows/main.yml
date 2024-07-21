@@ -36,6 +36,11 @@ jobs:
         path: walk-routes
         token: ${{ secrets.WALK_ROUTES_PAT }}
 
+    - id: get-sha
+      run: |
+        echo ::set-output name=lambda-sha::$( curl -u "u:${{github.token}}" https://api.github.com/repos/mikeboharsik/aws-lambda-walks/git/ref/heads/main | jq .object.sha | tr -d '"' )
+        echo ::set-output name=routes-sha::$( curl -u "u:${{ secrets.WALK_ROUTES_PAT }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main | jq .object.sha | tr -d '"' )
+
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.6.0
       with:
@@ -73,6 +78,14 @@ jobs:
         Write-Host "Installing server packages"
         npm install
         Write-Host "Installed server packages`n"
+
+        Write-Host (Get-Location)
+        $gitData = @{
+          'aws-lambda-walks' = "${{ steps.get-sha.outputs.lambda-sha }}"
+          'walk-routes' = "${{ steps.get-sha.outputs.routes-sha }}"
+        }
+        New-Item -Type Directory "./build" | Out-Null
+        $gitData | ConvertTo-Json -Depth 10 -Compress | Set-Content "./build/git.json"
 
         $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
         if ($invalidationPaths) {
