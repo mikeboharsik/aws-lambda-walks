@@ -15,6 +15,7 @@
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
+	let gitHashes = {};
 
 	onMount(async() => {
 		const options = getApiOptions();
@@ -30,6 +31,7 @@
 
 		const initialDataJobs = [
 			fetch(`${baseApiUrl}/events?q=${todayYearAndMonth}`, options).then(res => res.json()),
+			fetch(`${baseApiUrl}/git`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
 		];
@@ -39,10 +41,12 @@
 			
 			const [
 				{ value: eventsDataResult },
+				{ value: gitResult },
 				{ value: { results: sunxTodayResult } },
 				{ value: { results: sunxTomorrowResult } },
 			] = results;
 
+			gitHashes = gitResult;
 			EVENTS_DATA.update(() => eventsDataResult);
 			SUNX_DATA.update(() => ({ today: sunxTodayResult, tomorrow: sunxTomorrowResult }));
 		} catch(e) {
