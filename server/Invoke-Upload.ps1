@@ -33,9 +33,6 @@ if (!$DistributionId) {
 }
 
 New-Item -Path "$PSScriptRoot/build" -ItemType Directory -Force | Out-Null
-New-Item -Path "$PSScriptRoot/build/coords" -ItemType Directory -Force | Out-Null
-New-Item -Path "$PSScriptRoot/build/walks" -ItemType Directory -Force | Out-Null
-New-Item -Path "$PSScriptRoot/build/plates" -ItemType Directory -Force | Out-Null
 
 Copy-Item -Path @("$PSScriptRoot/index.js", "$PSScriptRoot/node_modules") -Recurse -Destination "$PSScriptRoot/build" -Force | Out-Null
 
@@ -43,9 +40,9 @@ if ($DeployClient) {
 	Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
 }
 
-Copy-Item -Recurse $CoordsPath "$PSScriptRoot/build/coords"
-Copy-Item -Recurse $WalksPath "$PSScriptRoot/build/walks"
-Copy-Item -Recurse $PlatesPath "$PSScriptRoot/build/plates"
+Copy-Item -Recurse $CoordsPath "$PSScriptRoot/build"
+Copy-Item -Recurse $WalksPath "$PSScriptRoot/build"
+Copy-Item -Recurse $PlatesPath "$PSScriptRoot/build"
 
 Write-Host (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10)
 
