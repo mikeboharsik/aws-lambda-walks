@@ -143,23 +143,23 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 $outputName = "$($dateStr)_trimmed.mp4"
 
-if (!$EndTime) {
-	if (Test-Path 'exif.json') {
-		$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
+if (Test-Path 'exif.json') {
+	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
 
-		foreach ($section in $exif) {
-			if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
-				$section.Duration = "00:00:$($Matches[1]).$($Matches[2])"
-			}
-
-			$section.Duration = ([TimeSpan]$section.Duration).ToString() -Replace '(\d{3})\d{3,}','$1'
+	foreach ($section in $exif) {
+		if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
+			$section.Duration = "00:00:$($Matches[1]).$($Matches[2])"
 		}
 
-		$data.exif = $exif
-	} else {
-		Write-Host 'Missing exif.json'
+		$section.Duration = ([TimeSpan]$section.Duration).ToString() -Replace '(\d{3})\d{3,}','$1'
 	}
 
+	$data.exif = $exif
+} else {
+	Write-Host 'Missing exif.json'
+}
+
+if (!$EndTime) {
 	$totalGap = [TimeSpan]"00:00:00"
 	$data.exif | ForEach-Object { $i = 0 } {
 		if ($i -gt 0) {
@@ -222,7 +222,7 @@ $dateDir = "$clipsDir\$dateStr"
 if (!(Test-Path $dateDir)) {
 	New-Item -ItemType Directory -Path $dateDir
 }
-Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4"
+Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4" -Force
 Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
 if (!$SkipJson) {
