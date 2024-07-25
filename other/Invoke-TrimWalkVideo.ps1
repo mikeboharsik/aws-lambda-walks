@@ -3,6 +3,8 @@ Param(
 	[string] $Route,
 	[hashtable] $Videos,
 
+	[string] $EndTime,
+
 	[switch] $SkipTimestampConversion,
 	[switch] $SkipCitiesPopulation,
 	[switch] $SkipJson,
@@ -139,47 +141,51 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 	$data.towns = $newTowns
 }
 
-if (Test-Path 'exif.json') {
-	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
-
-	foreach ($section in $exif) {
-		if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
-			$section.Duration = "00:00:$($Matches[1]).$($Matches[2])"
-		}
-
-		$section.Duration = ([TimeSpan]$section.Duration).ToString() -Replace '(\d{3})\d{3,}','$1'
-	}
-
-	$data.exif = $exif
-} else {
-	Write-Host 'Missing exif.json'
-}
-
 $outputName = "$($dateStr)_trimmed.mp4"
 
-$totalGap = [TimeSpan]"00:00:00"
-$data.exif | ForEach-Object { $i = 0 } {
-	if ($i -gt 0) {
-		$last = $data.exif[$i-1]
-		$created = [DateTime]($_.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
-		$lastCreated = [DateTime]($last.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
-		$lastDuration = [TimeSpan]$last.Duration
+if (!$EndTime) {
+	if (Test-Path 'exif.json') {
+		$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
 
-		$gap = $created - ($lastCreated + $lastDuration)
-		$totalGap += $gap
+		foreach ($section in $exif) {
+			if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
+				$section.Duration = "00:00:$($Matches[1]).$($Matches[2])"
+			}
+
+			$section.Duration = ([TimeSpan]$section.Duration).ToString() -Replace '(\d{3})\d{3,}','$1'
+		}
+
+		$data.exif = $exif
+	} else {
+		Write-Host 'Missing exif.json'
 	}
-	$i++
-}
-Write-Host "`Total gap between segments = $totalGap"
-if ($totalGap -lt [TimeSpan]"00:00:00") {
-	$totalGap = [TimeSpan]"00:00:00"
-}
 
-Write-Host "Unadjusted end: $($data.endMark)"
-try {
-	$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
-} catch {
-	$adjustedEnd = $data.endMark
+	$totalGap = [TimeSpan]"00:00:00"
+	$data.exif | ForEach-Object { $i = 0 } {
+		if ($i -gt 0) {
+			$last = $data.exif[$i-1]
+			$created = [DateTime]($_.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
+			$lastCreated = [DateTime]($last.CreateDate -Replace "(\d{4}):(\d{2}):(\d{2})",'$1-$2-$3')
+			$lastDuration = [TimeSpan]$last.Duration
+
+			$gap = $created - ($lastCreated + $lastDuration)
+			$totalGap += $gap
+		}
+		$i++
+	}
+	Write-Host "`Total gap between segments = $totalGap"
+	if ($totalGap -lt [TimeSpan]"00:00:00") {
+		$totalGap = [TimeSpan]"00:00:00"
+	}
+
+	Write-Host "Unadjusted end: $($data.endMark)"
+	try {
+		$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
+	} catch {
+		$adjustedEnd = $data.endMark
+	}
+} else {
+	$adjustedEnd = $EndTime
 }
 
 Write-Host "Adjusted end: $adjustedEnd"
