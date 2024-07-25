@@ -115,3 +115,4 @@ jobs:
       with:
         name: build
         path: server/build
+        retention-days: 1
