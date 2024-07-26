@@ -82,14 +82,6 @@ function makeFeatureSafeForUnauthed(feature) {
 	delete feature.properties.path;
 }
 
-function makeEventsSafeForUnauthed(events) {
-	for (let e of events) {
-		delete e.coords;
-		delete e.events;
-		delete e.exif;
-	}
-}
-
 function getGeoJsonFromCoords(coords, isAuthed) {
 	let coordinates = coords.map(({ lat, lon }) => [lon, lat]);
 
@@ -118,9 +110,12 @@ async function getAllEvents() {
 	return result;
 }
 
-async function getEventsByMonth(month) {
+async function getEventsByMonth(event) {
 	const s = new Date().getTime();
-	const result = JSON.parse(await fsPromises.readFile(`./walks/${month}.json`));
+	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
+	const ext = accept.toLowerCase() === 'text/csv' ? '.csv' : '.json';
+	const content = await fsPromises.readFile(`./walks/${month}${ext}`);
+	const result = accept.toLowerCase() === 'text/csv' ? content.toString() : JSON.parse(content);
 	console.log(`getEventsByMonth completed in ${new Date().getTime() - s} ms`);
 	return result;
 }
@@ -308,25 +303,19 @@ async function handleWalkRouteRequest(event) {
 }
 
 async function handleEventsRequest(event) {
-	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
-
+	const { isAuthed, headers: { accept }, queryStringParameters: { q = null } = {} } = event;
 	if (!q.match(/\d{4}-\d{2}/)) {
 		throw new Error("Query must be in yyyy-MM format");
 	}
+	const acceptHeader = accept.toLowerCase();
 
-	const parsed = await getEventsByMonth(q);
-	let results = parsed;
+	const parsed = await getEventsByMonth(event);
 
-	if (!isAuthed) {
-		makeEventsSafeForUnauthed(results);
-	}
-
+	const contentHeader = { 'content-type': acceptHeader === 'text/csv' ? 'text/csv' : 'application/json' };
 	return {
 		statusCode: 200,
-		body: JSON.stringify(results),
-		headers: {
-			'content-type': 'application/json'
-		}
+		body: acceptHeader === 'text/csv' ? parsed : JSON.stringify(parsed),
+		headers: contentHeader,
 	};
 }
 
