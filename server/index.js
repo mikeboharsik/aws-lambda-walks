@@ -129,8 +129,8 @@ async function getCoordsByMonth(month) {
 
 async function getAllEventsByPlate(event) {
 	const s = new Date().getTime();
-	let { queryStringParameters: { filterByCount = false, sortByCount = false } = {} } = event;
-	if (filterByCount) {
+	let { queryStringParameters: { filterByCount = false, filterByName = false, sortByCount = false } = {} } = event;
+	if (filterByCount !== false) {
 		filterByCount = parseInt(filterByCount, 10);
 		if (isNaN(filterByCount) || filterByCount <= 0) {
 			throw new Error('filterByCount must be a number greater than 0');
@@ -139,7 +139,16 @@ async function getAllEventsByPlate(event) {
 
 	let result = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
 
-	if (filterByCount) {
+	if (filterByName !== false) {
+		console.log(`Applying filterByName [${filterByName}]`);
+		result = Object.keys(result)
+			.filter(key => result[key].some(event => event.name))
+			.reduce((acc, key) => {
+				acc[key] = result[key].filter(e => e.name);
+				return acc;
+			}, {});
+	}
+	if (filterByCount !== false) {
 		console.log(`Applying filterByCount [${filterByCount}]`);
 		result = Object.keys(result)
 			.filter(key => result[key].length >= filterByCount)
@@ -148,7 +157,7 @@ async function getAllEventsByPlate(event) {
 				return acc;
 			}, {});
 	}
-	if (sortByCount) {
+	if (sortByCount !== false) {
 		console.log(`Applying sortByCount [${sortByCount}]`);
 		result = Object.keys(result)
 			.toSorted((a, b) => result[a].length > result[b].length ? -1 : result[a].length < result[b].length ? 1 : 0)
