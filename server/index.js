@@ -127,9 +127,37 @@ async function getCoordsByMonth(month) {
 	return result;
 }
 
-async function getAllEventsByPlate() {
+async function getAllEventsByPlate(event) {
 	const s = new Date().getTime();
-	const result = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
+	let { queryStringParameters: { filterByCount = false, sortByCount = false } = {} } = event;
+	if (filterByCount) {
+		filterByCount = parseInt(filterByCount, 10);
+		if (isNaN(filterByCount) || filterByCount <= 0) {
+			throw new Error('filterByCount must be a number greater than 0');
+		}
+	}
+
+	let result = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
+
+	if (filterByCount) {
+		console.log(`Applying filterByCount [${filterByCount}]`);
+		result = Object.keys(result)
+			.filter(key => result[key].length >= filterByCount)
+			.reduce((acc, key) => {
+				acc[key] = result[key];
+				return acc;
+			}, {});
+	}
+	if (sortByCount) {
+		console.log(`Applying sortByCount [${sortByCount}]`);
+		result = Object.keys(result)
+			.toSorted((a, b) => result[a].length > result[b].length ? -1 : result[a].length < result[b].length ? 1 : 0)
+			.reduce((acc, key) => {
+				acc[key] = result[key];
+				return acc;
+			}, {});
+	}
+
 	console.log(`getAllEventsByPlate completed in ${new Date().getTime() - s} ms`);
 	return result;
 }
@@ -174,9 +202,9 @@ exports.handler = async (event) => {
 };
 
 async function handleApiRequest(event) {
-	const { rawPath } = event;
+	const { queryStringParameters = null, rawPath } = event;
 
-	console.log(`handle api request for ${rawPath}`);
+	console.log(`handle api request for ${rawPath}${queryStringParameters ? ' ' + JSON.stringify(queryStringParameters) : ''}`);
 
 	const routeMap = {
 		'/api/sunx': handleSunxDataRequest,
@@ -320,9 +348,9 @@ async function handleEventsRequest(event) {
 }
 
 async function handlePlatesRequest(event) {
-	const { isAuthed, queryStringParameters: { q = null } = {} } = event;
+	const { isAuthed } = event;
 
-	const parsed = await getAllEventsByPlate();
+	const parsed = await getAllEventsByPlate(event);
 
 	return {
 		statusCode: 200,
