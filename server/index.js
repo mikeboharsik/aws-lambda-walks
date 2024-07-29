@@ -8,7 +8,6 @@ const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client
 
 const fetch = require('node-fetch');
 
-const playlistId = process.env.YOUTUBE_PLAYLIST_ID;
 const authUrl = process.env.AUTH_URL;
 const privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]');
 
