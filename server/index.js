@@ -341,7 +341,11 @@ async function handleWalkRouteRequest(event) {
 async function handleEventsRequest(event) {
 	const { isAuthed, headers: { accept }, queryStringParameters: { q = null } = {} } = event;
 	if (!q?.match(/\d{4}-\d{2}/)) {
-		throw new Error("q must be provided and in yyyy-MM format");
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: "q must be provided and in yyyy-MM format" }),
+			headers: { 'content-type': 'application/json' },
+		};
 	}
 	const acceptHeader = accept.toLowerCase();
 
