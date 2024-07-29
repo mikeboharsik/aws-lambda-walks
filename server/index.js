@@ -341,7 +341,7 @@ async function handleWalkRouteRequest(event) {
 async function handleEventsRequest(event) {
 	const { isAuthed, headers: { accept }, queryStringParameters: { q = null } = {} } = event;
 	if (!q?.match(/\d{4}-\d{2}/)) {
-		throw new Error("Query must be in yyyy-MM format");
+		throw new Error("q must be provided and in yyyy-MM format");
 	}
 	const acceptHeader = accept.toLowerCase();
 
