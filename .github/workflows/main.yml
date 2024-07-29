@@ -80,7 +80,7 @@ jobs:
         Write-Host "Installed server packages`n"
 
         Write-Host (Get-Location)
-        $gitData = @{
+        $gitData = [ordered]@{
           'aws-lambda-walks' = "${{ steps.get-sha.outputs.lambda-sha }}"
           'walk-routes' = "${{ steps.get-sha.outputs.routes-sha }}"
         }
