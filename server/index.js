@@ -203,8 +203,7 @@ exports.handler = async (event) => {
 		console.error('Unhandled exception:', e);
 
 		return setJsonContentType({
-			body: JSON.stringify({ message: e.message }),
-			statusCode: 400,
+			statusCode: 500,
 		});
 	}
 };
@@ -252,7 +251,8 @@ async function handleCacheInvalidate(event) {
 	if (!paths) {
 		return {
 			statusCode: 400,
-			body: 'paths is missing from the request body'
+			body: JSON.stringify({ error: 'paths is missing from the request body' }),
+			'content-type': 'application/json',
 		};
 	}
 
@@ -284,15 +284,11 @@ async function handleCacheInvalidate(event) {
 async function handleWalkRouteRequest(event) {
 	const { isAuthed, queryStringParameters: { date } } = event;
 
-	if (!date) {
+	if (!date?.match(/\d{4}-\d{2}-\d{2}/)) {
 		return {
 			statusCode: 400,
-		};
-	}
-
-	if (!date.match(/\d{4}-\d{2}-\d{2}/)) {
-		return {
-			statusCode: 400,
+			body: JSON.stringify({ error: "date must be provided and in yyyy-MM-dd format" }),
+			headers: { 'content-type': 'application/json' },
 		};
 	}
 
@@ -349,26 +345,39 @@ async function handleEventsRequest(event) {
 	}
 	const acceptHeader = accept.toLowerCase();
 
-	const parsed = await getEventsByMonth(event);
-
-	const contentHeader = { 'content-type': acceptHeader === 'text/csv' ? 'text/csv' : 'application/json' };
-	return {
-		statusCode: 200,
-		body: acceptHeader === 'text/csv' ? parsed : JSON.stringify(parsed),
-		headers: contentHeader,
-	};
+	try {
+		const parsed = await getEventsByMonth(event);
+		const contentHeader = { 'content-type': acceptHeader === 'text/csv' ? 'text/csv' : 'application/json' };
+		return {
+			statusCode: 200,
+			body: acceptHeader === 'text/csv' ? parsed : JSON.stringify(parsed),
+			headers: contentHeader,
+		};
+	} catch (e) {
+		console.error(e);
+		return {
+			statusCode: 404
+		};
+	}
 }
 
 async function handlePlatesRequest(event) {
 	const { isAuthed } = event;
 
-	const parsed = await getAllEventsByPlate(event);
-
-	return {
-		statusCode: 200,
-		body: JSON.stringify(parsed),
-		headers: { 'content-type': 'application/json' }
-	};
+	try {
+		const parsed = await getAllEventsByPlate(event);
+		return {
+			statusCode: 200,
+			body: JSON.stringify(parsed),
+			headers: { 'content-type': 'application/json' }
+		};
+	} catch (e) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: e.message }),
+			headers: { 'content-type': 'application/json' },
+		}
+	}
 }
 
 async function handleContentRequest(event) {
@@ -402,9 +411,7 @@ async function handleContentRequest(event) {
 		return {
 			body,
 			statusCode: 200,
-			headers: {
-				'content-type': contentType,
-			}
+			headers: { 'content-type': contentType }
 		}
 	}
 
@@ -465,15 +472,17 @@ async function handleSunxDataRequest(event) {
 
 	if (!date) {
 		return setJsonContentType({
-			body: JSON.stringify({ message: 'date query parameter is required' }),
-			statusCode: 400
+			body: JSON.stringify({ error: 'date query parameter is required' }),
+			statusCode: 400,
+			headers: { 'content-type': 'application/json' },
 		});
 	}
 
 	if (!date.match(/^\d{4}-\d{2}-\d{2}/)) {
 		return setJsonContentType({
-			body: JSON.stringify({ message: 'date query parameter must be in format yyyy-MM-dd' }),
-			statusCode: 400
+			body: JSON.stringify({ error: 'date query parameter must be in format yyyy-MM-dd' }),
+			statusCode: 400,
+			headers: { 'content-type': 'application/json' },
 		});
 	}
 
@@ -488,11 +497,13 @@ async function handleSunxDataRequest(event) {
 		return setJsonContentType({
 			body: JSON.stringify(responseJson),
 			statusCode: 200,
+			headers: { 'content-type': 'application/json' },
 		});
 	} catch(e) {
 		return setJsonContentType({
 			body: JSON.stringify({ message: e.message }),
 			statusCode: 400,
+			headers: { 'content-type': 'application/json' },
 		});
 	}
 }
