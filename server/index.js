@@ -204,7 +204,7 @@ exports.handler = async (event) => {
 
 		return setJsonContentType({
 			body: JSON.stringify({ message: e.message }),
-			statusCode: 500,
+			statusCode: 400,
 		});
 	}
 };
