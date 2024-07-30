@@ -102,32 +102,37 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 	};
 }
 
-async function getAllEvents() {
-	const s = new Date().getTime();
-	const result = JSON.parse(await fsPromises.readFile('./events.json'));
-	console.log(`getAllEvents completed in ${new Date().getTime() - s} ms`);
-	return result;
+function getBenchmarkedFunction(func) {
+	return function(...args) {
+		const s = new Date().getTime();
+		func(...args);
+		console.log(`${func.name} completed in ${new Date().getTime() - s}ms`);
+	};
+}
+
+function getBenchmarkedFunctionAsync(func) {
+	return async function(...args) {
+		const s = new Date().getTime();
+		const result = await func(...args);
+		console.log(`${func.name} completed in ${new Date().getTime() - s}ms`);
+		return result;
+	};
 }
 
 async function getEventsByMonth(event) {
-	const s = new Date().getTime();
 	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
 	const ext = accept.toLowerCase() === 'text/csv' ? '.csv' : '.json';
 	const content = await fsPromises.readFile(`./walks/${month}${ext}`);
-	const result = accept.toLowerCase() === 'text/csv' ? content.toString() : JSON.parse(content);
-	console.log(`getEventsByMonth completed in ${new Date().getTime() - s} ms`);
-	return result;
+	return accept.toLowerCase() === 'text/csv' ? content.toString() : JSON.parse(content);
 }
+const getEventsByMonthBenched = getBenchmarkedFunctionAsync(getEventsByMonth);
 
 async function getCoordsByMonth(month) {
-	const s = new Date().getTime();
-	const result = JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
-	console.log(`getCoordsByMonth completed in ${new Date().getTime() - s} ms`);
-	return result;
+	return JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
 }
+const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
 async function getAllEventsByPlate(event) {
-	const s = new Date().getTime();
 	let { queryStringParameters: { filterByCount = false, filterByName = false, sortByCount = false } = {} } = event;
 	if (filterByCount !== false) {
 		filterByCount = parseInt(filterByCount, 10);
@@ -165,10 +170,9 @@ async function getAllEventsByPlate(event) {
 				return acc;
 			}, {});
 	}
-
-	console.log(`getAllEventsByPlate completed in ${new Date().getTime() - s} ms`);
 	return result;
 }
+const getAllEventsByPlateBenched = getBenchmarkedFunctionAsync(getAllEventsByPlate);
 
 exports.handler = async (event) => {
 	try {
@@ -294,7 +298,7 @@ async function handleWalkRouteRequest(event) {
 
 	const [month] = date.match(/\d{4}-\d{2}/);
 
-	const parsed = await getCoordsByMonth(month);
+	const parsed = await getCoordsByMonthBenched(month);
 	const target = parsed.filter(e => e.date === date);
 
 	let geojson = target.reduce((acc, walk) => {
@@ -346,7 +350,7 @@ async function handleEventsRequest(event) {
 	const acceptHeader = accept.toLowerCase();
 
 	try {
-		const parsed = await getEventsByMonth(event);
+		const parsed = await getEventsByMonthBenched(event);
 		const contentHeader = { 'content-type': acceptHeader === 'text/csv' ? 'text/csv' : 'application/json' };
 		return {
 			statusCode: 200,
@@ -365,7 +369,7 @@ async function handlePlatesRequest(event) {
 	const { isAuthed } = event;
 
 	try {
-		const parsed = await getAllEventsByPlate(event);
+		const parsed = await getAllEventsByPlateBenched(event);
 		return {
 			statusCode: 200,
 			body: JSON.stringify(parsed),
