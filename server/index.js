@@ -174,6 +174,11 @@ async function getAllEventsByPlate(event) {
 }
 const getAllEventsByPlateBenched = getBenchmarkedFunctionAsync(getAllEventsByPlate);
 
+async function getAllYoutubeIds() {
+	return JSON.parse(await fsPromises.readFile(`./youtubeIds/youtubeIds.json`));
+}
+const getAllYoutubeIdsBenched = getBenchmarkedFunctionAsync(getAllYoutubeIds);
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -223,6 +228,7 @@ async function handleApiRequest(event) {
 		'/api/routes': handleWalkRouteRequest,
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
+		'/api/youtubeIds': handleYoutubeIdsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
 		'/api/git': handleGitRequest,
 	};
@@ -370,6 +376,23 @@ async function handlePlatesRequest(event) {
 
 	try {
 		const parsed = await getAllEventsByPlateBenched(event);
+		return {
+			statusCode: 200,
+			body: JSON.stringify(parsed),
+			headers: { 'content-type': 'application/json' }
+		};
+	} catch (e) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: e.message }),
+			headers: { 'content-type': 'application/json' },
+		}
+	}
+}
+
+async function handleYoutubeIdsRequest(event) {
+	try {
+		const parsed = await getAllYoutubeIdsBenched();
 		return {
 			statusCode: 200,
 			body: JSON.stringify(parsed),
