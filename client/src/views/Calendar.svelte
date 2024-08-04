@@ -69,7 +69,7 @@
 </script>
 
 {#if !navigator?.userAgentData?.mobile}
-	<ThumbnailGrid data={eventsData} />
+	<ThumbnailGrid />
 {/if}
 
 <StatusBar bind:now {currentMonthData} {currentMonth} {isRealMonth} {monthNames} {realMonth} />

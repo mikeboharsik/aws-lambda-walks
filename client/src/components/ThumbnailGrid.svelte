@@ -7,7 +7,6 @@
 	import { baseApiUrl } from '../constants/api';
 
 	const log = debug('ThumbnailGrid');
-	export let data;
 
 	const thumbnailWidth = 160;
 	const thumbnailHeight = 90;
@@ -198,7 +197,6 @@
 		}
 
 		if (allVideoIds.length <= 0) {
-			log('All videos have been fetched!');
 			return;
 		}
 
@@ -239,7 +237,7 @@
 
 		populateImageArray();
 
-		allVideoIds = data.reduce((acc, cur) => { if (cur.youtubeId) { acc.push(cur.youtubeId); } return acc; }, []);
+		allVideoIds = await fetch(`${baseApiUrl}/youtubeIds`).then(res => res.json());
 
 		window.requestAnimationFrame(draw);
 
