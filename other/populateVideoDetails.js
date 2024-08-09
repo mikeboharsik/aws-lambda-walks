@@ -37,7 +37,7 @@
 				([first, second] = towns);
 				townsContent = `${first} & ${second}, ${curState}`;
 			} else {
-				townsContent = `${towns.slice(0, -1).join(', ')}, & ${towns.slice(-1)}`;
+				townsContent = `${towns.slice(0, -1).join(', ')}, & ${towns.slice(-1)}, ${curState}`;
 			}
 		} else {
 			throw "not implemented";
