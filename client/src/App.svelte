@@ -10,8 +10,9 @@
 
 	import { baseApiUrl } from './constants/api';
 
-	import { getApiOptions } from './util/api';
+	import { getApiOptions, withAcceptCsv } from './util/api';
 	import { getPaddedDateString } from './util/date';
+	import { parseCsv } from './util/parseCsv';
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
@@ -30,7 +31,7 @@
 		const todayYearAndMonth = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`;
 
 		const initialDataJobs = [
-			fetch(`${baseApiUrl}/events?q=${todayYearAndMonth}`, options).then(res => res.json()),
+			fetch(`${baseApiUrl}/events?q=${todayYearAndMonth}`, withAcceptCsv(options)).then(res => res.text()).then(res => parseCsv(res)),
 			fetch(`${baseApiUrl}/git`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
 			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
