@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { getApiOptions } from '../util/api';
+	import { getApiOptions, withAcceptCsv } from '../util/api';
+	import { parseCsv } from '../util/parseCsv';
 	import { baseApiUrl } from '../constants/api';
 	import { firstMonth, toFixedDefault } from '../constants/config';
 	import { EVENTS_DATA } from '../stores.js';
@@ -24,7 +25,7 @@
 	async function updateEvents() {
 		const month = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}`;
 		const options = getApiOptions();
-		const monthEvents = await fetch(`${baseApiUrl}/events?q=${month}`, options).then(res => res.json());
+		const monthEvents = await fetch(`${baseApiUrl}/events?q=${month}`, withAcceptCsv(options)).then(res => res.text()).then(res => parseCsv(res));
 		EVENTS_DATA.update(() => monthEvents);
 	}
 
