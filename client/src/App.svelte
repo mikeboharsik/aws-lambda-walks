@@ -8,19 +8,14 @@
 
 	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
 
-	import { baseApiUrl } from './constants/api';
-
-	import { getApiOptions, withAcceptCsv } from './util/api';
+	import { getEvents, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
-	import { parseCsv } from './util/parseCsv';
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
 	let gitHashes = {};
 
 	onMount(async() => {
-		const options = getApiOptions();
-
 		const dateStr = getPaddedDateString(new Date());
 
 		const tomorrowDate = new Date();
@@ -31,10 +26,10 @@
 		const todayYearAndMonth = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`;
 
 		const initialDataJobs = [
-			fetch(`${baseApiUrl}/events?q=${todayYearAndMonth}`, withAcceptCsv(options)).then(res => res.text()).then(res => parseCsv(res)),
-			fetch(`${baseApiUrl}/git`, options).then(res => res.json()),
-			fetch(`${baseApiUrl}/sunx?date=${dateStr}`, options).then(res => res.json()),
-			fetch(`${baseApiUrl}/sunx?date=${tomorrowDateStr}`, options).then(res => res.json()),
+			getEvents(todayYearAndMonth),
+			getGit(),
+			getSunx(dateStr),
+			getSunx(tomorrowDateStr),
 		];
 
 		try {
