@@ -1,6 +1,6 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-	[string] $SdCardPath = "P:",
+	[string] $SdCardPath = "G:",
 	[string] $ContentPath = "DCIM/100GOPRO",
 
 	[string] $DestinationPath = "D:/wip/walks",
@@ -9,41 +9,10 @@ Param(
 	[switch] $SkipEject
 )
 
-function Get-StitchLocalGoProPath {
-	$filename = 'Invoke-StitchLocalGoPro.ps1'
-	$result = $null
-	if (Test-Path "$PSScriptRoot/$filename") {
-		$result = Resolve-Path "$PSScriptRoot/$filename"
-	} else {
-		$result = Resolve-Path "$PSScriptRoot/../$filename"
-	}
-	if (!$result) {
-		throw "Failed to find a path to $filename"
-	}
-	return $result
-}
-
-function Get-SensibleGoProFilenamePath {
-	$filename = 'Get-SensibleGoProFilename.ps1'
-	$result = $null
-	if (Test-Path "$PSScriptRoot/$filename") {
-		$result = Resolve-Path "$PSScriptRoot/$filename"
-	} else {
-		$result = Resolve-Path "$PSScriptRoot/../$filename"
-	}
-	if (!$result) {
-		throw "Failed to find a path to $filename"
-	}
-	return $result
-}
-
 Write-Verbose "`$PSScriptRoot = [$PSScriptRoot]"
 
 $StitchLocalGoProPath = Get-StitchLocalGoProPath
 Write-Verbose "`$StitchLocalGoProPath = $StitchLocalGoProPath"
-
-$SensibleGoProFilenamePath = Get-SensibleGoProFilenamePath
-Write-Verbose "`$SensibleGoProFilenamePath = $SensibleGoProFilenamePath"
 
 $OriginalContentPath = "$SdCardPath/$ContentPath"
 
@@ -68,31 +37,10 @@ try {
 		Copy-Item -Path $originalFiles -Destination $outputFolderPath
 	}
 
-	$copiedFiles = Get-ChildItem -File "$outputFolderPath\*.MP4"
-	foreach ($file in $copiedFiles) {
-		$name = $file.Name
-		$newName = & $SensibleGoProFilenamePath -Filename $name
-
-		if ($PSCmdlet.ShouldProcess("$name $newName", 'Move-Item')) {
-			Move-Item $name $newName
-		}
-	}
-
-	$files = Get-ChildItem "$outputFolderPath\*.MP4"
-		| Sort-Object { $_.Name }
-
-	exiftool.exe -api largefilesupport=1 -CreateDate -Duration -json $files > exif.json
-
-	$initialFile = $files[0]
-
-	$data = (exiftool -api LargeFileSupport=1 -MediaCreateDate $initialFile.FullName)
-	$mediaCreateDate = ($data.Split(': ')[1]) -Replace "(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})", "`$1-`$2-`$3_`$4-`$5-`$6"
-
-	& $StitchLocalGoProPath -StitchedFilename $mediaCreateDate
+	& $StitchLocalGoProPath -DeleteOriginalFiles:$DeleteOriginalFiles
 
 	if ($DeleteOriginalFiles) {
-		if ($PSCmdlet.ShouldProcess("$files, $OriginalContentPath\*", 'Remove-Item')) {
-			Remove-Item $files
+		if ($PSCmdlet.ShouldProcess("$OriginalContentPath\*", 'Remove-Item')) {
 			Remove-Item "$OriginalContentPath\*"
 		}
 	}
