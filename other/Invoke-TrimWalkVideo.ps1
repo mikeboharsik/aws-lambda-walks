@@ -12,8 +12,7 @@ Param(
 	[switch] $WhatIf
 )
 
-[System.IO.FileSystemInfo[]]$items = Get-ChildItem -File "*.mp4"
-
+[System.IO.FileSystemInfo[]]$items = Get-ChildItem -File "*_merged.mp4"
 if ($items.Length -gt 1) {
 	Write-Error "More than 1 items found in directory, halting execution"
 	exit 1
@@ -143,8 +142,10 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 $outputName = "$($dateStr)_trimmed.mp4"
 
-if (Test-Path 'exif.json') {
-	$exif = Get-Content 'exif.json' | ConvertFrom-Json -Depth 10
+$exifPath = (Get-ChildItem './*exif.json')[0]
+
+if ($exifPath) {
+	$exif = Get-Content $exifPath | ConvertFrom-Json -Depth 10
 
 	foreach ($section in $exif) {
 		if ($section.Duration -Match "(\d{1,2})\.(\d{2}) s") {
@@ -178,7 +179,7 @@ if (!$EndTime) {
 		$totalGap = [TimeSpan]"00:00:00"
 	}
 
-	Write-Host "Unadjusted end: $($data.endMark)"
+	Write-Host "Start: $($data.startMark)"
 	try {
 		$adjustedEnd = ([TimeSpan]$data.endMark - $totalGap).ToString().Substring(0, 12)
 	} catch {
