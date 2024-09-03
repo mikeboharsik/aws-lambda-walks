@@ -8,20 +8,6 @@ $ErrorActionPreference = 'Stop'
 
 $outputFolderPath = Get-Location
 
-function Get-StitchLocalGoProPath {
-	$filename = 'Invoke-StitchLocalGoPro.ps1'
-	$result = $null
-	if (Test-Path "$PSScriptRoot/$filename") {
-		$result = Resolve-Path "$PSScriptRoot/$filename"
-	} else {
-		$result = Resolve-Path "$PSScriptRoot/../$filename"
-	}
-	if (!$result) {
-		throw "Failed to find a path to $filename"
-	}
-	return $result
-}
-
 function Get-SensibleGoProFilenamePath {
 	$filename = 'Get-SensibleGoProFilename.ps1'
 	$result = $null

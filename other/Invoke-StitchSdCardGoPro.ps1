@@ -11,6 +11,20 @@ Param(
 
 Write-Verbose "`$PSScriptRoot = [$PSScriptRoot]"
 
+function Get-StitchLocalGoProPath {
+	$filename = 'Invoke-StitchLocalGoPro.ps1'
+	$result = $null
+	if (Test-Path "$PSScriptRoot/$filename") {
+		$result = Resolve-Path "$PSScriptRoot/$filename"
+	} else {
+		$result = Resolve-Path "$PSScriptRoot/../$filename"
+	}
+	if (!$result) {
+		throw "Failed to find a path to $filename"
+	}
+	return $result
+}
+
 $StitchLocalGoProPath = Get-StitchLocalGoProPath
 Write-Verbose "`$StitchLocalGoProPath = $StitchLocalGoProPath"
 
