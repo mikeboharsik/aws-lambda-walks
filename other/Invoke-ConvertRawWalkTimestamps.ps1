@@ -3,6 +3,7 @@ Param(
 	[string] $Date,
 	[hashtable] $SourceJson,
 
+	[switch] $IgnoreExif,
 	[switch] $PrintSegments,
 	[switch] $ReturnData,
 	[switch] $WhatIf
@@ -138,13 +139,13 @@ $walks = Get-json
 
 foreach ($json in $walks) {
 	$jsonStart = [TimeSpan]$json.startMark
-	[hashtable[]]$segments = Get-Segments $json
+	[hashtable[]]$segments = $IgnoreExif ? @() : (Get-Segments $json)
 
 	if ($PrintSegments) {
 		Print-Segments $segments
 	}
 
-	[DateTime]$startDate = $segments[0].startDate
+	[DateTime]$startDate = $IgnoreExif ? $json.startTime : $segments[0].startDate
 
 	foreach ($event in $json.events) {
 		if (!$event.mark) { continue }
@@ -157,19 +158,24 @@ foreach ($json in $walks) {
 		try {
 			[DateTime]$markDate = $startDate + [TimeSpan]$event.mark
 
-			$targetSegment = $segments
-				| Where-Object {
-					$markDate -ge $_.startDate -and $markDate -le $_.endDate
+			if ($IgnoreExif) {
+				$trimmedStart = ($markDate - [TimeSpan]$json.startMark - $startDate).ToString()
+			} else {
+				$targetSegment = $segments
+					| Where-Object {
+						$markDate -ge $_.startDate -and $markDate -le $_.endDate
+					}
+				if (!$targetSegment) {
+					Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
+					continue
 				}
-			if (!$targetSegment) {
-				Write-Warning "Failed to find segment for event at mark [$($event.mark): $($event.name)]"
-				continue
+
+				$mark = [TimeSpan]$event.mark
+				Write-Verbose "`$mark = $mark"
+				$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
+				Write-Verbose "`$trimmedStart = $trimmedStart"
 			}
 
-			$mark = [TimeSpan]$event.mark
-			Write-Verbose "`$mark = $mark"
-			$trimmedStart = ($mark - $targetSegment.sumOfPreviousGaps - $jsonStart).ToString()
-			Write-Verbose "`$trimmedStart = $trimmedStart"
 			$trimmedEnd = $trimmedStart
 
 			$event['trimmedStart'] = $trimmedStart.ToString() -Replace '(\d{3})\d{4}','$1'
