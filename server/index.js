@@ -133,7 +133,19 @@ async function getCoordsByMonth(month) {
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
 async function getAllEventsByPlate(event) {
-	let { queryStringParameters: { filterByCount = false, filterByName = false, sortByCount = false } = {} } = event;
+	let {
+		queryStringParameters: {
+			filterByCount = false,
+			filterByName = false,
+			sortByCount = false,
+			nameContains = false,
+		} = {}
+	} = event;
+
+	if (nameContains !== false) {
+		filterByName = true;
+	}
+
 	if (filterByCount !== false) {
 		filterByCount = parseInt(filterByCount, 10);
 		if (isNaN(filterByCount) || filterByCount <= 0) {
@@ -149,6 +161,14 @@ async function getAllEventsByPlate(event) {
 			.filter(key => result[key].some(event => event.name))
 			.reduce((acc, key) => {
 				acc[key] = result[key].filter(e => e.name);
+				return acc;
+			}, {});
+	}
+	if (nameContains !== false) {
+		console.log(`Applying nameContains [${nameContains}]`);
+		result = Object.keys(result)
+			.reduce((acc, key) => {
+				acc[key] = result[key].filter(e => e.name.toUpperCase().includes(nameContains.toUpperCase()));
 				return acc;
 			}, {});
 	}
@@ -170,6 +190,14 @@ async function getAllEventsByPlate(event) {
 				return acc;
 			}, {});
 	}
+
+	const keys = Object.keys(result);
+	for (let key of keys) {
+		if (!result[key].length) {
+			delete result[key];
+		}
+	}
+
 	return result;
 }
 const getAllEventsByPlateBenched = getBenchmarkedFunctionAsync(getAllEventsByPlate);
