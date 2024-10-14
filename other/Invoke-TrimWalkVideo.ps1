@@ -9,6 +9,8 @@ Param(
 	[switch] $SkipCitiesPopulation,
 	[switch] $SkipJson,
 
+	[string] $PathToWalkRoutes = $null,
+
 	[switch] $WhatIf
 )
 
@@ -31,7 +33,9 @@ if ($items[0].Name -Match '(\d{4})-(\d{2})-(\d{2})') {
 }
 
 $clipYear, $clipMonth, $clipDay = $dateStr -Split '-'
-$pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
+if (!$PathToWalkRoutes) {
+	$pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
+}
 $metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
 $expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$clipDay.json"
 
