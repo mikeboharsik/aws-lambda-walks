@@ -102,14 +102,8 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 	$testPoints | ForEach-Object -ThrottleLimit 5 -Parallel {
 			$lat, $lon = $_
-			$url = "https://www.google.com/maps/place/$lat,$lon"
 			try {
-				$data = Invoke-RestMethod $url -Headers @{ 'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36' }
-					| Select-String '([\w ]+), (\w{2}) \d{5}'
-					| Select-Object -ExpandProperty matches
-					| Select-Object -ExpandProperty groups
-					| Select-Object -Skip 1 -ExpandProperty Value
-					| ForEach-Object { $_.Trim() }
+				$data = & "./Get-DataForGpsCoordinate.ps1" -Coordinate "$lat,$lon"
 			} catch {
 				Write-Error $_.Exception
 				exit 1
@@ -126,18 +120,19 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 	foreach ($result in $results) {
 		if ($result) {
-			$city, $state = $result
-			if (!$data.towns[$state]) {
-				$data.towns[$state] = @($city)
+			$null, $stateIso = $result.address.'ISO3166-2-lvl4' -Split "-"
+			$town = $result.address.town
+			if (!$data.towns[$stateIso]) {
+				$data.towns[$stateIso] = @($town)
 			} else {
-				if (!$data.towns[$state].Contains($city)) {
-					$data.towns[$state] += $city
+				if (!$data.towns[$stateIso].Contains($town)) {
+					$data.towns[$stateIso] += $town
 				}
 			}
 		}
 	}
 
-	$newTowns = @{}
+	$newTowns = [ordered]@{}
 	foreach ($stateName in $data.towns.Keys) {
 		[string[]]$newTowns[$stateName] = $data.towns[$stateName] | Sort-Object
 	}
