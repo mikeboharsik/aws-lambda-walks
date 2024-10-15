@@ -14,6 +14,8 @@ Param(
 	[switch] $WhatIf
 )
 
+$ErrorActionPreference = 'Stop'
+
 [System.IO.FileSystemInfo[]]$items = Get-ChildItem -File "*_merged.mp4"
 if ($items.Length -gt 1) {
 	Write-Error "More than 1 items found in directory, halting execution"
@@ -98,12 +100,17 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 		($data.coords[[int]($data.coords.Length / 4) * 3].lat, $data.coords[[int]($data.coords.Length / 4) * 3].lon),
 		($data.coords[$data.coords.Length - 1].lat, $data.coords[$data.coords.Length - 1].lon)
 
-	$results = [System.Collections.Generic.List[string[]]]@()
+	$results = [System.Collections.Generic.List[PSCustomObject]]::new()
 
 	$testPoints | ForEach-Object -ThrottleLimit 5 -Parallel {
 			$lat, $lon = $_
 			try {
-				$data = & "./Get-DataForGpsCoordinate.ps1" -Coordinate "$lat,$lon"
+				$scriptPath = "$($using:PSScriptRoot)/Get-DataForGpsCoordinate.ps1"
+				if (!(Test-Path $scriptPath)) {
+					$scriptPath = Resolve-Path "$($using:PSScriptRoot)/../Get-DataForGpsCoordinate.ps1"
+				}
+
+				$data = & $scriptPath -Coordinate "$lat,$lon"
 			} catch {
 				Write-Error $_.Exception
 				exit 1
