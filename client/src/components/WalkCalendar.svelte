@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { toFixedDefault } from '../constants/config';
-	import { SUNX_DATA } from '../stores.js';
+	import { EVENTS_DATA_IN_PROGRESS, SUNX_DATA } from '../stores.js';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
 
@@ -14,6 +14,9 @@
 
 	let sunxData = null;
 	SUNX_DATA.subscribe(val => sunxData = val);
+
+	let eventsDataInProgress = false;
+	EVENTS_DATA_IN_PROGRESS.subscribe(val => eventsDataInProgress = val);
 
 	const now = new Date();
 	const todaySunrise = new Date(sunxData.today.sunrise);
@@ -37,7 +40,10 @@
 	function getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay }) {
 		let classes = ['day'];
 
-		if (isPendingDay || didWalkToday && isTomorrow) {
+		if (eventsDataInProgress) {
+			// do not push classes
+		}
+		else if (isPendingDay || didWalkToday && isTomorrow) {
 			classes.push('pending-day');
 		}
 		else if (isWalkDay) {
