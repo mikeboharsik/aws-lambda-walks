@@ -128,6 +128,9 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 	foreach ($result in $results) {
 		if ($result) {
 			$null, $stateIso = $result.address.'ISO3166-2-lvl4' -Split "-"
+
+			if (!$stateIso) { continue }
+
 			$town = $result.address.town
 			if (!$data.towns[$stateIso]) {
 				$data.towns[$stateIso] = @($town)
