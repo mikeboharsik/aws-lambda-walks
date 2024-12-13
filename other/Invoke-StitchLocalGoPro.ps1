@@ -73,7 +73,7 @@ try {
 	if (!$SkipBackup) {
 		Write-Host "Backing up [$outputFilename]"
 
-		$localArchiveDir = "H:/do_not_backup/walks"
+		$localArchiveDir = "\\AVONAS\Archive\do_not_backup\walks"
 
 		Write-Host "Writing to [$localArchiveDir]..."
 		if ($PSCmdlet.ShouldProcess("$outputFilename, $exifPath", "Copy generated files to NAS for backup")) {
