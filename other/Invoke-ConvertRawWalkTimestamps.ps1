@@ -71,7 +71,11 @@ function Get-CalculatedSegmentData {
 	$jsonStart = [TimeSpan]$json.startMark
 
 	$segments | ForEach-Object { $idx = 0 } {
-		$_.startDate = [DateTime]($_.createDate -Replace '(\d{4}):(\d{2}):(\d{2})','$1-$2-$3')
+		$createDate = $_.createDate
+		Write-Verbose "`$createDate = $createDate"
+		$replacedCreateDate = $createDate -Replace '(\d{4}):(\d{2}):(\d{2})','$1-$2-$3'
+		Write-Verbose "`$replacedCreateDate = $replacedCreateDate"
+		$_.startDate = [DateTime]$replacedCreateDate
 		$_.endDate = $_.startDate + $_.duration
 		if ($idx -eq 0) {
 			$_.trimmedStart = $zeroDuration - $jsonStart
@@ -99,6 +103,9 @@ function Get-Segments {
 	param($json)
 
 	$segments = Get-SegmentsFromExif $json.exif
+
+	Write-Verbose "$($segments.Length) segments"
+
 	$segments = Get-CalculatedSegmentData $segments
 
 	return $segments
@@ -135,7 +142,7 @@ function Print-Segments {
 	} | ConvertTo-Json)
 }
 
-$walks = Get-json
+$walks = Get-Json
 
 foreach ($json in $walks) {
 	$jsonStart = [TimeSpan]$json.startMark

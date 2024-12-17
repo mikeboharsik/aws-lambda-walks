@@ -1,6 +1,7 @@
 [CmdletBinding()]
 Param(
-	[string] $Route,
+	[Parameter(Mandatory=$false)]
+	[string] $Route = $null,
 	[hashtable] $Videos,
 
 	[string] $EndTime,
@@ -8,6 +9,7 @@ Param(
 	[switch] $SkipTimestampConversion,
 	[switch] $SkipCitiesPopulation,
 	[switch] $SkipJson,
+	[switch] $AssumeVideoCreated,
 
 	[string] $PathToWalkRoutes = $null,
 
@@ -57,39 +59,13 @@ if (!$dataPath) {
 
 $dayWalks = Get-Content $dataPath | ConvertFrom-Json -Depth 10 -AsHashtable
 Write-Verbose ($dayWalks | ConvertTo-Json -Depth 10)
-[hashtable]$data = $daysWalks.Length -gt 1 ? $dayWalks[-1] : $dayWalks[0]
+[hashtable]$data = $dayWalks.Length -gt 1 ? $dayWalks[-1] : $dayWalks
 
-if (!$data.route -and !$data.coords -and !$Route) {
-	$Route = Read-Host 'Route'
-	if ($Route.ToUpper() -eq 'NEW') {
-		$Route = [System.Guid]::NewGuid().ToString().ToUpper()
-	}
-	$data.route = $Route
-}
 if ($Route) {
 	$data.route = $Route
 }
 $Route = $data.route
 
-if (!$data.videos -and !$Videos) {
-	$Videos = @{}
-	do {
-		$VidId = Read-Host "Video ID"
-		if (!$VidId) { break }
-
-		$VidTimeCode = Read-Host "  Video Timecode"
-		$WalkTimeCode = Read-Host "  Walk Timecode"
-		if (!$VidTimeCode -and !$WalkTimeCode) {
-			$Videos[$VidId] = $null
-		} else {
-			$Videos[$VidId] = @($VidTimeCode, $WalkTimeCode)
-		}
-	} while ($VidId)
-
-	if (!$Videos.Keys.Length) {
-		$Videos = $null
-	}
-}
 if ($Videos) {
 	$data.videos = $Videos
 }
@@ -221,20 +197,26 @@ if ($WhatIf) {
 
 	exit 0
 } else {
-	ffmpeg @ffmpegArgs
+	if ($AssumeVideoCreated) {
+		Write-Host "`$AssumeVideoCreated = $AssumeVideoCreated, skipping ffmpeg"
+	} else {
+		ffmpeg @ffmpegArgs
 
-	if (!$?) {
-		exit 1
+		if (!$?) {
+			exit 1
+		}
 	}
 }
 
-$clipsDir = Resolve-Path "..\clips"
-$dateDir = "$clipsDir\$dateStr"
-if (!(Test-Path $dateDir)) {
-	New-Item -ItemType Directory -Path $dateDir
+if (!$AssumeVideoCreated) {
+	$clipsDir = Resolve-Path "..\clips"
+	$dateDir = "$clipsDir\$dateStr"
+	if (!(Test-Path $dateDir)) {
+		New-Item -ItemType Directory -Path $dateDir
+	}
+	Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4" -Force
+	Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 }
-Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4" -Force
-Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
 
 if (!$SkipJson) {
 	$dayWalks | ConvertTo-Json -Depth 10 -AsArray | Set-Content $expectedTargetFilePath
