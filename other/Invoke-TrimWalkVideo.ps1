@@ -56,7 +56,8 @@ if (!$dataPath) {
 }
 
 $dayWalks = Get-Content $dataPath | ConvertFrom-Json -Depth 10 -AsHashtable
-[hashtable]$data = $daysWalks.Length -gt 1 ? $dayWalks[-1] : $dayWalks
+Write-Verbose ($dayWalks | ConvertTo-Json -Depth 10)
+[hashtable]$data = $daysWalks.Length -gt 1 ? $dayWalks[-1] : $dayWalks[0]
 
 if (!$data.route -and !$data.coords -and !$Route) {
 	$Route = Read-Host 'Route'
