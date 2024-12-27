@@ -36,9 +36,9 @@ jobs:
         path: walk-routes
         token: ${{ secrets.WALK_ROUTES_PAT }}
 
-    - id: get-sha
+    - name: Get repo hashes
       run: |
-        echo ::set-output name=lambda-sha::$( curl -u "u:${{github.token}}" https://api.github.com/repos/mikeboharsik/aws-lambda-walks/git/ref/heads/main | jq .object.sha | tr -d '"' )
+        echo ::set-output name=lambda-sha::$( curl -u "u:${{ github.token }}" https://api.github.com/repos/mikeboharsik/aws-lambda-walks/git/ref/heads/main | jq .object.sha | tr -d '"' )
         echo ::set-output name=routes-sha::$( curl -u "u:${{ secrets.WALK_ROUTES_PAT }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main | jq .object.sha | tr -d '"' )
 
     - name: Setup Node.js environment
@@ -46,7 +46,7 @@ jobs:
       with:
         node-version: 16.19.1
 
-    - name: Configure AWS Credentials
+    - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-region: us-east-1
