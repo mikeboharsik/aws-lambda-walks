@@ -37,9 +37,23 @@ jobs:
         token: ${{ secrets.WALK_ROUTES_PAT }}
 
     - name: Get repo hashes
+      id: get-sha
+      shell: pwsh
       run: |
-        echo ::set-output name=lambda-sha::$( curl -u "u:${{ github.token }}" https://api.github.com/repos/mikeboharsik/aws-lambda-walks/git/ref/heads/main | jq .object.sha | tr -d '"' )
-        echo ::set-output name=routes-sha::$( curl -u "u:${{ secrets.WALK_ROUTES_PAT }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main | jq .object.sha | tr -d '"' )
+        $lambdaSha = curl -u "u:${{ github.token }}" https://api.github.com/repos/mikeboharsik/aws-lambda-walks/git/ref/heads/main
+          | ConvertFrom-Json -Depth 5 -AsHashtable
+          | Select-Object -ExpandProperty object
+          | Select-Object -ExpandProperty sha
+        $routesSha = curl -u "u:${{ secrets.WALK_ROUTES_PAT }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main
+          | ConvertFrom-Json -Depth 5 -AsHashtable
+          | Select-Object -ExpandProperty object
+          | Select-Object -ExpandProperty sha
+
+        Write-Host "`$lambdaSha = [$lambdaSha]"
+        Write-Host "`$routesSha = [$routesSha]"
+
+        "lambda-sha=$lambdaSha" >> $ENV:GITHUB_OUTPUT
+        "routes-sha=$routesSha" >> $ENV:GITHUB_OUTPUT
 
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.6.0
