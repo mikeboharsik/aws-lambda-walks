@@ -168,7 +168,7 @@ async function getAllEventsByPlate(event) {
 		console.log(`Applying nameContains [${nameContains}]`);
 		result = Object.keys(result)
 			.reduce((acc, key) => {
-				acc[key] = result[key].filter(e => e.name.toUpperCase().includes(nameContains.toUpperCase()));
+				acc[key] = result[key].filter(e => e.name?.toUpperCase().includes(nameContains.toUpperCase()));
 				return acc;
 			}, {});
 	}
