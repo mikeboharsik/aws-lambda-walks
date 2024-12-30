@@ -160,7 +160,7 @@ async function getAllEventsByPlate(event) {
 		result = Object.keys(result)
 			.filter(key => result[key].some(event => event.name))
 			.reduce((acc, key) => {
-				acc[key] = result[key].filter(e => e.name);
+				acc[key] = result[key];
 				return acc;
 			}, {});
 	}
