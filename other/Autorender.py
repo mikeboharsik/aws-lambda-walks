@@ -101,23 +101,29 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
         return int(((hours * 3600) + (minutes * 60) + seconds) * frame_rate)
 
     def create_event_strip(self, event):
-        bpy.ops.sequencer.select_all(action='SELECT')
+        try:
+            bpy.ops.sequencer.select_all(action='SELECT')
+                
+            start_frame = self.timespan_to_frame(event['trimmedStart'])        
+            bpy.context.scene.frame_set(start_frame)
+            bpy.ops.sequencer.split(side='BOTH')
+            print(f'Split at {start_frame}')
             
-        start_frame = self.timespan_to_frame(event['trimmedStart'])        
-        bpy.context.scene.frame_set(start_frame)
-        bpy.ops.sequencer.split(side='BOTH')
-        print(f'Split at {start_frame}')
-        
-        end_frame = self.timespan_to_frame(event['trimmedEnd'])
-        bpy.context.scene.frame_set(end_frame)  
-        bpy.ops.sequencer.split(side='BOTH')
-        print(f'Split at {end_frame}')
-        
-        bpy.ops.sequencer.select_all(action="DESELECT")
-        bpy.context.scene.frame_set(bpy.context.scene.frame_current - 1)
-        bpy.ops.sequencer.select_side_of_frame(extend=False, side='CURRENT')
-        for sequence in bpy.context.selected_sequences:
-            sequence.name = event['name']
+            end_frame = self.timespan_to_frame(event['trimmedEnd'])
+            bpy.context.scene.frame_set(end_frame)  
+            bpy.ops.sequencer.split(side='BOTH')
+            print(f'Split at {end_frame}')
+            
+            bpy.ops.sequencer.select_all(action="DESELECT")
+            bpy.context.scene.frame_set(bpy.context.scene.frame_current - 1)
+            bpy.ops.sequencer.select_side_of_frame(extend=False, side='CURRENT')
+            for sequence in bpy.context.selected_sequences:
+                sequence.name = event['name']
+        except:
+            if 'trimmedStart' in event:
+                print(f'Failed to create strip for event with name {event["name"]} and trimmedStart of {event["trimmedStart"]}')
+            else:
+                print(f'Failed to create strip for event with name {event["name"]} which is missing trimmedStart')
     
     def mute_nonevent_strips(self):
         for sequence in bpy.context.sequences:
@@ -140,9 +146,9 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
                 print(f'Reading event [{json.dumps(event)}]')
                 if 'name' not in event:
                     print(f'Skipping event with no name')
-                elif 'trimmedStart' not in event:
-                    print(f'Skipping event with no trimmedStart')
-                elif event['name'].upper().startswith('SKIP'):
+                elif 'trimmedStart' not in event or 'trimmedEnd' not in event:
+                    print(f'Skipping event with no trimmedStart and/or trimmedEnd')
+                elif event['name'].upper().startswith('SKIP') or 'skip' in event:
                     print(f'Skipping event with name [{event["name"]}]')
                 else:
                     self.create_event_strip(event)
