@@ -73,11 +73,7 @@ jobs:
         Write-Host "Deploying to CF distribution $($distId)`n"
         
         Push-Location ./walk-routes
-        if (Test-Path "./utility") {
-          ./utility/Invoke-GenerateJson.ps1
-        } else {
-          ./Invoke-GenerateJson.ps1
-        }
+        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
         Pop-Location
         Write-Host "Finished generating JSON`n"
 
