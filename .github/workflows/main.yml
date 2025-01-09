@@ -67,14 +67,9 @@ jobs:
         role-to-assume: ${{ vars.AWS_ROLE_ARN }}
 
     - name: Generate walk data
-      shell: pwsh
       run: |
         pushd ./walk-routes
-        if (Test-Path "./utility") {
-          ./utility/Invoke-GenerateJson.ps1
-        } else {
-          ./Invoke-GenerateJson.ps1
-        }
+        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
         popd
 
     - name: Invoke PowerShell scripts
