@@ -72,24 +72,25 @@ jobs:
         node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
         popd
 
-    - name: Invoke PowerShell scripts
+    - name: Build client
       shell: pwsh
       run: |
-        $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
-        Write-Host "Deploying to CF distribution $($distId)`n"
-
-        Write-Host "Building client"          
         Push-Location ./client
         npm install
         npm run build
         Pop-Location
-        Write-Host "Finished building client`n"
 
+    - name: Install server packages
+      shell: pwsh
+      run: |
         Push-Location ./server
         Write-Host "Installing server packages"
         npm install
         Write-Host "Installed server packages`n"
 
+    - name: Populate git.json
+      shell: pwsh
+      run: |
         Write-Host (Get-Location)
         $gitData = [ordered]@{
           'aws-lambda-walks' = "${{ steps.get-sha.outputs.lambda-sha }}"
@@ -97,6 +98,12 @@ jobs:
         }
         New-Item -Type Directory "./build" | Out-Null
         $gitData | ConvertTo-Json -Depth 10 -Compress | Set-Content "./build/git.json"
+
+    - name: Deploy to CloudFront
+      shell: pwsh
+      run: |
+        $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
+        Write-Host "Deploying to CF distribution $($distId)`n"
 
         $invalidationPaths = "${{ github.event.inputs.invalidationPaths }}"
         if ($invalidationPaths) {
