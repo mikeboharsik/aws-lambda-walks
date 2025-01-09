@@ -69,7 +69,7 @@ jobs:
     - name: Generate walk data
       run: |
         pushd ./walk-routes
-        node -e "const g = require('./utility/WalkDataGenerator'); await (async() => { new g().generateAll(); })()"
+        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
         popd
 
     - name: Invoke PowerShell scripts
