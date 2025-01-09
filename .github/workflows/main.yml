@@ -66,16 +66,17 @@ jobs:
         aws-region: us-east-1
         role-to-assume: ${{ vars.AWS_ROLE_ARN }}
 
+    - name: Generate walk data
+      run: |
+        pushd ./walk-routes
+        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
+        popd
+
     - name: Invoke PowerShell scripts
       shell: pwsh
       run: |
         $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
         Write-Host "Deploying to CF distribution $($distId)`n"
-        
-        Push-Location ./walk-routes
-        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
-        Pop-Location
-        Write-Host "Finished generating JSON`n"
 
         Write-Host "Building client"          
         Push-Location ./client
