@@ -22,7 +22,7 @@ const routeCacheValues = {
 
 async function authenticate(event) {
 	try {
-		const res = await fetch(authUrl, { method: 'POST', headers: { authorization: event.headers.authorization }});
+		const res = await fetch(`${authUrl}/verify`, { method: 'POST', headers: { authorization: event.headers.authorization }});
 
 		if (res.ok) {
 			event.isAuthed = true;
