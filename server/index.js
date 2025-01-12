@@ -46,6 +46,7 @@ function verifyBodyIsString(result) {
 }
 
 function verifyCacheValue(event, result, rawPath) {
+  if (!result.headers) result.headers = {};
   const { headers } = result;
 	if (event.authExpires) {
 		const nowInSeconds = Math.floor(new Date().getTime() / 1000);
