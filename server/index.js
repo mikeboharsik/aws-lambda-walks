@@ -414,6 +414,11 @@ async function handleEventsRequest(event) {
 
 async function handlePlatesRequest(event) {
 	const { isAuthed } = event;
+  if (!isAuthed) {
+    return {
+      statusCode: 401
+    };
+  }
 
 	try {
 		const parsed = await getAllEventsByPlateBenched(event);
