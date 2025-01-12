@@ -59,7 +59,7 @@ function verifyCacheValue(event, result, rawPath) {
 			result['cache-control'] = `max-age=${yearInSeconds}`;
 		}
 	}
-	console.log(`Set cache-control header to [${result['cache-control']}]`);
+	console.log(`Set cache-control header to [${result['cache-control']}], expires to [${result.expires}]`);
 }
 
 function logResult(result) {
