@@ -46,20 +46,21 @@ function verifyBodyIsString(result) {
 }
 
 function verifyCacheValue(event, result, rawPath) {
+  const { headers } = result;
 	if (event.authExpires) {
 		const nowInSeconds = Math.floor(new Date().getTime() / 1000);
 		const maxAge = Math.max(0, event.authExpires - nowInSeconds);
 		console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
-		result['expires'] = event.authExpires;
-	}	else if (!result['cache-control'] && !result['expires']) {
+		headers['expires'] = event.authExpires;
+	}	else if (!headers['cache-control'] && !headers['expires']) {
 		if (routeCacheValues[rawPath]) {
 			const cacheValue = routeCacheValues[rawPath];
-			result['cache-control'] = `max-age=${cacheValue}`;
+			headers['cache-control'] = `max-age=${cacheValue}`;
 		} else {
-			result['cache-control'] = `max-age=${yearInSeconds}`;
+			headers['cache-control'] = `max-age=${yearInSeconds}`;
 		}
 	}
-	console.log(`Set cache-control header to [${result['cache-control']}], expires to [${result.expires}]`);
+	console.log(`Set cache-control header to [${headers['cache-control']}], expires to [${headers.expires}]`);
 }
 
 function logResult(result) {
