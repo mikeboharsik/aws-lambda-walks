@@ -26,12 +26,13 @@ async function authenticate(event) {
 
 		if (res.ok) {
 			event.isAuthed = true;
+      
 			const [, token] = event.headers.authorization.split('Bearer ');
 			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
-			event.authExpires = content.exp;
+			event.authExpires = new Date(content.exp * 1000).toUTCString();
 		}
 	} catch { }
-	console.log({ isAuthed: !!event.authExpires });
+	console.log({ isAuthed: event.isAuthed });
 }
 
 function verifyBodyIsString(result) {
@@ -45,8 +46,8 @@ function verifyCacheValue(event, result, rawPath) {
 		const nowInSeconds = Math.floor(new Date().getTime() / 1000);
 		const maxAge = Math.max(0, event.authExpires - nowInSeconds);
 		console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
-		result['cache-control'] = `max-age=${maxAge}`;
-	}	else if (!result['cache-control']) {
+		result['expires'] = event.authExpires;
+	}	else if (!result['cache-control'] && !result['expires']) {
 		if (routeCacheValues[rawPath]) {
 			const cacheValue = routeCacheValues[rawPath];
 			result['cache-control'] = `max-age=${cacheValue}`;
