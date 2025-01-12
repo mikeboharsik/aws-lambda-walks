@@ -259,6 +259,13 @@ async function handleApiRequest(event) {
 		'/api/youtubeIds': handleYoutubeIdsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
 		'/api/git': handleGitRequest,
+    '/api/authtest': async (event) => {
+      return {
+        statusCode: 200,
+        body: JSON.stringify(event),
+        headers: { 'content-type': 'application/json' },
+      };
+    },
 	};
 
 	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
