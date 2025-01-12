@@ -26,12 +26,14 @@ async function authenticate(event) {
 
 		if (res.ok) {
 			event.isAuthed = true;
-      
+
 			const [, token] = event.headers.authorization.split('Bearer ');
 			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
 			event.authExpires = new Date(content.exp * 1000).toUTCString();
 		}
-	} catch { }
+	} catch (e) {
+    console.error('Something went wrong during authentication', e);
+  }
 	console.log({ isAuthed: event.isAuthed });
 }
 
