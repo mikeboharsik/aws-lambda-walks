@@ -21,6 +21,7 @@ const routeCacheValues = {
 };
 
 async function authenticate(event) {
+  let token;
 	try {
 		const res = await fetch(`${authUrl}/verify`, { method: 'POST', headers: { authorization: event.headers.authorization }});
 
@@ -34,7 +35,7 @@ async function authenticate(event) {
       console.log('Authentication failed', authUrl, event.headers.authorization);
     }
 	} catch (e) {
-    console.error('Something went wrong during authentication', e);
+    console.error('Something went wrong during authentication', e, token);
   }
 	console.log({ isAuthed: event.isAuthed });
 }
