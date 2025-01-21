@@ -26,6 +26,15 @@ jobs:
     name: Deploy to AWS
     runs-on: ubuntu-latest
     steps:
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ vars.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+        repositories: "aws-lambda-walks,walk-routes"
+
     - name: Checkout aws-lambda-walks
       uses: actions/checkout@v3
       
@@ -34,7 +43,7 @@ jobs:
       with:
         repository: mikeboharsik/walk-routes
         path: walk-routes
-        token: ${{ secrets.WALK_ROUTES_PAT }}
+        token: ${{ steps.generate-token.outputs.token }}
 
     - name: Get repo hashes
       id: get-sha
@@ -44,7 +53,7 @@ jobs:
           | ConvertFrom-Json -Depth 5 -AsHashtable
           | Select-Object -ExpandProperty object
           | Select-Object -ExpandProperty sha
-        $routesSha = curl -u "u:${{ secrets.WALK_ROUTES_PAT }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main
+        $routesSha = curl -u "u:${{ steps.generate-token.outputs.token }}" https://api.github.com/repos/mikeboharsik/walk-routes/git/ref/heads/main
           | ConvertFrom-Json -Depth 5 -AsHashtable
           | Select-Object -ExpandProperty object
           | Select-Object -ExpandProperty sha
