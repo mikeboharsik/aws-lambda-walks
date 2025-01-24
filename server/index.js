@@ -3,6 +3,7 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const geolib = require('geolib');
+const jwt = require('jsonwebtoken');
 
 const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 
@@ -23,12 +24,14 @@ const routeCacheValues = {
 async function authenticate(event) {
   let token;
 	try {
-		const res = await fetch(`${authUrl}/verify`, { method: 'POST', headers: { authorization: event.headers.authorization }});
+		const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
+		const [, token] = event.headers.authorization.split('Bearer ');
 
-		if (res.ok) {
+		const verified = jwt.verify(token, publicKey, { algorithm: 'RS256' });
+
+		if (verified) {
 			event.isAuthed = true;
-
-			const [, token] = event.headers.authorization.split('Bearer ');
+			
 			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
 			event.authExpires = new Date(content.exp * 1000).toUTCString();
 		} else {
