@@ -10,12 +10,15 @@
 
 	import { getEvents, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
+	import { storeJwt, getJwt } from './util/jwt';
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
 	let gitHashes = {};
 
 	onMount(async() => {
+		storeJwt();
+
 		const dateStr = getPaddedDateString(new Date());
 
 		const tomorrowDate = new Date();
@@ -58,7 +61,7 @@
 </script>
 
 <svelte:window on:keydown={({ altKey, code, shiftKey }) => {
-	if (localStorage.getItem('access_token') && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
+	if (getJwt() && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
 		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
 		window.open(`https://geojson.io/#data=data:application/json,${encodedRouteData}`, '_blank', 'noopener');
 	}
