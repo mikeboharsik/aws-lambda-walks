@@ -49,7 +49,16 @@ if (!$SkipUpload) {
 	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/build/deployable.zip"
 
 	if ($DistributionId) {
-		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths
-		Write-Host ($result | ConvertFrom-Json | ConvertTo-Json -Depth 10)
+		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths | ConvertFrom-Json -AsHashtable
+		$invalidationId = $result.Invalidation.Id
+		Write-Host ($result | ConvertTo-Json -Depth 10)
+
+		while ($result.Invalidation.Status -ne 'Completed') {
+			Start-Sleep -Seconds 5
+
+			$result = aws cloudfront get-invalidation --distribution-id $DistributionId --id $invalidationId | ConvertFrom-Json -AsHashtable
+		}
+
+		Write-Host ($result | ConvertTo-Json -Depth 10)
 	}
 }
