@@ -150,7 +150,8 @@ async function getAllEventsByPlate(event) {
 			filterByName = false,
 			sortByCount = false,
 			nameContains = false,
-		} = {}
+		} = {},
+		headers: { accept },
 	} = event;
 
 	if (nameContains !== false) {
@@ -207,6 +208,18 @@ async function getAllEventsByPlate(event) {
 		if (!result[key].length) {
 			delete result[key];
 		}
+	}
+
+	if (accept === 'text/csv') {
+		const header = `"plate","date","name","link","resi"\n`;
+		result = header + Object.keys(result).reduce((acc, plate) => {
+			const plateEvents = result[plate];
+			plateEvents.forEach(({ date, name, link, resi }) => {
+				const line = `"${plate}","${date}","${name || ''}","${link || ''}","${resi || ''}"`;
+				acc.push(line);
+			});
+			return acc;
+		}, []).join('\n');
 	}
 
 	return result;
@@ -418,7 +431,7 @@ async function handleEventsRequest(event) {
 }
 
 async function handlePlatesRequest(event) {
-	const { isAuthed } = event;
+	const { isAuthed, headers: { accept } } = event;
   if (!isAuthed) {
     return {
       statusCode: 401
@@ -427,12 +440,14 @@ async function handlePlatesRequest(event) {
 
 	try {
 		const parsed = await getAllEventsByPlateBenched(event);
+		const isCsv = accept === 'text/csv';
 		return {
 			statusCode: 200,
-			body: JSON.stringify(parsed),
-			headers: { 'content-type': 'application/json' }
+			body: isCsv ? parsed : JSON.stringify(parsed),
+			headers: { 'content-type': isCsv ? 'text/csv' : 'application/json' }
 		};
 	} catch (e) {
+		console.error('Failed to load plates', e);
 		return {
 			statusCode: 400,
 			body: JSON.stringify({ error: e.message }),
