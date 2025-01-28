@@ -60,19 +60,5 @@ if (!$SkipUpload) {
 		}
 
 		Write-Host ($result | ConvertTo-Json -Depth 10 -Compress)
-
-		$now = Get-Date
-		@(
-			Get-Date -Date $now -Format "yyyy-MM"
-			Get-Date -Date ($now.AddMonths(-1)) -Format "yyyy-MM"
-			Get-Date -Date ($now.AddMonths(-2)) -Format "yyyy-MM"
-			Get-Date -Date ($now.AddMonths(-3)) -Format "yyyy-MM"
-			Get-Date -Date ($now.AddMonths(-4)) -Format "yyyy-MM"
-			Get-Date -Date ($now.AddMonths(-5)) -Format "yyyy-MM"
-		) | ForEach-Object -ThrottleLimit 6 -Parallel {
-			$url = "https://walks.mikeboharsik.com/api/events?q=$_"
-			Write-Host $url
-			Invoke-RestMethod -Headers @{'Accept' = 'text/cvs'} $url | Out-Null
-		}
 	}
 }
