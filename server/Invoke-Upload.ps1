@@ -41,17 +41,17 @@ if ($DeployClient) {
 
 Copy-Item -Recurse $GeneratedPath "$PSScriptRoot/build"
 
-Write-Host (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10)
+Write-Host "Everything except node_modules:" (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10 -Compress)
 
 Compress-Archive -Path "$PSScriptRoot/build/**" -DestinationPath "$PSScriptRoot/build/deployable.zip" -Force
 
 if (!$SkipUpload) {
-	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/build/deployable.zip"
+	aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/build/deployable.zip" | ConvertFrom-Json -AsHashtable -Depth 10 | ConvertTo-Json -Depth 10 -Compress
 
 	if ($DistributionId) {
 		$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths | ConvertFrom-Json -AsHashtable
 		$invalidationId = $result.Invalidation.Id
-		Write-Host ($result | ConvertTo-Json -Depth 10)
+		Write-Host ($result | ConvertTo-Json -Depth 10 -Compress)
 
 		while ($result.Invalidation.Status -ne 'Completed') {
 			Start-Sleep -Seconds 5
@@ -59,6 +59,20 @@ if (!$SkipUpload) {
 			$result = aws cloudfront get-invalidation --distribution-id $DistributionId --id $invalidationId | ConvertFrom-Json -AsHashtable
 		}
 
-		Write-Host ($result | ConvertTo-Json -Depth 10)
+		Write-Host ($result | ConvertTo-Json -Depth 10 -Compress)
+
+		$now = Get-Date
+		@(
+			Get-Date -Date $now -Format "yyyy-MM"
+			Get-Date -Date ($now.AddMonths(-1)) -Format "yyyy-MM"
+			Get-Date -Date ($now.AddMonths(-2)) -Format "yyyy-MM"
+			Get-Date -Date ($now.AddMonths(-3)) -Format "yyyy-MM"
+			Get-Date -Date ($now.AddMonths(-4)) -Format "yyyy-MM"
+			Get-Date -Date ($now.AddMonths(-5)) -Format "yyyy-MM"
+		) | ForEach-Object -ThrottleLimit 6 -Parallel {
+			$url = "https://walks.mikeboharsik.com/api/events?q=$_"
+			Write-Host $url
+			Invoke-RestMethod -Headers @{'Accept' = 'text/cvs'} $url | Out-Null
+		}
 	}
 }
