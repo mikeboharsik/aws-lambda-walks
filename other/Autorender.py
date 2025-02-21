@@ -118,12 +118,12 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
             bpy.context.scene.frame_set(bpy.context.scene.frame_current - 1)
             bpy.ops.sequencer.select_side_of_frame(extend=False, side='CURRENT')
             for sequence in bpy.context.selected_sequences:
-                sequence.name = event['name']
+                sequence.name = event['id']
         except:
             if 'trimmedStart' in event:
-                print(f'Failed to create strip for event with name {event["name"]} and trimmedStart of {event["trimmedStart"]}')
+                print(f'Failed to create strip for event with name {event["id"]} and trimmedStart of {event["trimmedStart"]}')
             else:
-                print(f'Failed to create strip for event with name {event["name"]} which is missing trimmedStart')
+                print(f'Failed to create strip for event with name {event["id"]} which is missing trimmedStart')
     
     def mute_nonevent_strips(self):
         for sequence in bpy.context.sequences:
