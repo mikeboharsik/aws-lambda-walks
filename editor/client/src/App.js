@@ -29,6 +29,7 @@ const states = [
   'NY',
   'CT',
   'RI',
+  'NJ',
   'N/A'
 ];
 
@@ -41,7 +42,12 @@ function PlateInputs({ plates, addPlate }) {
   if (plates?.length || newPlates.length) {
     return (
       <div>
-        {(plates || []).concat(newPlates).map(e => <span className="plate"><PlateStateInput defaultValue={e?.slice(0, 2)} /><input key={e} className="plate-value" type="text" defaultValue={e.slice(2).trim()}></input></span>)}
+        {(plates || []).concat(newPlates).map(e => (
+          <span className="plate">
+            <PlateStateInput defaultValue={e?.slice(0, 2)} />
+            <input key={e} className="plate-value" type="text" defaultValue={e.slice(2).trim()}></input>
+          </span>
+        ))}
         <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span>
       </div>
     );
@@ -78,11 +84,11 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
               const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
               const name = e.querySelector('.name')?.value || undefined;
               const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
-              const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`);
+              const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
               const skip = e.querySelector('.skip')?.checked || undefined;
               const resi = e.querySelector('.resi')?.checked || undefined;
               const id = e.querySelector('.id').value;
-              if (name.toUpperCase().trimmed === 'DELETED') {
+              if (name?.toUpperCase().trim() === 'DELETED') {
                 return undefined;
               }
               return {
@@ -96,7 +102,7 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
                 skip,
                 resi,
               };
-            }).filter(e => e);
+            }).filter(e => e && e.name !== 'DELETE');
           if (e.ctrlKey) {
             console.log(JSON.stringify(updatedEvents, null, '  '));
           } else {
