@@ -55,60 +55,151 @@ function PlateInputs({ plates, addPlate }) {
   return <div>No plates <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span></div>;
 }
 
+function currentTimeToTimestamp(currentTime) {
+  const hours = Math.floor(currentTime / (60 * 60)).toString().padStart(2, 0);
+  const minutes = Math.floor(currentTime / 60).toString().padStart(2, 0);
+  const seconds = Math.floor(currentTime % 60).toString().padStart(2, 0);
+  const ms = (currentTime % 1).toFixed(3).padEnd(3, 0).replace('0.', '');
+  return `${hours}:${minutes}:${seconds}.${ms}`;
+}
+
+function VideoPreview() {
+  const [vidSrc, setVidSrc] = useState(null);
+  const [vidZoom, setVidZoom] = useState(1.0);
+  const [vidOffset, setVidOffset] = useState([0, 0]);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  return (
+    <>
+      <div
+        id="video-container"
+        style={{
+          width: '960px',
+          height: '100vh',
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        {vidSrc && <video
+          onTimeUpdate={(e) => {setCurrentTime(e.target.currentTime)}}
+          id="wip-video"
+          src={vidSrc}
+          controls
+          width="960"
+          height="540"
+          style={{ display: 'inline-block', scale: vidZoom, translate: `${vidOffset[0]}px ${vidOffset[1]}px`, width: 960, height: 540 }}
+          onWheel={(e) => {
+            if (e.ctrlKey) {
+              let newVal = vidZoom;   
+              if (e.nativeEvent.wheelDeltaY > 0) {
+                newVal = Math.min(10.0, vidZoom + 1);
+              } else {
+                newVal = Math.max(1.0, vidZoom - 1);
+                if (newVal === 1) {
+                  setVidOffset([0, 0]);
+                }
+              }
+              setVidZoom(newVal);
+            }
+          }}
+          onContextMenu={(e) => e.preventDefault()}
+          onMouseMove={(e) => { if (e.shiftKey) setVidOffset(([x, y]) => ([x + e.movementX, y + e.movementY]))}}
+        ></video>}
+        {!vidSrc && <input type="file" onChange={(e) => {
+          const url = URL.createObjectURL(e.target.files[0]);
+          setVidSrc(url);
+        }}></input>}
+
+        <div
+          style={{ position: 'absolute', bottom: '15%' }}
+        >
+          <button onClick={() => {
+            setVidZoom(1.0);
+            setVidOffset([0, 0]);
+          }}>Reset video transforms</button>
+          <br></br>
+          <input type="text" id="jump-to-time" defaultValue={'00:00:00'}></input>
+          <button onClick={() => {
+            const targetTime = document.querySelector('#jump-to-time').value;
+            let [, hour, minute, second, , millisecond] = targetTime.match(/(\d{2}):(\d{2}):(\d{2})(\.)*(\d{1,})*/);
+            if (millisecond) millisecond = millisecond.padEnd(3, 0);
+            console.log({ hour, minute, second, millisecond });
+            const newCurrentTime = (parseInt(hour) * 60 * 60) + (parseInt(minute) * 60) + parseInt(second) + (parseInt(millisecond ?? 0) / 1000);
+            console.log(newCurrentTime);
+            document.querySelector('#wip-video').currentTime = newCurrentTime;
+          }}>Jump to time</button>
+          <br></br>
+          <input type="text" value={currentTimeToTimestamp(currentTime)}></input>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function EventInputs({ year, month, day, walks, walkIdx, revert }) {
   if (year && month && day && walks) {
     const { events } = walks[walkIdx];
     return (
-      <div id="eventInputs">
-        {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
-        <span></span>
-        {events.map(e => (
-          <div className="event" style={{ fontSize: '18px' }} key={`${e.name}_${e.mark}`}>
-            Name: <input className="name" type="text" defaultValue={e.name}></input>
-            Trimmed start: <input className="trimmedStart" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedStart}></input>
-            Trimmed end: <input className="trimmedEnd" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedEnd}></input>
-            Skip: <input className="skip" type="checkbox" defaultChecked={e.skip === true}></input>
-            Resi: <input className="resi" type="checkbox" defaultChecked={e.resi === true}></input>
-            <input className="coords" type="hidden" defaultValue={e.coords}></input>
-            <input className="mark" type="hidden" defaultValue={e.mark}></input>
-            <input className="id" type="hidden" defaultValue={e.id}></input>
-            <PlateInputs plates={e.plates} />
-            <hr />
-          </div>
-        ))}
-        <button onClick={(e) => {
-          const updatedEvents = Array.from(document.querySelector('#eventInputs').querySelectorAll('.event'))
-            .map(e => {
-              const mark = e.querySelector('.mark')?.value || undefined;
-              const trimmedStart = e.querySelector('.trimmedStart')?.value || undefined;
-              const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
-              const name = e.querySelector('.name')?.value || undefined;
-              const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
-              const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
-              const skip = e.querySelector('.skip')?.checked || undefined;
-              const resi = e.querySelector('.resi')?.checked || undefined;
-              const id = e.querySelector('.id').value;
-              if (name?.toUpperCase().trim() === 'DELETED') {
-                return undefined;
+      <div style={{ display: 'flex', width: '100%' }}>
+        <div style={{ width: '50%' }}>
+          <VideoPreview />
+        </div>
+        <div style={{ width: '50%' }}>
+          <div id="eventInputs" style={{ height: '100vh', overflow: 'scroll' }}>
+            {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
+            <span></span>
+            {events.map(e => (
+              <div className="event" style={{ fontSize: '18px' }} key={e.id}>
+                Name: <input className="name" type="text" defaultValue={e.name}></input>
+                Trimmed start: <input className="trimmedStart" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedStart}></input>
+                Trimmed end: <input className="trimmedEnd" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedEnd}></input>
+                Skip: <input className="skip" type="checkbox" defaultChecked={e.skip === true}></input>
+                Resi: <input className="resi" type="checkbox" defaultChecked={e.resi === true}></input>
+                <input className="coords" type="hidden" defaultValue={e.coords}></input>
+                <input className="mark" type="hidden" defaultValue={e.mark}></input>
+                <input className="id" type="hidden" defaultValue={e.id}></input>
+                <PlateInputs plates={e.plates} />
+                <hr />
+              </div>
+            ))}
+            <button onClick={(e) => {
+              const updatedEvents = Array.from(document.querySelector('#eventInputs').querySelectorAll('.event'))
+                .map(e => {
+                  const mark = e.querySelector('.mark')?.value || undefined;
+                  const trimmedStart = e.querySelector('.trimmedStart')?.value || undefined;
+                  const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
+                  const name = e.querySelector('.name')?.value || undefined;
+                  const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
+                  const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
+                  const skip = e.querySelector('.skip')?.checked || undefined;
+                  const resi = e.querySelector('.resi')?.checked || undefined;
+                  const id = e.querySelector('.id').value;
+                  if (name?.toUpperCase().trim() === 'DELETED') {
+                    return undefined;
+                  }
+                  return {
+                    id,
+                    mark,
+                    trimmedStart,
+                    trimmedEnd,
+                    name,
+                    coords,
+                    plates: plates.length ? plates : undefined,
+                    skip,
+                    resi,
+                  };
+                }).filter(e => e && e.name !== 'DELETE');
+              if (e.ctrlKey) {
+                console.log(JSON.stringify(updatedEvents, null, '  '));
+              } else {
+                fetch(`${baseUrl}/date/${year}-${month}-${day}/0/events`, { method: 'put', headers: { 'content-type': 'application/json' }, body: JSON.stringify(updatedEvents) });
               }
-              return {
-                id,
-                mark,
-                trimmedStart,
-                trimmedEnd,
-                name,
-                coords,
-                plates: plates.length ? plates : undefined,
-                skip,
-                resi,
-              };
-            }).filter(e => e && e.name !== 'DELETE');
-          if (e.ctrlKey) {
-            console.log(JSON.stringify(updatedEvents, null, '  '));
-          } else {
-            fetch(`${baseUrl}/date/${year}-${month}-${day}/0/events`, { method: 'put', headers: { 'content-type': 'application/json' }, body: JSON.stringify(updatedEvents) });
-          }
-        }}>Submit</button>
+            }}>Submit</button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -126,6 +217,20 @@ function App() {
   const [selectedWalk, setSelectedWalk] = useState(0);
 
   useEffect(() => {
+    const handleWheel = (event) => {
+      if (event.ctrlKey) {
+        event.preventDefault(); // Prevent default browser zoom
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false }); // Important: passive: false for preventDefault to work
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
+  useEffect(() => {
     fetch(`${baseUrl}/dates`)
       .then(r => r.json())
       .then(r => setYears(r));
@@ -140,7 +245,7 @@ function App() {
   }, [selectedYear, selectedMonth, selectedDay, setDateData]);
 
   return (
-    <div className="App">
+    <div className="App" onWheel={(e) => { if (e.ctrlKey) e.preventDefault() } }>
       <header className="App-header">
         <SelectDateComponent
           isVisible={selectedYear === null && years}
