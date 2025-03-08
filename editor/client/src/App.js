@@ -124,6 +124,7 @@ function VideoPreview() {
         }}></input>}
 
         <div
+          id="video-controls-container"
           style={{ position: 'absolute', bottom: '15%' }}
         >
           <div>

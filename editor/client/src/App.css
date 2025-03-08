@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+#video-controls-container > div {
+  height: 24px;
+}
