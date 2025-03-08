@@ -43,10 +43,10 @@ function PlateInputs({ plates, addPlate }) {
     return (
       <div>
         {(plates || []).concat(newPlates).map(e => (
-          <span className="plate">
+          <div className="plate">
             <PlateStateInput defaultValue={e?.slice(0, 2)} />
             <input key={e} className="plate-value" type="text" defaultValue={e.slice(2).trim()}></input>
-          </span>
+          </div>
         ))}
         <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span>
       </div>
@@ -152,7 +152,7 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
     const { events } = walks[walkIdx];
     return (
       <div style={{ display: 'flex', width: '100%' }}>
-        <div style={{ width: '88%' }}>
+        <div style={{ width: '80%' }}>
           <VideoPreview />
         </div>
         <div>
