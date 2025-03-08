@@ -12,8 +12,8 @@ function SelectDateComponent({ isVisible, options, updateValue, revert }) {
         {
           options
             .toSorted((a,b) => parseInt(a) < parseInt(b) ? -1 : parseInt(a) > parseInt(b) ? 1 : 0)
-            .map(e => (
-              <div key={`year-${e}`} style={{ cursor: 'pointer' }} onClick={() => updateValue(e)}>{e}</div>
+            .map(dateComponent => (
+              <div key={`year-${dateComponent}`} style={{ cursor: 'pointer' }} onClick={() => updateValue(dateComponent)}>{dateComponent}</div>
             ))
         }
       </div>);
@@ -42,13 +42,13 @@ function PlateInputs({ plates, addPlate }) {
   if (plates?.length || newPlates.length) {
     return (
       <div>
-        {(plates || []).concat(newPlates).map(e => (
+        {(plates || []).concat(newPlates).map((e, idx, arr) => (
           <div className="plate">
             <PlateStateInput defaultValue={e?.slice(0, 2)} />
             <input key={e} className="plate-value" type="text" defaultValue={e.slice(2).trim()}></input>
+            {idx === arr.length - 1 && <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span>}
           </div>
         ))}
-        <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span>
       </div>
     );
   }
@@ -63,14 +63,15 @@ function currentTimeToTimestamp(currentTime) {
   return `${hours}:${minutes}:${seconds}.${ms}`;
 }
 
+function timestampToCurrentTime(timestamp) {
+  let [, hour, minute, second, , millisecond] = timestamp.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})(\.)*(\d{1,})*/);
+  if (millisecond) millisecond = millisecond.padEnd(3, 0);
+  return (parseInt(hour) * 60 * 60) + (parseInt(minute) * 60) + parseInt(second) + (parseInt(millisecond ?? 0) / 1000);
+}
+
 function jumpToTime() {
   const targetTime = document.querySelector('#jump-to-time').value;
-  let [, hour, minute, second, , millisecond] = targetTime.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})(\.)*(\d{1,})*/);
-  if (millisecond) millisecond = millisecond.padEnd(3, 0);
-  console.log({ hour, minute, second, millisecond });
-  const newCurrentTime = (parseInt(hour) * 60 * 60) + (parseInt(minute) * 60) + parseInt(second) + (parseInt(millisecond ?? 0) / 1000);
-  console.log(newCurrentTime);
-  document.querySelector('#wip-video').currentTime = newCurrentTime;
+  document.querySelector('#wip-video').currentTime = timestampToCurrentTime(targetTime);
 }
 
 function VideoPreview() {
@@ -219,10 +220,10 @@ function App() {
   const [years, setYears] = useState(null);
   const [dateData, setDateData] = useState(null);
 
-  const [selectedYear, setSelectedYear] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedWalk, setSelectedWalk] = useState(0);
+  const [selectedYear, setSelectedYear] = useState(localStorage.getItem('selectedYear') ?? null);
+  const [selectedMonth, setSelectedMonth] = useState(localStorage.getItem('selectedMonth') ?? null);
+  const [selectedDay, setSelectedDay] = useState(localStorage.getItem('selectedDay') ?? null);
+  const [selectedWalk, setSelectedWalk] = useState(localStorage.getItem('selectedWalk') ?? 0);
 
   useEffect(() => {
     const handleWheel = (event) => {
@@ -252,25 +253,29 @@ function App() {
     }
   }, [selectedYear, selectedMonth, selectedDay, setDateData]);
 
+  if (!years) {
+    return null;
+  }
+
   return (
     <div className="App" onWheel={(e) => { if (e.ctrlKey) e.preventDefault() } }>
       <header className="App-header">
         <SelectDateComponent
           isVisible={selectedYear === null && years}
           options={years && Object.keys(years)}
-          updateValue={setSelectedYear}
+          updateValue={(e) => { setSelectedYear(e); localStorage.setItem('selectedYear', e); }}
         />
         <SelectDateComponent
           isVisible={selectedYear !== null && selectedMonth === null}
           options={selectedYear && Object.keys(years?.[selectedYear])}
-          updateValue={setSelectedMonth}
-          revert={() => setSelectedYear(null)}
+          updateValue={(e) => { setSelectedMonth(e); localStorage.setItem('selectedMonth', e); }}
+          revert={() => { setSelectedYear(null); localStorage.removeItem('selectedYear'); }}
         />
         <SelectDateComponent
           isVisible={selectedYear !== null && selectedMonth !== null && selectedDay === null}
           options={years?.[selectedYear]?.[selectedMonth]}
-          updateValue={setSelectedDay}
-          revert={() => setSelectedMonth(null)}
+          updateValue={(e) => { setSelectedDay(e); localStorage.setItem('selectedDay', e); }}
+          revert={() => { setSelectedMonth(null); localStorage.removeItem('selectedMonth'); }}
         />
         <EventInputs
           year={selectedYear}
@@ -278,7 +283,7 @@ function App() {
           day={selectedDay}
           walks={dateData}
           walkIdx={selectedWalk}
-          revert={() => setSelectedDay(null)}
+          revert={() => { setSelectedDay(null); localStorage.removeItem('selectedDay'); }}
         />
       </header>
     </div>
