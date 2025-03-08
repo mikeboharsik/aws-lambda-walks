@@ -84,7 +84,7 @@ function VideoPreview() {
       <div
         id="video-container"
         style={{
-          width: '960px',
+          width: '1280px',
           height: '100vh',
           overflow: 'hidden',
           display: 'flex',
@@ -98,9 +98,7 @@ function VideoPreview() {
           id="wip-video"
           src={vidSrc}
           controls
-          width="960"
-          height="540"
-          style={{ display: 'inline-block', scale: vidZoom, translate: `${vidOffset[0]}px ${vidOffset[1]}px`, width: 960, height: 540 }}
+          style={{ display: 'inline-block', scale: vidZoom, translate: `${vidOffset[0]}px ${vidOffset[1]}px`, width: 1280 }}
           onWheel={(e) => {
             if (e.ctrlKey) {
               let newVal = vidZoom;   
@@ -125,7 +123,7 @@ function VideoPreview() {
 
         <div
           id="video-controls-container"
-          style={{ position: 'absolute', bottom: '15%' }}
+          style={{ position: 'absolute', bottom: '5%' }}
         >
           <div>
             <button onClick={() => {
@@ -154,10 +152,10 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
     const { events } = walks[walkIdx];
     return (
       <div style={{ display: 'flex', width: '100%' }}>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: '88%' }}>
           <VideoPreview />
         </div>
-        <div style={{ width: '50%' }}>
+        <div>
           <div id="eventInputs" style={{ height: '100vh', overflow: 'scroll' }}>
             {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
             <span></span>
