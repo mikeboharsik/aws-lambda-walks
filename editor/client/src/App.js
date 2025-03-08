@@ -132,7 +132,9 @@ function VideoPreview() {
             document.querySelector('#wip-video').currentTime = newCurrentTime;
           }}>Jump to time</button>
           <br></br>
+          <button onClick={() => document.querySelector('#wip-video').currentTime -= 1.0}>{'<-'}</button>
           <input type="text" value={currentTimeToTimestamp(currentTime)}></input>
+          <button onClick={() => document.querySelector('#wip-video').currentTime += 1.0}>{'->'}</button>
         </div>
       </div>
     </>
