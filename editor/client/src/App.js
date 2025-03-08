@@ -63,6 +63,16 @@ function currentTimeToTimestamp(currentTime) {
   return `${hours}:${minutes}:${seconds}.${ms}`;
 }
 
+function jumpToTime() {
+  const targetTime = document.querySelector('#jump-to-time').value;
+  let [, hour, minute, second, , millisecond] = targetTime.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})(\.)*(\d{1,})*/);
+  if (millisecond) millisecond = millisecond.padEnd(3, 0);
+  console.log({ hour, minute, second, millisecond });
+  const newCurrentTime = (parseInt(hour) * 60 * 60) + (parseInt(minute) * 60) + parseInt(second) + (parseInt(millisecond ?? 0) / 1000);
+  console.log(newCurrentTime);
+  document.querySelector('#wip-video').currentTime = newCurrentTime;
+}
+
 function VideoPreview() {
   const [vidSrc, setVidSrc] = useState(null);
   const [vidZoom, setVidZoom] = useState(1.0);
@@ -116,27 +126,22 @@ function VideoPreview() {
         <div
           style={{ position: 'absolute', bottom: '15%' }}
         >
-          <button onClick={() => {
-            setVidZoom(1.0);
-            setVidOffset([0, 0]);
-          }}>Reset video transforms</button>
-          <br></br>
-          <input type="text" id="jump-to-time" defaultValue={'00:00:00'}></input>
-          <button onClick={() => {
-            const targetTime = document.querySelector('#jump-to-time').value;
-            let [, hour, minute, second, , millisecond] = targetTime.match(/(\d{2}):(\d{2}):(\d{2})(\.)*(\d{1,})*/);
-            if (millisecond) millisecond = millisecond.padEnd(3, 0);
-            console.log({ hour, minute, second, millisecond });
-            const newCurrentTime = (parseInt(hour) * 60 * 60) + (parseInt(minute) * 60) + parseInt(second) + (parseInt(millisecond ?? 0) / 1000);
-            console.log(newCurrentTime);
-            document.querySelector('#wip-video').currentTime = newCurrentTime;
-          }}>Jump to time</button>
-          <br></br>
-          <button onClick={() => document.querySelector('#wip-video').currentTime -= 1.0}>{'<-'}</button>
-          <button onClick={() => document.querySelector('#wip-video').currentTime -= (1 / 59.94)}>{'<'}</button>
-          <input type="text" value={currentTimeToTimestamp(currentTime)}></input>
-          <button onClick={() => document.querySelector('#wip-video').currentTime += (1 / 59.94)}>{'>'}</button>
-          <button onClick={() => document.querySelector('#wip-video').currentTime += 1.0}>{'->'}</button>
+          <div>
+            <button onClick={() => {
+              setVidZoom(1.0);
+              setVidOffset([0, 0]);
+            }}>Reset video transforms</button>
+          </div>
+          <div>
+            <input onKeyDown={(e) => e.key === 'Enter' && jumpToTime()} type="text" id="jump-to-time" defaultValue={'00:00:00'}></input>
+          </div>
+          <div>
+            <button onClick={() => document.querySelector('#wip-video').currentTime -= 1.0}>{'<-'}</button>
+            <button onClick={() => document.querySelector('#wip-video').currentTime -= (1 / 59.94)}>{'<'}</button>
+            <input type="text" value={currentTimeToTimestamp(currentTime)}></input>
+            <button onClick={() => document.querySelector('#wip-video').currentTime += (1 / 59.94)}>{'>'}</button>
+            <button onClick={() => document.querySelector('#wip-video').currentTime += 1.0}>{'->'}</button>
+          </div>
         </div>
       </div>
     </>
