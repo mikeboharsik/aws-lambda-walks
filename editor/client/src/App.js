@@ -57,7 +57,7 @@ function PlateInputs({ plates, addPlate }) {
 
 function currentTimeToTimestamp(currentTime) {
   const hours = Math.floor(currentTime / (60 * 60)).toString().padStart(2, 0);
-  const minutes = Math.floor(currentTime / 60).toString().padStart(2, 0);
+  const minutes = Math.floor((currentTime / 60) % 60).toString().padStart(2, 0);
   const seconds = Math.floor(currentTime % 60).toString().padStart(2, 0);
   const ms = (currentTime % 1).toFixed(3).padEnd(3, 0).replace('0.', '');
   return `${hours}:${minutes}:${seconds}.${ms}`;
@@ -148,6 +148,13 @@ function VideoPreview() {
   );
 }
 
+function handleTrimmedStartClick(e) {
+  if (e.ctrlKey) {
+    const newTime = timestampToCurrentTime(e.target.value);
+    document.querySelector('#wip-video').currentTime = newTime - 10; // assume it's off by 10 seconds
+  }
+}
+
 function EventInputs({ year, month, day, walks, walkIdx, revert }) {
   if (year && month && day && walks) {
     const { events } = walks[walkIdx];
@@ -163,7 +170,7 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
             {events.map(e => (
               <div className="event" style={{ fontSize: '18px' }} key={e.id}>
                 Name: <input className="name" type="text" defaultValue={e.name}></input>
-                Trimmed start: <input className="trimmedStart" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedStart}></input>
+                Trimmed start: <input onClick={handleTrimmedStartClick} className="trimmedStart" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedStart}></input>
                 Trimmed end: <input className="trimmedEnd" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedEnd}></input>
                 Skip: <input className="skip" type="checkbox" defaultChecked={e.skip === true}></input>
                 Resi: <input className="resi" type="checkbox" defaultChecked={e.resi === true}></input>
