@@ -93,12 +93,13 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
             return None
 
     def timespan_to_frame(self, timespan):
-        result = re.search(r'(\d{2}):(\d{2}):(\d{2})', timespan)
+        result = re.search(r'(\d{2}):(\d{2}):(\d{2})(\.)*(\d{1,3})*', timespan)
         hours = int(result.group(1))
         minutes = int(result.group(2))
         seconds = int(result.group(3))
+        milliseconds = int(result.group(5) or 0) / 1000
         
-        return int(((hours * 3600) + (minutes * 60) + seconds) * frame_rate)
+        return int(((hours * 3600) + (minutes * 60) + seconds + milliseconds) * frame_rate)
 
     def create_event_strip(self, event):
         try:
