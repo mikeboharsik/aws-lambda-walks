@@ -96,10 +96,14 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
         result = re.search(r'(\d{2}):(\d{2}):(\d{2})(\.)*(\d{1,3})*', timespan)
         hours = int(result.group(1))
         minutes = int(result.group(2))
-        seconds = int(result.group(3))
         milliseconds = int(result.group(5) or 0) / 1000
+        seconds = int(result.group(3)) + milliseconds
+
+        frames_per_second = 59.94
+        frames_per_minute = frames_per_second * 60
+        frames_per_hour = frames_per_minute * 60
         
-        result = int(((hours * 3600) + (minutes * 60) + seconds + milliseconds) * frame_rate)
+        result = int((hours * frames_per_hour) + (minutes * frames_per_minute) + (seconds * frames_per_second))
 
         print(f'Timestamp [{timespan}] converted to frame is [{result}]')
 
