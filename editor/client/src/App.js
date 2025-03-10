@@ -37,15 +37,18 @@ function PlateStateInput({ defaultValue = 'MA' }) {
   return <select defaultValue={defaultValue} className="plate-state">{states.map(e => <option value={e}>{e}</option>)}</select>;
 }
 
-function PlateInputs({ plates, addPlate }) {
+function PlateInputs({ plates }) {
   const [newPlates, setNewPlates] = useState([]);
+
+  if (plates === 'HIDE') return null;
+
   if (plates?.length || newPlates.length) {
     return (
       <div>
         {(plates || []).concat(newPlates).map((e, idx, arr) => (
           <div className="plate">
-            <PlateStateInput defaultValue={e?.slice(0, 2)} />
-            <input key={e} className="plate-value" type="text" defaultValue={e.slice(2).trim()}></input>
+            <PlateStateInput defaultValue={e[0]} />
+            <input key={e} className="plate-value" type="text" defaultValue={e[1]}></input>
             {idx === arr.length - 1 && <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span>}
           </div>
         ))}
@@ -53,6 +56,22 @@ function PlateInputs({ plates, addPlate }) {
     );
   }
   return <div>No plates <span onClick={() => setNewPlates(e => [...e, ''])}>{'+'}</span></div>;
+}
+
+function TagInputs({ tags }) {
+  const [newTags, setNewTags] = useState([]);
+  if (tags?.length || newTags.length) {
+    return (
+      <div>
+        {(tags || []).concat(newTags).map((e, idx, arr) => (
+          <div className="tag">
+            <input key={e} className="tag-value" type="text" defaultValue={e}></input>
+            {idx === arr.length - 1 && <span onClick={() => setNewTags(e => [...e, ''])}>{'+'}</span>}
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
 
 function currentTimeToTimestamp(currentTime) {
@@ -72,6 +91,42 @@ function timestampToCurrentTime(timestamp) {
 function jumpToTime() {
   const targetTime = document.querySelector('#jump-to-time').value;
   document.querySelector('#wip-video').currentTime = timestampToCurrentTime(targetTime);
+}
+
+function exportEvents(ev, year, month, day) {
+  const updatedEvents = Array.from(document.querySelector('#eventInputs').querySelectorAll('.event'))
+    .map(e => {
+      const mark = e.querySelector('.mark')?.value || undefined;
+      const trimmedStart = e.querySelector('.trimmedStart')?.value || undefined;
+      const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
+      const name = e.querySelector('.name')?.value || undefined;
+      const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
+      const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
+      const tags = Array.from(e.querySelectorAll('.tag-value'))?.map?.(t => t.value);
+      const skip = e.querySelector('.skip')?.checked || undefined;
+      const resi = e.querySelector('.resi')?.checked || undefined;
+      const id = e.querySelector('.id').value;
+      if (name?.toUpperCase().trim() === 'DELETED') {
+        return undefined;
+      }
+      return {
+        id,
+        mark,
+        trimmedStart,
+        trimmedEnd,
+        name,
+        coords,
+        plates: plates.length ? plates : undefined,
+        tags: tags.length ? tags : undefined,
+        skip,
+        resi,
+      };
+    }).filter(e => e && e.name !== 'DELETE');
+  if (ev.ctrlKey) {
+    console.log(JSON.stringify(updatedEvents, null, '  '));
+  } else {
+    fetch(`${baseUrl}/date/${year}-${month}-${day}/0/events`, { method: 'put', headers: { 'content-type': 'application/json' }, body: JSON.stringify(updatedEvents) });
+  }
 }
 
 function VideoPreview() {
@@ -169,7 +224,7 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
             <span></span>
             {events.map(e => (
               <div className="event" style={{ fontSize: '18px' }} key={e.id}>
-                Name: <input className="name" type="text" defaultValue={e.name}></input>
+                <span onClick={() => { window.open(`https://www.google.com/maps/place/${e.coords[0]},${e.coords[1]}`, '_blank') }}>Name:</span> <input disabled={e.tags} className="name" type="text" defaultValue={e.name}></input>
                 Trimmed start: <input onClick={handleTrimmedStartClick} className="trimmedStart" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedStart}></input>
                 Trimmed end: <input className="trimmedEnd" style={{ textAlign: 'center', width: '6.2em' }} type="text" defaultValue={e.trimmedEnd}></input>
                 Skip: <input className="skip" type="checkbox" defaultChecked={e.skip === true}></input>
@@ -177,43 +232,12 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
                 <input className="coords" type="hidden" defaultValue={e.coords}></input>
                 <input className="mark" type="hidden" defaultValue={e.mark}></input>
                 <input className="id" type="hidden" defaultValue={e.id}></input>
-                <PlateInputs plates={e.plates} />
+                <PlateInputs plates={((!e.tags || e.tags.length === 0) && e.plates) || 'HIDE'} />
+                <TagInputs tags={e.tags} />
                 <hr />
               </div>
             ))}
-            <button onClick={(e) => {
-              const updatedEvents = Array.from(document.querySelector('#eventInputs').querySelectorAll('.event'))
-                .map(e => {
-                  const mark = e.querySelector('.mark')?.value || undefined;
-                  const trimmedStart = e.querySelector('.trimmedStart')?.value || undefined;
-                  const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
-                  const name = e.querySelector('.name')?.value || undefined;
-                  const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
-                  const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
-                  const skip = e.querySelector('.skip')?.checked || undefined;
-                  const resi = e.querySelector('.resi')?.checked || undefined;
-                  const id = e.querySelector('.id').value;
-                  if (name?.toUpperCase().trim() === 'DELETED') {
-                    return undefined;
-                  }
-                  return {
-                    id,
-                    mark,
-                    trimmedStart,
-                    trimmedEnd,
-                    name,
-                    coords,
-                    plates: plates.length ? plates : undefined,
-                    skip,
-                    resi,
-                  };
-                }).filter(e => e && e.name !== 'DELETE');
-              if (e.ctrlKey) {
-                console.log(JSON.stringify(updatedEvents, null, '  '));
-              } else {
-                fetch(`${baseUrl}/date/${year}-${month}-${day}/0/events`, { method: 'put', headers: { 'content-type': 'application/json' }, body: JSON.stringify(updatedEvents) });
-              }
-            }}>Submit</button>
+            <button onClick={(ev) => exportEvents(ev, year, month, day)}>Submit</button>
           </div>
         </div>
       </div>
