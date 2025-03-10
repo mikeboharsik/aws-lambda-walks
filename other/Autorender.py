@@ -99,7 +99,11 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
         seconds = int(result.group(3))
         milliseconds = int(result.group(5) or 0) / 1000
         
-        return int(((hours * 3600) + (minutes * 60) + seconds + milliseconds) * frame_rate)
+        result = int(((hours * 3600) + (minutes * 60) + seconds + milliseconds) * frame_rate)
+
+        print(f'Timestamp [{timespan}] converted to frame is [{result}]')
+
+        return result
 
     def create_event_strip(self, event):
         try:
