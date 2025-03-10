@@ -101,7 +101,7 @@ function exportEvents(ev, year, month, day) {
       const trimmedEnd = e.querySelector('.trimmedEnd')?.value || undefined;
       const name = e.querySelector('.name')?.value || undefined;
       const coords = e.querySelector('.coords')?.value.split(',').map(e => parseFloat(e)) || undefined;
-      const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => `${p.querySelector('.plate-state')?.value} ${p.querySelector('.plate-value')?.value}`).filter(p => !p.endsWith('DELETE'));
+      const plates = Array.from(e.querySelectorAll('.plate'))?.map?.(p => ([p.querySelector('.plate-state')?.value, p.querySelector('.plate-value')?.value])).filter(p => !p[1].endsWith('DELETE'));
       const tags = Array.from(e.querySelectorAll('.tag-value'))?.map?.(t => t.value);
       const skip = e.querySelector('.skip')?.checked || undefined;
       const resi = e.querySelector('.resi')?.checked || undefined;
