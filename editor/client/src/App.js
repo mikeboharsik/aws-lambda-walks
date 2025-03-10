@@ -280,7 +280,8 @@ function App() {
     if (selectedDay) {
       fetch(`${baseUrl}/date/${selectedYear}-${selectedMonth}-${selectedDay}`)
         .then(r => r.json())
-        .then(r => setDateData(JSON.parse(r)));
+        .then(r => setDateData(JSON.parse(r)))
+        .catch(() => { localStorage.removeItem('selectedDay'); window.location.reload(); });
     }
   }, [selectedYear, selectedMonth, selectedDay, setDateData]);
 
