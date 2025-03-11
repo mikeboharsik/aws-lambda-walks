@@ -178,7 +178,7 @@ function exportEvents(ev, year, month, day) {
   }
 }
 
-function VideoPreview() {
+function VideoPreview({ revert }) {
   const [vidSrc, setVidSrc] = useState(null);
   const [vidZoom, setVidZoom] = useState(1.0);
   const [vidOffset, setVidOffset] = useState([0, 0]);
@@ -228,7 +228,7 @@ function VideoPreview() {
 
         <div
           id="video-controls-container"
-          style={{ position: 'absolute', bottom: '5%' }}
+          style={{ position: 'absolute', bottom: '2.5%' }}
         >
           <div>
             <button onClick={() => {
@@ -245,6 +245,9 @@ function VideoPreview() {
             <input type="text" value={currentTimeToTimestamp(currentTime)}></input>
             <button onClick={() => document.querySelector('#wip-video').currentTime += (1 / 59.94)}>{'>'}</button>
             <button onClick={() => document.querySelector('#wip-video').currentTime += 1.0}>{'->'}</button>
+          </div>
+          <div>
+            {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
           </div>
         </div>
       </div>
@@ -265,11 +268,10 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
     return (
       <div style={{ display: 'flex', width: '100%' }}>
         <div style={{ width: '80%' }}>
-          <VideoPreview />
+          <VideoPreview revert={revert} />
         </div>
         <div>
           <div id="eventInputs" style={{ height: '100vh', overflow: 'scroll' }}>
-            {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
             <span></span>
             {events.map(e => (
               <div className="event" style={{ fontSize: '18px' }} key={e.id}>
