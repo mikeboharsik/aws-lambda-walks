@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const baseUrl = 'http://localhost:8089';
 
@@ -142,7 +142,7 @@ function jumpToTime() {
   document.querySelector('#wip-video').currentTime = timestampToCurrentTime(targetTime);
 }
 
-function exportEvents(ev, year, month, day) {
+async function exportEvents(ev, year, month, day) {
   const updatedEvents = Array.from(document.querySelector('#eventInputs').querySelectorAll('.event'))
     .map(e => {
       const mark = e.querySelector('.mark')?.value || undefined;
@@ -198,6 +198,9 @@ function VideoPreview({ revert }) {
           flexDirection: 'column',
         }}
       >
+        <div>
+          {revert && <span style={{ position: 'absolute', cursor: 'pointer', top: '2.5%' }} onClick={revert}>{'←'}</span>}
+        </div>
         {vidSrc && <video
           onTimeUpdate={(e) => {setCurrentTime(e.target.currentTime)}}
           id="wip-video"
@@ -228,7 +231,7 @@ function VideoPreview({ revert }) {
 
         <div
           id="video-controls-container"
-          style={{ position: 'absolute', bottom: '2.5%' }}
+          style={{ position: 'absolute', bottom: '5%' }}
         >
           <div>
             <button onClick={() => {
@@ -246,9 +249,6 @@ function VideoPreview({ revert }) {
             <button onClick={() => document.querySelector('#wip-video').currentTime += (1 / 59.94)}>{'>'}</button>
             <button onClick={() => document.querySelector('#wip-video').currentTime += 1.0}>{'->'}</button>
           </div>
-          <div>
-            {revert && <span style={{ cursor: 'pointer' }} onClick={revert}>{'←'}</span>}
-          </div>
         </div>
       </div>
     </>
@@ -262,7 +262,7 @@ function handleTrimmedStartClick(e) {
   }
 }
 
-function EventInputs({ year, month, day, walks, walkIdx, revert }) {
+function EventInputs({ year, month, day, walks, walkIdx, revert, loadWalkData }) {
   if (year && month && day && walks) {
     const { events } = walks[walkIdx];
     return (
@@ -288,7 +288,7 @@ function EventInputs({ year, month, day, walks, walkIdx, revert }) {
                 <hr />
               </div>
             ))}
-            <button onClick={(ev) => exportEvents(ev, year, month, day)}>Submit</button>
+            <button onClick={async (ev) => { await exportEvents(ev, year, month, day); await loadWalkData(); }}>Submit</button>
           </div>
         </div>
       </div>
@@ -306,6 +306,13 @@ function App() {
   const [selectedMonth, setSelectedMonth] = useState(localStorage.getItem('selectedMonth') ?? null);
   const [selectedDay, setSelectedDay] = useState(localStorage.getItem('selectedDay') ?? null);
   const [selectedWalk, setSelectedWalk] = useState(localStorage.getItem('selectedWalk') ?? 0);
+
+  const loadWalkData = useCallback(async () => {
+    await fetch(`${baseUrl}/date/${selectedYear}-${selectedMonth}-${selectedDay}`, { headers: { 'cache-control': 'no-cache' } })
+      .then(r => r.json())
+      .then(r => setDateData(JSON.parse(r)))
+      .catch(() => { localStorage.removeItem('selectedDay'); window.location.reload(); });
+  }, [selectedYear, selectedMonth, selectedDay]);
 
   useEffect(() => {
     const handleWheel = (event) => {
@@ -329,12 +336,9 @@ function App() {
 
   useEffect(() => {
     if (selectedDay) {
-      fetch(`${baseUrl}/date/${selectedYear}-${selectedMonth}-${selectedDay}`)
-        .then(r => r.json())
-        .then(r => setDateData(JSON.parse(r)))
-        .catch(() => { localStorage.removeItem('selectedDay'); window.location.reload(); });
+      loadWalkData();
     }
-  }, [selectedYear, selectedMonth, selectedDay, setDateData]);
+  }, [loadWalkData, selectedDay]);
 
   if (!years) {
     return null;
@@ -367,6 +371,7 @@ function App() {
           walks={dateData}
           walkIdx={selectedWalk}
           revert={() => { setSelectedDay(null); localStorage.removeItem('selectedDay'); }}
+          loadWalkData={loadWalkData}
         />
       </header>
     </div>
