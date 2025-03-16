@@ -260,10 +260,7 @@ exports.handler = async (event) => {
 
 		let result = await handlerFunction(event);
 		if (!result.statusCode) {
-			result = {
-				body: result,
-				statusCode: 200,
-			};
+			throw new Error(`The result returned has an incorrect format: ${JSON.stringify(result)}`);
 		}
 
 		verifyBodyIsString(result);
@@ -292,7 +289,7 @@ async function handleApiRequest(event) {
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,
-		'/api/globalStats': getGlobalStatsBenched,
+		'/api/globalStats': handleGlobalStatsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
 		'/api/git': handleGitRequest,
     '/api/authtest': async (event) => {
@@ -471,6 +468,23 @@ async function handlePlatesRequest(event) {
 async function handleYoutubeIdsRequest(event) {
 	try {
 		const parsed = await getAllYoutubeIdsBenched();
+		return {
+			statusCode: 200,
+			body: JSON.stringify(parsed),
+			headers: { 'content-type': 'application/json' }
+		};
+	} catch (e) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: e.message }),
+			headers: { 'content-type': 'application/json' },
+		}
+	}
+}
+
+async function handleGlobalStatsRequest() {
+	try {
+		const parsed = await getGlobalStatsBenched();
 		return {
 			statusCode: 200,
 			body: JSON.stringify(parsed),
