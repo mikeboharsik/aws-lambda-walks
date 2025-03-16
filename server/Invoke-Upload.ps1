@@ -7,8 +7,10 @@ Param(
 		"/build/*"
 		"/api/events*"
 		"/api/git"
+		"/api/globalStats"
 		"/api/routes*"
 		"/api/plates*"
+		"/api/youtubeIds"
 		"/global.css"
 		"/index.html"
 	),
