@@ -231,6 +231,11 @@ async function getAllYoutubeIds() {
 }
 const getAllYoutubeIdsBenched = getBenchmarkedFunctionAsync(getAllYoutubeIds);
 
+async function getGlobalStats() {
+	return JSON.parse(await fsPromises.readFile(`./globalStats/globalStats.json`));
+}
+const getGlobalStatsBenched = getBenchmarkedFunctionAsync(getGlobalStats);
+
 exports.handler = async (event) => {
 	try {
 		const { rawPath } = event;
@@ -281,6 +286,7 @@ async function handleApiRequest(event) {
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,
+		'/api/globalStats': getGlobalStatsBenched,
 		'/api/invalidateCache': handleCacheInvalidate,
 		'/api/git': handleGitRequest,
     '/api/authtest': async (event) => {
