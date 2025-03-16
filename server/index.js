@@ -258,7 +258,13 @@ exports.handler = async (event) => {
 		const isApiRequest = rawPath.startsWith('/api');
 		const handlerFunction = isApiRequest ? handleApiRequest : handleContentRequest;
 
-		const result = await handlerFunction(event);
+		let result = await handlerFunction(event);
+		if (!result.statusCode) {
+			result = {
+				body: result,
+				statusCode: 200,
+			};
+		}
 
 		verifyBodyIsString(result);
 		verifyCacheValue(event, result, rawPath);
