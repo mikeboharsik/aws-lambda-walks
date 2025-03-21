@@ -39,3 +39,10 @@ export async function getSunx(date) {
 	return fetch(`${baseApiUrl}/sunx?date=${date}`, options)
 		.then(res => res.json());
 }
+
+export async function getGlobalStats() {
+	const options = getApiOptions();
+
+	return fetch(`${baseApiUrl}/globalStats`, options)
+		.then(res => res.json());
+}

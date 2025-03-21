@@ -5,12 +5,21 @@
 	import ErrorMessage from './components/ErrorMessage.svelte';
 
 	import Calendar from './views/Calendar.svelte';
+	import Stats from './views/Stats.svelte';
 
 	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
 
 	import { getEvents, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
 	import { storeJwt, getJwt } from './util/jwt';
+
+	const PAGES = { CALENDAR: 'CALENDAR', STATS: 'STATS' };
+
+	let page = localStorage.getItem('page');
+	if (page === null) {
+		page = PAGES.CALENDAR;
+		localStorage.setItem('page', page);
+	}
 
 	let isLoaded = false;
 	let isErrorDuringLoad = false;
@@ -72,8 +81,18 @@
 		{#if isErrorDuringLoad}
 			<ErrorMessage />
 		{:else}
-			<Calendar />
+			{#if page === PAGES.CALENDAR}
+				<Calendar />
+			{:else if page === PAGES.STATS}
+				<Stats />
+			{/if}
 		{/if}
+
+		<div style="position: absolute; top: 1em; border: 0; margin: 0; color: white">
+			<span on:click={() => { page = PAGES.CALENDAR; localStorage.setItem('page', page); }} style="cursor: pointer">Calendar</span>
+			|
+			<span on:click={() => { page = PAGES.STATS; localStorage.setItem('page', page); }} style="cursor: pointer">Stats</span>
+		</div>
 	{:else}
 		<div style="position: absolute">
 			<Circle />
