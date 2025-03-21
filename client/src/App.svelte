@@ -89,9 +89,19 @@
 		{/if}
 
 		<div style="position: absolute; top: 1em; border: 0; margin: 0; color: white">
-			<span on:click={() => { page = PAGES.CALENDAR; localStorage.setItem('page', page); }} style="cursor: pointer">Calendar</span>
+			<span
+				on:click={() => { page = PAGES.CALENDAR; localStorage.setItem('page', page); }}
+				style={'cursor: pointer' + (page === PAGES.CALENDAR ? '; font-weight: bold' : '')}
+			>
+				Calendar
+			</span>
 			|
-			<span on:click={() => { page = PAGES.STATS; localStorage.setItem('page', page); }} style="cursor: pointer">Stats</span>
+			<span
+				on:click={() => { page = PAGES.STATS; localStorage.setItem('page', page); }}
+				style={'cursor: pointer' + (page === PAGES.STATS ? '; font-weight: bold' : '')}
+			>
+				Stats
+			</span>
 		</div>
 	{:else}
 		<div style="position: absolute">
