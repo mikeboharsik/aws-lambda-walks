@@ -49,11 +49,11 @@
 					chart = new Chart(document.getElementById('testChart'), {
 						type: 'bar',
 						data: {
-							labels: ['Average', 'Median', 'Total'],
+							labels: ['Mean', 'Median', 'Total'],
 							datasets: [
 								{
 									label: 'Distance in miles',
-									data: [(globalStatsData.averageWalkDistance / 1609).toFixed(2), (globalStatsData.medianWalkDistance / 1609).toFixed(2), (globalStatsData.totalDistance / 1609).toFixed(2)]
+									data: [(globalStatsData.meanWalkDistance / 1609).toFixed(2), (globalStatsData.medianWalkDistance / 1609).toFixed(2), (globalStatsData.totalDistance / 1609).toFixed(2)]
 								}
 							]
 						},
