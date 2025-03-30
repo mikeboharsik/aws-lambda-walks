@@ -8,6 +8,7 @@ Param(
 		"/api/events*"
 		"/api/git"
 		"/api/globalStats"
+		"/api/jumpToEvent*"
 		"/api/routes*"
 		"/api/plates*"
 		"/api/youtubeIds"

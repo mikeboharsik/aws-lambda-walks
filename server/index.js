@@ -138,6 +138,12 @@ async function getEventsByMonth(event) {
 }
 const getEventsByMonthBenched = getBenchmarkedFunctionAsync(getEventsByMonth);
 
+async function getAllEvents(event) {
+	const content = await fsPromises.readFile('./events/all.json');
+	return JSON.parse(content);
+}
+const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
+
 async function getCoordsByMonth(month) {
 	return JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
 }
@@ -291,6 +297,7 @@ async function handleApiRequest(event) {
 		'/api/youtubeIds': handleYoutubeIdsRequest,
 		'/api/globalStats': handleGlobalStatsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
+		'/api/jumpToEvent': handleJumpToEvent,
 		'/api/git': handleGitRequest,
     '/api/authtest': async (event) => {
       return {
@@ -356,6 +363,40 @@ async function handleCacheInvalidate(event) {
 		statusCode: 200,
 		body: result,
 		'content-type': 'application/json',
+	};
+}
+
+async function handleJumpToEvent(event) {
+	const { queryStringParameters: { id = null } = {} } = event;
+
+	if (!id) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: 'query parameter id must be specified' }),
+			'content-type': 'application/json',
+		};
+	}
+
+	const allEvents = await getAllEventsBenched();
+	const result = allEvents[id];
+
+	if (!result) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: `Failed to find event with ID [${id}]` }),
+			'content-type': 'application/json',
+		};
+	}
+	
+	const [, hours, minutes, seconds] = result.match(/(\d{2}):(\d{2}):(\d{2})/);
+	const totalSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
+	const redirectUrl = `https://youtu.be/${result.youtubeId}?t=${totalSeconds}`;
+
+	return {
+		statusCode: 302,
+		headers: {
+			Location: redirectUrl,
+		},
 	};
 }
 
