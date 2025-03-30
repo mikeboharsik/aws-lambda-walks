@@ -388,7 +388,7 @@ async function handleJumpToEvent(event) {
 		};
 	}
 	
-	const [, hours, minutes, seconds] = result.match(/(\d{2}):(\d{2}):(\d{2})/);
+	const [, hours, minutes, seconds] = result.trimmedStart.match(/(\d{2}):(\d{2}):(\d{2})/);
 	const totalSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
 	const redirectUrl = `https://youtu.be/${result.youtubeId}?t=${totalSeconds}`;
 
