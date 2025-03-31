@@ -25,7 +25,7 @@ async function authenticate(event) {
   let token;
 	try {
 		const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
-		const [, token] = event.headers.authorization.split('Bearer ');
+		const [, token = null] = event.headers?.authorization?.split('Bearer ') ?? [];
 
 		let verified = false;
 		try {
