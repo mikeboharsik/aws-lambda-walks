@@ -295,10 +295,22 @@ exports.handler = async (event) => {
 	}
 };
 
+function makeQueryStringParametersSafe(qsp) {
+	if (!qsp) return null;
+
+	const copy = JSON.parse(JSON.stringify(qsp));
+
+	if (copy.jwt) {
+		copy.jwt = '*****';
+	}
+
+	return copy;
+}
+
 async function handleApiRequest(event) {
 	const { queryStringParameters = null, rawPath } = event;
 
-	console.log(`handle api request for ${rawPath}${queryStringParameters ? ' ' + JSON.stringify(queryStringParameters) : ''}`);
+	console.log(`handle api request for ${rawPath}`, makeQueryStringParametersSafe(queryStringParameters));
 
 	const routeMap = {
 		'/api/sunx': handleSunxDataRequest,
@@ -555,7 +567,7 @@ async function handleGlobalStatsRequest() {
 async function handleContentRequest(event) {
 	const { isAuthed, rawPath } = event;
 
-	console.log('handle content request', rawPath, event.queryStringParameters);
+	console.log('handle content request', rawPath, makeQueryStringParametersSafe(event.queryStringParameters));
 
 	let target = `./public/${rawPath}`;
 	if (['/', '/oauth', '/routes'].includes(rawPath)) {
