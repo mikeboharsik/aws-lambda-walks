@@ -27,7 +27,19 @@ async function authenticate(event) {
 		const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
 		const [, token] = event.headers.authorization.split('Bearer ');
 
-		const verified = jwt.verify(token, publicKey, { algorithm: 'RS256' });
+		let verified = false;
+		try {
+			if (token) {
+				verified = jwt.verify(token, publicKey, { algorithm: 'RS256' });
+			} else {
+				const { queryStringParameters: { jwt: queryJwt } = {} } = event;
+				if (queryJwt) {
+					verified = jwt.verify(queryJwt, publicKey, { algorithm: 'RS256' });
+				}
+			}
+		} catch (e) {
+			console.error('Failed to verify JWT', e);
+		}
 
 		if (verified) {
 			event.isAuthed = true;
