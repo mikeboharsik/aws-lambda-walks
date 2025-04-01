@@ -3,13 +3,13 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
 const geolib = require('geolib');
-const jwt = require('jsonwebtoken');
 
 const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 
+const { authenticate } = require('./auth.js');
+
 const fetch = require('node-fetch');
 
-const authUrl = process.env.AUTH_URL;
 const privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]');
 
 const minuteInSeconds = 60;
@@ -20,40 +20,6 @@ const yearInSeconds = dayInSeconds * 365;
 const routeCacheValues = {
 	'/api/yt-thumbnail': yearInSeconds,
 };
-
-async function authenticate(event) {
-  let token;
-	try {
-		const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
-		const [, token = null] = event.headers?.authorization?.split('Bearer ') ?? [];
-
-		let verified = false;
-		try {
-			if (token) {
-				verified = jwt.verify(token, publicKey, { algorithm: 'RS256' });
-			} else {
-				const { queryStringParameters: { jwt: queryJwt } = {} } = event;
-				if (queryJwt) {
-					verified = jwt.verify(queryJwt, publicKey, { algorithm: 'RS256' });
-				}
-			}
-		} catch (e) {
-			console.error('Failed to verify JWT', e);
-		}
-
-		if (verified) {
-			event.isAuthed = true;
-			
-			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
-			event.authExpires = new Date(content.exp * 1000).toUTCString();
-		} else {
-      console.log('Authentication failed', authUrl, event.headers.authorization);
-    }
-	} catch (e) {
-    console.error('Something went wrong during authentication', e, token);
-  }
-	console.log({ isAuthed: event.isAuthed });
-}
 
 function verifyBodyIsString(result) {
 	if (result.body && typeof result.body !== 'string') {

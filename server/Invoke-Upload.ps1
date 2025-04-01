@@ -36,7 +36,7 @@ if (!$DistributionId) {
 
 New-Item -Path "$PSScriptRoot/build" -ItemType Directory -Force | Out-Null
 
-Copy-Item -Path @("$PSScriptRoot/index.js", "$PSScriptRoot/node_modules") -Recurse -Destination "$PSScriptRoot/build" -Force | Out-Null
+Copy-Item -Path @("$PSScriptRoot/index.js", "$PSScriptRoot/auth.js", "$PSScriptRoot/node_modules") -Recurse -Destination "$PSScriptRoot/build" -Force | Out-Null
 
 if ($DeployClient) {
 	Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
