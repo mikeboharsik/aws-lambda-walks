@@ -25,9 +25,7 @@ async function authenticate(event) {
 
 		if (verified) {
 			event.isAuthed = true;
-			
-			const [, content] = token.split('.').slice(0, 2).map(e => JSON.parse(Buffer.from(e, 'base64').toString()));
-			event.authExpires = new Date(content.exp * 1000).toUTCString();
+			event.authExpires = new Date(verified.exp * 1000).toUTCString();
 		} else {
       console.log('Authentication failed', authUrl, event.headers.authorization);
     }
