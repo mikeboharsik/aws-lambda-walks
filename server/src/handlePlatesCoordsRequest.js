@@ -18,26 +18,11 @@ async function handlePlatesCoordsRequest(event) {
 	}
 
 	try {
-		const parsed = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
+		const parsed = JSON.parse(await fsPromises.readFile(`./progressiveStats/plates.json`));
 
-		let features = [];
-		if (plate) {
-			const found = parsed[plate];
-			if (!found) {
-				throw new Error(`Failed to find plate [${plate}]`);
-			}
-			features = found.map(({ date, coords }) => date && coords ? ({ date, coords, plate }) : null).filter(e => e);
-		} else {
-			const allKeys = Object.keys(parsed);
-			allKeys.forEach((key) => {
-				const plateEvents = parsed[key];
-				plateEvents.forEach((ev) => {
-					if (ev.date === date && ev.coords) {
-						features.push({ date: ev.date, coords: ev.coords, plate: key });
-					}
-				});
-			});
-		}
+		const filterKey = plate ? 'plate' : 'date';
+
+		const features = parsed.filter(e => e[filterKey] === (plate || date));
 
 		const geoJson = {
 			type: 'FeatureCollection',

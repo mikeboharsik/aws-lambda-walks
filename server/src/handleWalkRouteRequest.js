@@ -2,6 +2,7 @@ const fsPromises = require('fs/promises');
 
 const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
+const { getGeoJsonFromCoords } = require('./getGeoJsonFromCoords.js');
 
 async function getCoordsByMonth(month) {
 	return JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
