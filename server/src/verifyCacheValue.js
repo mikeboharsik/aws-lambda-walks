@@ -11,9 +11,6 @@ function verifyCacheValue(event, result, rawPath) {
   if (!result.headers) result.headers = {};
   const { headers } = result;
 	if (event.authExpires) {
-		const nowInSeconds = Math.floor(new Date().getTime() / 1000);
-		const maxAge = Math.max(0, event.authExpires - nowInSeconds);
-		console.log(JSON.stringify({ authExpires: event.authExpires, nowInSeconds, maxAge }));
 		headers['expires'] = event.authExpires;
 	}	else if (!headers['cache-control'] && !headers['expires']) {
 		if (routeCacheValues[rawPath]) {
@@ -23,7 +20,6 @@ function verifyCacheValue(event, result, rawPath) {
 			headers['cache-control'] = `max-age=${yearInSeconds}`;
 		}
 	}
-	console.log(`Set cache-control header to [${headers['cache-control']}], expires to [${headers.expires}]`);
 }
 
 module.exports = {
