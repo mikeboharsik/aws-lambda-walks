@@ -7,6 +7,7 @@ const { handleYoutubeIdsRequest } = require('./handleYoutubeIdsRequest.js');
 const { handleJumpToEvent } = require('./handleJumpToEvent.js');
 const { handleWalkRouteRequest } = require('./handleWalkRouteRequest.js');
 const { handlePlatesRequest } = require('./handlePlatesRequest.js');
+const { handlePlatesCoordsRequest } = require('./handlePlatesCoordsRequest.js');
 const { handleGitRequest } = require('./handleGitRequest.js');
 const { handleEventsRequest } = require('./handleEventsRequest.js');
 const { handleGlobalStatsRequest } = require('./handleGlobalStatsRequest.js');
@@ -22,6 +23,7 @@ async function handleApiRequest(event) {
 		'/api/routes': handleWalkRouteRequest,
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
+		'/api/plates/coords': handlePlatesCoordsRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,
 		'/api/globalStats': handleGlobalStatsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
