@@ -18,6 +18,7 @@ async function authenticate(event) {
 					verified = jwt.verify(queryJwt, publicKey, { algorithm: 'RS256' });
 				}
 			}
+			console.log('User authenticated', verified?.username);
 		} catch (e) {
 			console.error('Failed to verify JWT', e);
 		}
