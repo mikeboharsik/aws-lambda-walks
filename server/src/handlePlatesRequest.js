@@ -1,5 +1,6 @@
 const fsPromises = require('fs/promises');
 
+const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getAllEventsByPlate(event) {
@@ -103,11 +104,10 @@ async function handlePlatesRequest(event) {
 		};
 	} catch (e) {
 		console.error('Failed to load plates', e);
-		return {
+		return setJsonContentType({
 			statusCode: 400,
 			body: JSON.stringify({ error: e.message }),
-			headers: { 'content-type': 'application/json' },
-		}
+		});
 	}
 }
 

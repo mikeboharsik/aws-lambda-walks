@@ -8,16 +8,14 @@ async function handleSunxDataRequest(event) {
 	if (!date) {
 		return setJsonContentType({
 			body: JSON.stringify({ error: 'date query parameter is required' }),
-			statusCode: 400,
-			headers: { 'content-type': 'application/json' },
+			statusCode: 400
 		});
 	}
 
 	if (!date.match(/^\d{4}-\d{2}-\d{2}/)) {
 		return setJsonContentType({
 			body: JSON.stringify({ error: 'date query parameter must be in format yyyy-MM-dd' }),
-			statusCode: 400,
-			headers: { 'content-type': 'application/json' },
+			statusCode: 400
 		});
 	}
 
@@ -32,13 +30,11 @@ async function handleSunxDataRequest(event) {
 		return setJsonContentType({
 			body: JSON.stringify(responseJson),
 			statusCode: 200,
-			headers: { 'content-type': 'application/json' },
 		});
 	} catch(e) {
 		return setJsonContentType({
 			body: JSON.stringify({ message: e.message }),
 			statusCode: 400,
-			headers: { 'content-type': 'application/json' },
 		});
 	}
 }

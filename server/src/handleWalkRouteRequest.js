@@ -1,5 +1,6 @@
 const fsPromises = require('fs/promises');
 
+const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getCoordsByMonth(month) {
@@ -11,11 +12,10 @@ async function handleWalkRouteRequest(event) {
 	const { isAuthed, queryStringParameters: { date } } = event;
 
 	if (!date?.match(/\d{4}-\d{2}-\d{2}/)) {
-		return {
+		return setJsonContentType({
 			statusCode: 400,
 			body: JSON.stringify({ error: "date must be provided and in yyyy-MM-dd format" }),
-			headers: { 'content-type': 'application/json' },
-		};
+		});
 	}
 
 	const [month] = date.match(/\d{4}-\d{2}/);

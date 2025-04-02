@@ -1,5 +1,6 @@
 const fsPromises = require('fs/promises');
 
+const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getEventsByMonth(event) {
@@ -13,11 +14,10 @@ const getEventsByMonthBenched = getBenchmarkedFunctionAsync(getEventsByMonth);
 async function handleEventsRequest(event) {
 	const { isAuthed, headers: { accept }, queryStringParameters: { q = null } = {} } = event;
 	if (!q?.match(/\d{4}-\d{2}/)) {
-		return {
+		return setJsonContentType({
 			statusCode: 400,
 			body: JSON.stringify({ error: "q must be provided and in yyyy-MM format" }),
-			headers: { 'content-type': 'application/json' },
-		};
+		});
 	}
 	const acceptHeader = accept.toLowerCase();
 
