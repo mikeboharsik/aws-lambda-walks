@@ -26,14 +26,14 @@ async function handlePlatesCoordsRequest(event) {
 			if (!found) {
 				throw new Error(`Failed to find plate [${plate}]`);
 			}
-			features = found.map(({ date, coords }) => date && coords ? ({ date, coords }) : null).filter(e => e);
+			features = found.map(({ date, coords }) => date && coords ? ({ date, coords, plate }) : null).filter(e => e);
 		} else {
 			const allKeys = Object.keys(parsed);
 			allKeys.forEach((key) => {
 				const plateEvents = parsed[key];
 				plateEvents.forEach((ev) => {
 					if (ev.date === date && ev.coords) {
-						features.push({ date: ev.date, coords: ev.coords });
+						features.push({ date: ev.date, coords: ev.coords, plate: key });
 					}
 				});
 			});
@@ -41,10 +41,10 @@ async function handlePlatesCoordsRequest(event) {
 
 		const geoJson = {
 			type: 'FeatureCollection',
-			features: features.map(({ date, coords }) => {
+			features: features.map(({ coords, date, plate }) => {
 				return {
 					type: 'Feature',
-					properties: { date },
+					properties: { date, plate },
 					geometry: {
 						coordinates: [
 							parseFloat(coords[1]),
