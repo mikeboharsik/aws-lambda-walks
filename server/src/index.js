@@ -7,6 +7,7 @@ const geolib = require('geolib');
 const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
 
 const { authenticate } = require('./auth.js');
+const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 const fetch = require('node-fetch');
 
@@ -88,23 +89,6 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 			type: "LineString",
 			coordinates,
 		}
-	};
-}
-
-function getBenchmarkedFunction(func) {
-	return function(...args) {
-		const s = new Date().getTime();
-		func(...args);
-		console.log(`${func.name} completed in ${new Date().getTime() - s}ms`);
-	};
-}
-
-function getBenchmarkedFunctionAsync(func) {
-	return async function(...args) {
-		const s = new Date().getTime();
-		const result = await func(...args);
-		console.log(`${func.name} completed in ${new Date().getTime() - s}ms`);
-		return result;
 	};
 }
 
