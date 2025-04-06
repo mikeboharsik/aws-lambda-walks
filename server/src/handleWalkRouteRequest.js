@@ -27,10 +27,12 @@ async function handleWalkRouteRequest(event) {
 	let geojson = target.reduce((acc, walk) => {
 		const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
 
-		newEntry.properties.date = walk.date;
-		if (walk.route) {
-			newEntry.properties.route = walk.route;
-		}
+		newEntry.properties = {
+			date: walk.date,
+			stroke: "#ff0000",
+			"stroke-width": 5,
+			"stroke-opacity": 1
+		};
 
 		acc.push(newEntry);
 		return acc;
