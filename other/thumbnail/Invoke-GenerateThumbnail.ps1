@@ -26,7 +26,7 @@ if (!(Test-Path $ClipsPath)) {
 	throw "Failed to find expected folder [$ClipsPath]"
 }
 
-$expectedVideoFolder = "$ClipsPath/$Date"
+$expectedVideoFolder = "$ClipsPath/output"
 if (!(Test-Path $expectedVideoFolder)) {
 	throw "Failed to find expected folder [$expectedVideoFolder]"
 }

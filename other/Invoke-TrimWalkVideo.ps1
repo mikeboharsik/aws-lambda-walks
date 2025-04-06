@@ -210,12 +210,12 @@ if ($WhatIf) {
 
 if (!$AssumeVideoCreated) {
 	$clipsDir = Resolve-Path "..\clips"
-	$dateDir = "$clipsDir\$dateStr"
-	if (!(Test-Path $dateDir)) {
-		New-Item -ItemType Directory -Path $dateDir
+	$outputDir = "$clipsDir\output"
+	if (!(Test-Path $outputDir)) {
+		New-Item -ItemType Directory -Path $outputDir
 	}
-	Move-Item $outputName "$dateDir\$($dateStr)_trimmed.mp4" -Force
-	Copy-Item "$clipsDir\template.blend" "$dateDir\$dateStr.blend"
+	Move-Item $outputName "$outputDir\$($dateStr)_trimmed.mp4" -Force
+	Copy-Item "$clipsDir\template.blend" "$outputDir\$dateStr.blend"
 }
 
 if (!$SkipJson) {
