@@ -20,7 +20,7 @@ async function handleJumpToEvent(event) {
 	}
 
 	const allEvents = await getAllEventsBenched();
-	const result = allEvents[id];
+	const result = allEvents.find(ev => ev.id === id);
 
 	if (!result) {
 		return setJsonContentType({
