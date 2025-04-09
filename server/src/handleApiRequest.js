@@ -10,6 +10,7 @@ const { handlePlatesRequest } = require('./handlePlatesRequest.js');
 const { handlePlatesCoordsRequest } = require('./handlePlatesCoordsRequest.js');
 const { handleGitRequest } = require('./handleGitRequest.js');
 const { handleEventsRequest } = require('./handleEventsRequest.js');
+const { handleEventsProximityRequest } = require('./handleEventsProximityRequest.js');
 const { handleGlobalStatsRequest } = require('./handleGlobalStatsRequest.js');
 
 async function handleApiRequest(event) {
@@ -24,6 +25,7 @@ async function handleApiRequest(event) {
 		'/api/events': handleEventsRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/plates/coords': handlePlatesCoordsRequest,
+		'/api/plates/proximity': handleEventsProximityRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,
 		'/api/globalStats': handleGlobalStatsRequest,
 		'/api/invalidateCache': handleCacheInvalidate,
