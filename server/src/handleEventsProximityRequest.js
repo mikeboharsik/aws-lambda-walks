@@ -11,6 +11,20 @@ async function getAllEvents(event) {
 }
 const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
 
+function getPointFeatureFromEvent(event) {
+	return {
+		properties: {
+			name: event.name,
+			plates: event.plates,
+		},
+		geometry: {
+			coordinates: [event.coords[1], event.coords[0]],
+			type: 'Point',
+		},
+		type: 'Feature',
+	};
+}
+
 async function handleEventsProximityRequest(event) {
 	let {
 		isAuthed,
@@ -54,10 +68,26 @@ async function handleEventsProximityRequest(event) {
 			}
 			return acc;
 		}, []);
+	
+		const geojson = {
+			type: "FeatureCollection",
+			features: hits.map(getPointFeatureFromEvent),
+		};
+	
+		const encodedRouteData = encodeURIComponent(JSON.stringify(geojson));
+	
+		const body = `
+<html>
+	<body>
+		<script>
+			window.location = 'https://geojson.io/#data=data:application/json,${encodedRouteData}';
+		</script>
+	</body>
+</html>`;
 
 		return {
 			statusCode: 200,
-			body: JSON.stringify(hits),
+			body,
 			headers: { 'content-type': 'text/html' }
 		};
 	} catch (e) {
