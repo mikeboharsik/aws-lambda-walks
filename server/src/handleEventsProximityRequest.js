@@ -73,23 +73,11 @@ async function handleEventsProximityRequest(event) {
 			type: "FeatureCollection",
 			features: hits.map(getPointFeatureFromEvent),
 		};
-	
-		const encodedRouteData = encodeURIComponent(JSON.stringify(geojson));
-	
-		const body = `
-<html>
-	<body>
-		<script>
-			window.location = 'https://geojson.io/#data=data:application/json,${encodedRouteData}';
-		</script>
-	</body>
-</html>`;
 
-		return {
+		return setJsonContentType({
 			statusCode: 200,
-			body,
-			headers: { 'content-type': 'text/html' }
-		};
+			body: JSON.stringify(geojson),
+		});
 	} catch (e) {
 		console.error('Failed to load proximity events', e);
 		return setJsonContentType({
