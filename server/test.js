@@ -1,4 +1,4 @@
-const handler = require('./index').handler;
+const handler = require('./src/index').handler;
 const tests = require('./tests.json');
 
 const [test] = tests;
@@ -35,5 +35,7 @@ process.argv.forEach((key, idx, arr) => {
 });
 
 (async () => {
-	console.log('Handler result:', await handler(test));
+	const result = await handler(test);
+	console.log('Handler result:', result);
+	require('fs').writeFileSync('testResult.txt', JSON.stringify(result, null, '  '));
 })();
