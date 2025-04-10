@@ -15,7 +15,7 @@ function getPointFeatureFromEvent(event) {
 	return {
 		properties: {
 			name: event.name,
-			plates: event.plates,
+			plates: event.plates?.map(e => `${e[0]} ${e[1]}`).join(', '),
 		},
 		geometry: {
 			coordinates: [event.coords[1], event.coords[0]],
