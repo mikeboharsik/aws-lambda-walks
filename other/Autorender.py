@@ -31,7 +31,7 @@ def get_output_dir():
     return abspath(blend_dir + '\\..\\output')
 
 def get_date():
-    return os.path.basename(get_blend_dir())
+    return os.path.basename(bpy.context.blend_data.filepath).replace('.blend', '')
     
 def configure_output():
     bpy.context.scene.render.use_sequencer = True
@@ -190,7 +190,7 @@ class MikeBWalksAutoRender(bpy.types.Operator):
             bpy.data.scenes[0].frame_start = start
             bpy.data.scenes[0].frame_end = end
             
-            output_name = get_output_dir() + '\\' + get_date() + "_" + strip.name.replace(' ', '_') + '.mp4'
+            output_name = get_output_dir() + '\\short_' + get_date() + "_" + strip.name.replace(' ', '_') + '.mp4'
             bpy.context.scene.render.filepath = output_name
             print(f'Rendering animation [{output_name}]...')
             
