@@ -13,6 +13,15 @@ function contentTypeIs(result, contentType) {
 
 	const tests = [
 		{
+			name: 'plates json',
+			path: '/api/plates',
+			headers: { 'accept': 'application/json' },
+			asserts: [
+				(result) => statusCodeIs(result, 200),
+				(result) => contentTypeIs(result, 'application/json'),
+			],
+		},
+		{
 			name: 'plates csv',
 			path: '/api/plates',
 			headers: { 'accept': 'text/csv' },
