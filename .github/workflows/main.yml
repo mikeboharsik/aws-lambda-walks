@@ -80,6 +80,14 @@ jobs:
         pushd ./walk-routes
         node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
 
+    - name: Run API tests
+      shell: pwsh
+      run: |
+        Push-Location ./server/test
+        npm install
+        $env:GENERATED_PATH = '../../walk-routes/generated'
+        node ./tests.js
+
     - name: Build client
       shell: pwsh
       run: |

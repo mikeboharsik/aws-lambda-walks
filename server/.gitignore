@@ -1,3 +1,3 @@
 build
 node_modules
-testResult.txt
+test/testResult.txt
