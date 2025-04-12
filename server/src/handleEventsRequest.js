@@ -6,7 +6,7 @@ const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 async function getEventsByMonth(event) {
 	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
 	const ext = accept.toLowerCase() === 'text/csv' ? '.csv' : '.json';
-	const content = await fsPromises.readFile(`./walks/${month}${ext}`);
+	const content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/walks/${month}${ext}`);
 	return accept.toLowerCase() === 'text/csv' ? content.toString() : JSON.parse(content);
 }
 const getEventsByMonthBenched = getBenchmarkedFunctionAsync(getEventsByMonth);

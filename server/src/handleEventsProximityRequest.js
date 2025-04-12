@@ -6,7 +6,7 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getAllEvents(event) {
-	const content = await fsPromises.readFile('./events/all.json');
+	const content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/events/all.json`);
 	return JSON.parse(content);
 }
 const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);

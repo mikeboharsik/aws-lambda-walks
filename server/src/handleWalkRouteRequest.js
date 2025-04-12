@@ -5,7 +5,7 @@ const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 const { getGeoJsonFromCoords } = require('./getGeoJsonFromCoords.js');
 
 async function getCoordsByMonth(month) {
-	return JSON.parse(await fsPromises.readFile(`./coords/${month}.json`));
+	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/coords/${month}.json`));
 }
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 

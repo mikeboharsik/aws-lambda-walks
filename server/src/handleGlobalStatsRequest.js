@@ -4,7 +4,7 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getGlobalStats() {
-	return JSON.parse(await fsPromises.readFile(`./globalStats/globalStats.json`));
+	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/globalStats/globalStats.json`));
 }
 const getGlobalStatsBenched = getBenchmarkedFunctionAsync(getGlobalStats);
 

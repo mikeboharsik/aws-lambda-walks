@@ -25,7 +25,7 @@ async function getAllEventsByPlate(event) {
 		}
 	}
 
-	let result = JSON.parse(await fsPromises.readFile(`./plates/plates.json`));
+	let result = JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/plates/plates.json`));
 
 	if (filterByName !== false) {
 		console.log(`Applying filterByName [${filterByName}]`);

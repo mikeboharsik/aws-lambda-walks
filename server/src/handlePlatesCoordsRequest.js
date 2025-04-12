@@ -18,7 +18,7 @@ async function handlePlatesCoordsRequest(event) {
 	}
 
 	try {
-		const parsed = JSON.parse(await fsPromises.readFile(`./progressiveStats/plates.json`));
+		const parsed = JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/progressiveStats/plates.json`));
 
 		const filterKey = plate ? 'plate' : 'date';
 

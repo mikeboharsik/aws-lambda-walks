@@ -4,7 +4,7 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
 async function getAllYoutubeIds() {
-	return JSON.parse(await fsPromises.readFile(`./youtubeIds/youtubeIds.json`));
+	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/youtubeIds/youtubeIds.json`));
 }
 const getAllYoutubeIdsBenched = getBenchmarkedFunctionAsync(getAllYoutubeIds);
 
