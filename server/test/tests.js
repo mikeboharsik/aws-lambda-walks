@@ -8,6 +8,14 @@ function contentTypeIs(result, contentType) {
 	return [`content type is ${contentType}`, result.headers['content-type'] === contentType];
 }
 
+function deserializesToJson(result) {
+	try {
+		return ['deserializes to json', !!JSON.parse(result.body)];
+	} catch {
+		return ['deserializes to json', false];
+	}
+}
+
 (async () => {
 	let failed = false;
 
@@ -17,8 +25,9 @@ function contentTypeIs(result, contentType) {
 			path: '/api/plates',
 			headers: { 'accept': 'application/json' },
 			asserts: [
-				(result) => statusCodeIs(result, 200),
-				(result) => contentTypeIs(result, 'application/json'),
+				result => statusCodeIs(result, 200),
+				result => contentTypeIs(result, 'application/json'),
+				result => deserializesToJson(result),
 			],
 		},
 		{
@@ -36,7 +45,7 @@ function contentTypeIs(result, contentType) {
 
 	for (const test of tests) {
 		const result = await callHandler(test.path, test.query, test.headers);
-		// console.log(JSON.stringify(result));
+		// console.log(JSON.stringify(result.body));
 		const assertResults = test.asserts.map(a => a(result));
 		failed ||= assertResults.some(([condition, assertResult]) => assertResult !== true);
 		results.push({ [test.name]: assertResults });
