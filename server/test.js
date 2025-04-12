@@ -35,7 +35,7 @@ process.argv.forEach((key, idx, arr) => {
 });
 
 (async () => {
-	const result = await handler(test);
+	const result = await handler(test, true);
 	console.log('Handler result:', result);
 	require('fs').writeFileSync('testResult.txt', JSON.stringify(result, null, '  '));
 })();

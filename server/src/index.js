@@ -13,7 +13,7 @@ function logResult(result) {
 	}
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event, ignoreAuth = false) => {
 	try {
 		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
@@ -28,7 +28,9 @@ exports.handler = async (event) => {
 			console.warn('Body seems to exist but it failed to parse', e);
 		}
 
-		if (event?.headers?.authorization || event?.queryStringParameters?.jwt) {
+		if (ignoreAuth === true) {
+			event.isAuthed = true;
+		} else if (event?.headers?.authorization || event?.queryStringParameters?.jwt) {
 			await authenticate(event);
 		}
 
