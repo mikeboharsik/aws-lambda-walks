@@ -5,6 +5,7 @@
 	import ErrorMessage from './components/ErrorMessage.svelte';
 
 	import Calendar from './views/Calendar.svelte';
+	import Maps from './views/Maps.svelte';
 	import Stats from './views/Stats.svelte';
 
 	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
@@ -13,7 +14,7 @@
 	import { getPaddedDateString } from './util/date';
 	import { storeJwt, getJwt } from './util/jwt';
 
-	const PAGES = { CALENDAR: 'CALENDAR', STATS: 'STATS' };
+	const PAGES = { CALENDAR: 'CALENDAR', MAPS: 'MAPS', STATS: 'STATS' };
 
 	let page = localStorage.getItem('page');
 	if (page === null) {
@@ -69,6 +70,10 @@
 	ORIGINAL_ROUTES_DATA.subscribe(data => originalRoutesData = data);
 </script>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
 <svelte:window on:keydown={({ altKey, code, shiftKey }) => {
 	if (getJwt() && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
 		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
@@ -85,10 +90,13 @@
 				<Calendar />
 			{:else if page === PAGES.STATS}
 				<Stats />
+			{:else if page === PAGES.MAPS}
+				<Maps />
 			{/if}
 		{/if}
 
 		<div style="position: absolute; top: 1em; border: 0; margin: 0; color: white">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<span
 				on:click={() => { page = PAGES.CALENDAR; localStorage.setItem('page', page); }}
 				style={'cursor: pointer' + (page === PAGES.CALENDAR ? '; font-weight: bold' : '')}
@@ -96,11 +104,20 @@
 				Calendar
 			</span>
 			|
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<span
 				on:click={() => { page = PAGES.STATS; localStorage.setItem('page', page); }}
 				style={'cursor: pointer' + (page === PAGES.STATS ? '; font-weight: bold' : '')}
 			>
 				Stats
+			</span>
+			|
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<span
+				on:click={() => { page = PAGES.MAPS; localStorage.setItem('page', page); }}
+				style={'cursor: pointer' + (page === PAGES.MAPS ? '; font-weight: bold' : '')}
+			>
+				Maps
 			</span>
 		</div>
 	{:else}
