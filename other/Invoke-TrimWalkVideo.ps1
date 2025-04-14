@@ -53,7 +53,18 @@ foreach ($path in $possibleDataPaths) {
 }
 
 if (!$dataPath) {
-	Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')]"
+	$expectedRemote = "personalgdrive:/Walk Uploads/$($dateStr)_1.json"
+	$expectedLocal = "C:\Users\mboha\Documents\GitHub\walk-routes\meta_archive\$clipYear\$clipMonth\$clipDay.json"
+
+	Write-Host "Attempting data load from Drive [$expectedRemote]"
+
+	rclone copyto $expectedRemote $expectedLocal
+
+	$dataPath = Resolve-Path $expectedLocal
+}
+
+if (!$dataPath) {
+	Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')] and failed to load from Drive"
 	exit 1
 }
 
