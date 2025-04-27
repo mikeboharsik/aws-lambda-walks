@@ -1,13 +1,15 @@
 const tokenStorageKey = 'authToken';
 
 export function storeJwt() {
-	const hash = window.location.hash;
-	if (hash !== '') {
-		const [key, val] = hash.replace('#', '').split('=');
-		if (key === 'access_token') {
-			localStorage.setItem(tokenStorageKey, val);
+	try {
+		const hashParams = new URLSearchParams(window.location.hash.replace('#',''));
+		const token = hashParams.get('access_token');
+		if (token) {
+			localStorage.setItem(tokenStorageKey, token);
 			history.pushState('', document.title, '/');
 		}
+	} catch (e) {
+		console.log(e);
 	}
 }
 
