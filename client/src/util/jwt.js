@@ -4,7 +4,7 @@ export function storeJwt() {
 	const hash = window.location.hash;
 	if (hash !== '') {
 		const [key, val] = hash.replace('#', '').split('=');
-		if (key === 'token') {
+		if (key === 'access_token') {
 			localStorage.setItem(tokenStorageKey, val);
 			history.pushState('', document.title, '/');
 		}
