@@ -1,41 +1,36 @@
 <script>
 	import * as L from 'leaflet';
+	import { getJwt } from '../util/jwt';
+	import { waitForElement } from '../util/waitForElement';
 
-	function waitForElement(selector) {
-		return new Promise((resolve) => {
-			if (document.querySelector(selector)) {
-				return resolve(document.querySelector(selector));
+	const jwt = getJwt();
+	if (jwt) {
+		waitForElement("#map").then(async (el) => {
+			const map = L.map("map").setView(
+				[42.49982449797383, -71.10087850677222],
+				13,
+			);
+			const tiles = L.tileLayer(
+				"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+				{
+					maxZoom: 22,
+					attribution:
+						'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				},
+			).addTo(map);
+
+			if (jwt) {
+				const geoJson = await fetch(`https://walks.mikeboharsik.com/api/events/proximity?targetPoint=42.4997178,-71.1006031&maxRadius=100`, { headers: { Authorization: `Bearer ${jwt}` } }).then(r => r.json());
+				L.geoJSON(geoJson).addTo(map);
+				L.circle([42.4997178,-71.1006031], {
+					color: '#f03',
+					fillColor: '#f03',
+					fillOpacity: 0.5,
+					radius: 100
+				}).addTo(map);
 			}
-
-			const observer = new MutationObserver((mutations) => {
-				if (document.querySelector(selector)) {
-					observer.disconnect();
-					resolve(document.querySelector(selector));
-				}
-			});
-
-			// If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
-			observer.observe(document.body, {
-				childList: true,
-				subtree: true,
-			});
-		});
-	}
-
-	waitForElement("#map").then((el) => {
-		const map = L.map("map").setView(
-			[42.49982449797383, -71.10087850677222],
-			13,
-		);
-		const tiles = L.tileLayer(
-			"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-			{
-				maxZoom: 19,
-				attribution:
-					'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			},
-		).addTo(map);
-	});
+		})
+	};
 </script>
 
 <div>
