@@ -12,5 +12,17 @@ export function storeJwt() {
 }
 
 export function getJwt() {
-	return localStorage.getItem(tokenStorageKey);
+	const storedJwt = localStorage.getItem(tokenStorageKey);
+	if (!storedJwt) return null;
+
+	const { exp } = storedJwt.split('.').slice(1, 2).map(e => JSON.parse(atob(e))).at(0);	
+
+	const now = new Date();
+	const expireTime = new Date(exp * 1000);
+	if (now > expireTime) {
+		localStorage.removeItem(tokenStorageKey);
+		return null;
+	}
+
+	return storedJwt;
 }
