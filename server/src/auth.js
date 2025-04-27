@@ -23,6 +23,11 @@ async function authenticate(event) {
 			console.error('Failed to verify JWT', e);
 		}
 
+		if (!verified.scope.includes('walks.read')) {
+			console.log('Expected token scope to include walks.read but was', verified.scope);
+			verified = false;
+		}
+
 		if (verified) {
 			event.isAuthed = true;
 			event.authExpires = new Date(verified.exp * 1000).toUTCString();
