@@ -43,22 +43,39 @@ async function handleWalkRouteRequest(event) {
 		features: geojson,
 	};
 
-	const encodedRouteData = encodeURIComponent(JSON.stringify(geojson));
-
-	const body = `
-	<html>
-		<body>
-			<script>
-				window.location = 'https://geojson.io/#data=data:application/json,${encodedRouteData}';
-			</script>
-		</body>
-	</html>`;
+	let body = null;
+	let contentType = null;
+	switch (event.headers?.accept) {
+		case 'application/geo+json': {
+			body = JSON.stringify(geojson);
+			contentType = 'application/geo+json';
+			break;
+		}
+		case 'text/plain': {
+			body = `https://geojson.io/#data=data:application/json,${encodeURIComponent(JSON.stringify(geojson))}`;
+			contentType = 'text/plain';
+			break;
+		}
+		case 'text/html':
+		default: {
+			const encodedRouteData = encodeURIComponent(JSON.stringify(geojson));
+			body = `<html>
+	<body>
+		<script>
+			window.location = 'https://geojson.io/#data=data:application/json,${encodedRouteData}';
+		</script>
+	</body>
+</html>`;
+			contentType = 'text/html';
+			break;
+		}
+	}
 
 	return {
 		statusCode: 200,
 		body,
 		headers: { 
-			'content-type': 'text/html'
+			'content-type': contentType
 		}
 	};
 }
