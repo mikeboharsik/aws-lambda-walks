@@ -5,6 +5,7 @@
 	import { EVENTS_DATA_IN_PROGRESS, SUNX_DATA } from '../stores.js';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
+	import { getRoute } from '../util/api';
 
 	export let currentMonthData = [];
 	export let currentDate;
@@ -70,9 +71,16 @@
 		}
 	}
 
-	$: {
-		// console.log({ currentMonthData });
+	async function handleRouteClick(date) {
+		try {
+			const url = await getRoute(date);
+			window.open(url, '_blank');
+		} catch (e) {
+			console.error('Error handling route click', e);
+		}
 	}
+
+	$: {}
 </script>
 
 <div transition:fade id="container-walkcalendar">
@@ -106,13 +114,14 @@
 				<div style="display: flex">
 					{#each dayData as walk}
 						<div style="display: flex; font-size: 0.8em; flex-direction: column">
+							<!-- svelte-ignore a11y-click-events-have-key-events -->
+							<!-- svelte-ignore a11y-missing-attribute -->
 							<a
-								href={`https://walks.mikeboharsik.com/api/routes?date=${walk.date}`}
 								noreferrer
 								noopener
-								style="text-decoration: none"
-								target="_blank"
+								style="text-decoration: none; cursor: pointer;"
 								title={`Walk Route`}
+								on:click={() => handleRouteClick(walk.date)}
 							>
 								🗺️
 							</a>
