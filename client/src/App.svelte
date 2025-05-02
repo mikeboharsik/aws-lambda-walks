@@ -12,7 +12,7 @@
 
 	import { getEvents, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
-	import { storeJwt, getJwt } from './util/jwt';
+	import { getJwt, removeJwt, storeJwt } from './util/jwt';
 
 	const PAGES = { CALENDAR: 'CALENDAR', MAPS: 'MAPS', STATS: 'STATS' };
 
@@ -119,6 +119,26 @@
 			>
 				Maps
 			</span>
+		</div>
+
+		<div style="position: absolute; top: 0.25em; left: 0.25em; cursor: pointer;">
+			{#if getJwt()}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div
+					on:click={removeJwt}
+				>
+					🧑
+				</div>
+			{:else}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div
+					on:click={() => {
+						window.location.href = `https://auth.mikeboharsik.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/oauth&response_type=token&scope=walks.read`;
+					}}
+				>
+					👤
+				</div>
+			{/if}
 		</div>
 	{:else}
 		<div style="position: absolute">

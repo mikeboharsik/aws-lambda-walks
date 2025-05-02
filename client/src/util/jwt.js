@@ -28,3 +28,11 @@ export function getJwt() {
 
 	return storedJwt;
 }
+
+export function removeJwt() {
+	const storedJwt = localStorage.getItem(tokenStorageKey);
+	if (storedJwt !== null) {
+		localStorage.removeItem(tokenStorageKey);
+		location.reload();
+	}
+}
