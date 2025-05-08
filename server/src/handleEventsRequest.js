@@ -33,8 +33,8 @@ async function handleEventsRequest(event) {
 			after = null,
 			before = null,
 			plateOnly = false,
-			nonPlatesOnly = false,
-			maxRadius = 20,
+			nonPlateOnly = false,
+			maxRadius = null,
 		} = {},
 	} = event;
 
@@ -45,6 +45,9 @@ async function handleEventsRequest(event) {
   }
 
 	try {
+		if (plateOnly && nonPlateOnly) {
+			throw new Error('plateOnly and nonPlateOnly are mutually exclusive');
+		}
 		if (!targetPoint && maxRadius) {
 			throw new Error('targetPoint must be provided');
 		}
@@ -72,6 +75,13 @@ async function handleEventsRequest(event) {
 			}, []);
 		} else {
 			hits = allEvents;
+		}
+
+		if (plateOnly) {
+			hits = hits.filter(e => e.plates.length);
+		}
+		if (nonPlateOnly) {
+			hits = hits.filter(e => e.name && !e.plates.length);
 		}
 	
 		const geojson = {
