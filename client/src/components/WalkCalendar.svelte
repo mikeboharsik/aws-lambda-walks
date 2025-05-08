@@ -1,5 +1,6 @@
 <script>
 	import { fade } from 'svelte/transition';
+	import { Circle } from 'svelte-loading-spinners';
 
 	import { toFixedDefault } from '../constants/config';
 	import { EVENTS_DATA_IN_PROGRESS, SUNX_DATA } from '../stores.js';
@@ -12,6 +13,8 @@
 	export let firstDayOffset;
 	export let isRealMonth;
 	export let daysInMonth;
+
+	let WALK_ROUTE_IN_PROGRESS_REQUESTS = [];
 
 	let sunxData = null;
 	SUNX_DATA.subscribe(val => sunxData = val);
@@ -73,10 +76,13 @@
 
 	async function handleRouteClick(date) {
 		try {
+			WALK_ROUTE_IN_PROGRESS_REQUESTS = [...WALK_ROUTE_IN_PROGRESS_REQUESTS, date];
 			const url = await getRoute(date);
 			window.open(url, '_blank');
 		} catch (e) {
 			console.error('Error handling route click', e);
+		} finally {
+			WALK_ROUTE_IN_PROGRESS_REQUESTS = WALK_ROUTE_IN_PROGRESS_REQUESTS.filter(e => e !== date);
 		}
 	}
 
@@ -123,7 +129,11 @@
 								title={`Walk Route`}
 								on:click={() => handleRouteClick(walk.date)}
 							>
-								🗺️
+								{#if WALK_ROUTE_IN_PROGRESS_REQUESTS.indexOf(walk.date) >= 0}
+									<Circle size="14" />
+								{:else}
+									🗺️
+								{/if}
 							</a>
 
 							{#if walk.youtubeId}
