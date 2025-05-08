@@ -14,6 +14,7 @@ const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
 function getPointFeatureFromEvent(event) {
 	return {
 		properties: {
+			id: event.id,
 			name: event.name,
 			plates: event.plates?.map(e => `${e[0]} ${e[1]}`).join(', '),
 		},
