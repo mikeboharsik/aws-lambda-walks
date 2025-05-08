@@ -12,11 +12,17 @@ async function getAllEvents(event) {
 const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
 
 function getPointFeatureFromEvent(event) {
+	const resiProps = event.resi ? {
+		"marker-color": "#fd0006",
+		"marker-size": "medium",
+		"marker-symbol": "circle"
+	} : {};
 	return {
 		properties: {
 			id: event.id,
 			name: event.name,
 			plates: event.plates?.map(e => `${e[0]} ${e[1]}`).join(', '),
+			...resiProps
 		},
 		geometry: {
 			coordinates: [event.coords[1], event.coords[0]],
