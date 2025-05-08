@@ -38,6 +38,10 @@ async function handleEventsRequest(event) {
 		} = {},
 	} = event;
 
+	const { headers: { accept } } = event;
+	const acceptHeader = accept?.toLowerCase() || 'application/json';
+	const didRequestGeoJson = acceptHeader === 'application/geo+json';
+
   if (!isAuthed) {
     return {
       statusCode: 401
@@ -53,7 +57,9 @@ async function handleEventsRequest(event) {
 		}
 
 		let hits = await getAllEventsBenched();
-		hits = hits.filter(e => e.coords);
+		if (didRequestGeoJson) {
+			hits = hits.filter(e => e.coords);
+		}
 		
 		if (maxRadius) {
 			const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
@@ -82,15 +88,24 @@ async function handleEventsRequest(event) {
 			hits = hits.filter(e => e.name && !e.plates.length);
 		}
 	
-		const geojson = {
-			type: "FeatureCollection",
-			features: hits.map(getPointFeatureFromEvent),
-		};
-
-		return setJsonContentType({
-			statusCode: 200,
-			body: JSON.stringify(geojson),
-		});
+		if (didRequestGeoJson) {
+			const geojson = {
+				type: "FeatureCollection",
+				features: hits.map(getPointFeatureFromEvent),
+			};
+	
+			return setJsonContentType({
+				statusCode: 200,
+				headers: { 'content-type': 'application/geo+json' },
+				body: JSON.stringify(geojson),
+			});
+		} else {
+			return setJsonContentType({
+				statusCode: 200,
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(hits),
+			});
+		}
 	} catch (e) {
 		console.error('Failed to load proximity events', e);
 		return setJsonContentType({
