@@ -35,6 +35,7 @@ async function handleEventsRequest(event) {
 			plateOnly = false,
 			nonPlateOnly = false,
 			maxRadius = null,
+			hasPlate = null,
 		} = {},
 	} = event;
 
@@ -49,6 +50,9 @@ async function handleEventsRequest(event) {
   }
 
 	try {
+		if (hasPlate && nonPlateOnly) {
+			throw new Error('hasPlate and nonPlateOnly are mutually exclusive');
+		}
 		if (plateOnly && nonPlateOnly) {
 			throw new Error('plateOnly and nonPlateOnly are mutually exclusive');
 		}
@@ -59,6 +63,12 @@ async function handleEventsRequest(event) {
 		let hits = await getAllEventsBenched();
 		if (didRequestGeoJson) {
 			hits = hits.filter(e => e.coords);
+		}
+
+		if (hasPlate) {
+			const validPlateCharacterPattern = /[^a-zA-Z0-9]/g;
+			hasPlate = hasPlate.replace(validPlateCharacterPattern, '');
+			hits = hits.filter(e => e.plates?.map(([state, value]) => state + value.replace(validPlateCharacterPattern, '')).includes(hasPlate));
 		}
 		
 		if (maxRadius) {
