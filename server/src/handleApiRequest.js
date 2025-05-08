@@ -9,7 +9,7 @@ const { handleWalkRouteRequest } = require('./handleWalkRouteRequest.js');
 const { handlePlatesRequest } = require('./handlePlatesRequest.js');
 const { handlePlatesCoordsRequest } = require('./handlePlatesCoordsRequest.js');
 const { handleGitRequest } = require('./handleGitRequest.js');
-const { handleEventsRequest } = require('./handleEventsRequest.js');
+const { handleWalksRequest } = require('./handleWalksRequest.js');
 const { handleEventsProximityRequest } = require('./handleEventsProximityRequest.js');
 const { handleGlobalStatsRequest } = require('./handleGlobalStatsRequest.js');
 
@@ -22,7 +22,7 @@ async function handleApiRequest(event) {
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/routes': handleWalkRouteRequest,
-		'/api/events': handleEventsRequest,
+		'/api/walks': handleWalksRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/plates/coords': handlePlatesCoordsRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,

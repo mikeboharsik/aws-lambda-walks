@@ -3,7 +3,7 @@
 	import { Circle } from 'svelte-loading-spinners';
 
 	import { toFixedDefault } from '../constants/config';
-	import { EVENTS_DATA_IN_PROGRESS, SUNX_DATA } from '../stores.js';
+	import { WALKS_DATA_IN_PROGRESS, SUNX_DATA } from '../stores.js';
 
 	import { getPaddedDateString, getPaddedTimeString } from '../util/date';
 	import { getRoute } from '../util/api';
@@ -19,8 +19,8 @@
 	let sunxData = null;
 	SUNX_DATA.subscribe(val => sunxData = val);
 
-	let eventsDataInProgress = false;
-	EVENTS_DATA_IN_PROGRESS.subscribe(val => eventsDataInProgress = val);
+	let walksDataInProgress = false;
+	WALKS_DATA_IN_PROGRESS.subscribe(val => walksDataInProgress = val);
 
 	const now = new Date();
 	const todaySunrise = new Date(sunxData.today.sunrise);
@@ -44,7 +44,7 @@
 	function getDayClasses({ isEmptyDay, isFutureDay, isFuturePaddingDay, isPendingDay, isTomorrow, isWalkDay }) {
 		let classes = ['day'];
 
-		if (eventsDataInProgress) {
+		if (walksDataInProgress) {
 			// do not push classes
 		}
 		else if (isPendingDay || didWalkToday && isTomorrow) {

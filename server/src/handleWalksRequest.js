@@ -3,7 +3,7 @@ const fsPromises = require('fs/promises');
 const { setJsonContentType } = require('./setJsonContentType.js');
 const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
 
-async function getEventsByMonth(event) {
+async function getWalksByMonth(event) {
 	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
 	const acceptHeader = accept?.toLowerCase() || 'text/csv';
 	const didRequestCsv = acceptHeader === 'text/csv';
@@ -25,9 +25,31 @@ async function getEventsByMonth(event) {
 		headers: contentHeader,
 	}
 }
-const getEventsByMonthBenched = getBenchmarkedFunctionAsync(getEventsByMonth);
+const getWalksByMonthBenched = getBenchmarkedFunctionAsync(getWalksByMonth);
 
-async function handleEventsRequest(event) {
+async function getWalks(event) {
+	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
+	const acceptHeader = accept?.toLowerCase() || 'text/csv';
+	const didRequestCsv = acceptHeader === 'text/csv';
+
+	if (!month?.match(/\d{4}-\d{2}/)) {
+		return setJsonContentType({
+			statusCode: 400,
+			body: JSON.stringify({ error: 'q must be provided and in yyyy-MM format' }),
+		});
+	}
+
+	const ext = didRequestCsv ? '.csv' : '.json';
+	let content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/walks/${month}${ext}`);
+	return {
+		statusCode: 200,
+		body: didRequestCsv ? content : JSON.stringify(content),
+		headers: contentHeader,
+	}
+}
+const getWalksBenched = getBenchmarkedFunctionAsync(getWalks);
+
+async function handleWalksRequest(event) {
 	const {
 		queryStringParameters: {
 			q = null,
@@ -36,8 +58,9 @@ async function handleEventsRequest(event) {
 
 	try {
 		if (q) {
-			return await getEventsByMonthBenched(event);
+			return await getWalksByMonthBenched(event);
 		}
+		return await getWalksBenched(event);
 	} catch (e) {
 		console.error(e);
 		return {
@@ -47,5 +70,5 @@ async function handleEventsRequest(event) {
 }
 
 module.exports = {
-	handleEventsRequest
+	handleWalksRequest
 };

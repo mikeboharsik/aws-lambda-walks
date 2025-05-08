@@ -4,7 +4,7 @@
 
 	import { getEvents } from '../util/api';
 	import { firstMonth, toFixedDefault } from '../constants/config';
-	import { EVENTS_DATA, EVENTS_DATA_IN_PROGRESS } from '../stores.js';
+	import { WALKS_DATA, WALKS_DATA_IN_PROGRESS } from '../stores.js';
 
 	export let currentMonth;
 	export let currentMonthData;
@@ -22,10 +22,10 @@
 
 	async function updateEvents() {
 		const month = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}`;
-		EVENTS_DATA_IN_PROGRESS.update(() => true);
-		const monthEvents = await getEvents(month);
-		EVENTS_DATA_IN_PROGRESS.update(() => false);
-		EVENTS_DATA.update(() => monthEvents);
+		WALKS_DATA_IN_PROGRESS.update(() => true);
+		const monthEvents = await getWalks(month);
+		WALKS_DATA_IN_PROGRESS.update(() => false);
+		WALKS_DATA.update(() => monthEvents);
 	}
 
 	function subtractMonth() {

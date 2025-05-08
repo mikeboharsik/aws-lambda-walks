@@ -8,9 +8,9 @@
 	import Maps from './views/Maps.svelte';
 	import Stats from './views/Stats.svelte';
 
-	import { EVENTS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
+	import { WALKS_DATA, ORIGINAL_ROUTES_DATA, SUNX_DATA } from './stores.js';
 
-	import { getEvents, getGit, getSunx } from './util/api';
+	import { getWalks, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
 	import { getJwt, removeJwt, storeJwt } from './util/jwt';
 
@@ -39,7 +39,7 @@
 		const todayYearAndMonth = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}`;
 
 		const initialDataJobs = [
-			getEvents(todayYearAndMonth),
+			getWalks(todayYearAndMonth),
 			getGit(),
 			getSunx(dateStr),
 			getSunx(tomorrowDateStr),
@@ -56,7 +56,7 @@
 			] = results;
 
 			gitHashes = gitResult;
-			EVENTS_DATA.update(() => eventsDataResult);
+			WALKS_DATA.update(() => eventsDataResult);
 			SUNX_DATA.update(() => ({ today: sunxTodayResult, tomorrow: sunxTomorrowResult }));
 		} catch(e) {
 			console.error(e);

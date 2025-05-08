@@ -29,9 +29,9 @@ export async function getRoute(date) {
 		.then(res => res.text());
 }
 
-export async function getEvents(q) {
+export async function getWalks(q) {
 	const options = withAcceptCsv(getApiOptions());
-	return fetch(`${baseApiUrl}/events?q=${q}`, options)
+	return fetch(`${baseApiUrl}/walks?q=${q}`, options)
 		.then(res => res.text())
 		.then(res => parseCsv(res))
 }

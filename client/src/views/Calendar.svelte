@@ -1,5 +1,5 @@
 <script>
-	import { EVENTS_DATA } from '../stores.js';
+	import { WALKS_DATA } from '../stores.js';
 
 	import StatusBar from '../components/StatusBar.svelte';
 	import SunsetApiSourceAttribution from '../components/SunsetApiSourceAttribution.svelte';
@@ -27,7 +27,7 @@
 			const newCurrentMonthData = Array.from(new Array(daysInMonth + firstDayOffset + toAdd));
 
 			const searchPattern = new RegExp(`${now.getFullYear()}-${currentMonth}-\\d{2}`);
-			const matches = eventsData.filter(e => e.date.match(searchPattern));
+			const matches = walksData.filter(e => e.date.match(searchPattern));
 
 			newCurrentMonthData.forEach((e, i, a) => {
 				const dayIsInMonth = i > (firstDayOffset - 1);
@@ -53,11 +53,11 @@
 	let daysInMonth;
 	let isRealMonth;
 
-	let eventsData = null;
-	EVENTS_DATA.subscribe(val => eventsData = val);
+	let walksData = null;
+	WALKS_DATA.subscribe(val => walksData = val);
 
 	$: {
-		eventsData = eventsData;
+		walksData = walksData;
 		let tempHumanMonthNumber = now.getMonth() + 1;
 		currentMonth = tempHumanMonthNumber < 10 ? '0' + tempHumanMonthNumber : tempHumanMonthNumber.toString();
 		firstDayOffset = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
