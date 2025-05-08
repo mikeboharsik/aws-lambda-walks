@@ -25,7 +25,7 @@ function getPointFeatureFromEvent(event) {
 	};
 }
 
-async function handleEventsProximityRequest(event) {
+async function handleEventsRequest(event) {
 	let {
 		isAuthed,
 		queryStringParameters: {
@@ -37,6 +37,7 @@ async function handleEventsProximityRequest(event) {
 			maxRadius = 20,
 		} = {},
 	} = event;
+
   if (!isAuthed) {
     return {
       statusCode: 401
@@ -44,30 +45,34 @@ async function handleEventsProximityRequest(event) {
   }
 
 	try {
-		if (!targetPoint) {
+		if (!targetPoint && maxRadius) {
 			throw new Error('targetPoint must be provided');
 		}
 
-		const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
-
 		const allEvents = await getAllEventsBenched();
 
-		const hits = allEvents.reduce((acc, event) => {
-			if (!event.coords) return acc;
-			if (before && event?.mark >= before) return acc; 
-			if (after && event?.mark <= after) return acc;
+		let hits = [];
+		if (maxRadius) {
+			const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
+			hits = allEvents.reduce((acc, event) => {
+				if (!event.coords) return acc;
+				if (before && event?.mark >= before) return acc; 
+				if (after && event?.mark <= after) return acc;
 
-			const [lat, lon] = event.coords;
-			const isHit = geolib.isPointWithinRadius(
-				{ latitude: lat, longitude: lon },
-				{ latitude: targetLat, longitude: targetLon },
-				maxRadius,
-			);
-			if (isHit) {
-				acc.push(event);
-			}
-			return acc;
-		}, []);
+				const [lat, lon] = event.coords;
+				const isHit = geolib.isPointWithinRadius(
+					{ latitude: lat, longitude: lon },
+					{ latitude: targetLat, longitude: targetLon },
+					maxRadius,
+				);
+				if (isHit) {
+					acc.push(event);
+				}
+				return acc;
+			}, []);
+		} else {
+			hits = allEvents;
+		}
 	
 		const geojson = {
 			type: "FeatureCollection",
@@ -88,5 +93,5 @@ async function handleEventsProximityRequest(event) {
 }
 
 module.exports = {
-	handleEventsProximityRequest
+	handleEventsRequest
 };

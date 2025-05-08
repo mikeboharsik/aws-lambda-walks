@@ -10,7 +10,7 @@ const { handlePlatesRequest } = require('./handlePlatesRequest.js');
 const { handlePlatesCoordsRequest } = require('./handlePlatesCoordsRequest.js');
 const { handleGitRequest } = require('./handleGitRequest.js');
 const { handleWalksRequest } = require('./handleWalksRequest.js');
-const { handleEventsProximityRequest } = require('./handleEventsProximityRequest.js');
+const { handleEventsRequest } = require('./handleEventsRequest.js');
 const { handleGlobalStatsRequest } = require('./handleGlobalStatsRequest.js');
 
 async function handleApiRequest(event) {
@@ -21,6 +21,7 @@ async function handleApiRequest(event) {
 	const routeMap = {
 		'/api/sunx': handleSunxDataRequest,
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
+		'/api/events': handleEventsRequest,
 		'/api/routes': handleWalkRouteRequest,
 		'/api/walks': handleWalksRequest,
 		'/api/plates': handlePlatesRequest,
