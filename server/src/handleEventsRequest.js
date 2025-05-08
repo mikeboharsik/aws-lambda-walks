@@ -82,10 +82,10 @@ async function handleEventsRequest(event) {
 		}
 
 		if (plateOnly) {
-			hits = hits.filter(e => e.plates.length);
+			hits = hits.filter(e => e.plates?.length);
 		}
 		if (nonPlateOnly) {
-			hits = hits.filter(e => e.name && !e.plates.length);
+			hits = hits.filter(e => e.name && !e.plates?.length);
 		}
 	
 		if (didRequestGeoJson) {
