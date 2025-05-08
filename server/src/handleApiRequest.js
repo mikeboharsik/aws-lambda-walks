@@ -23,7 +23,6 @@ async function handleApiRequest(event) {
 		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
 		'/api/routes': handleWalkRouteRequest,
 		'/api/events': handleEventsRequest,
-		'/api/events/proximity': handleEventsProximityRequest,
 		'/api/plates': handlePlatesRequest,
 		'/api/plates/coords': handlePlatesCoordsRequest,
 		'/api/youtubeIds': handleYoutubeIdsRequest,
