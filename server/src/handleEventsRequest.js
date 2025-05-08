@@ -52,12 +52,12 @@ async function handleEventsRequest(event) {
 			throw new Error('targetPoint must be provided');
 		}
 
-		const allEvents = await getAllEventsBenched();
-
-		let hits = [];
+		let hits = await getAllEventsBenched();
+		hits = hits.filter(e => e.coords);
+		
 		if (maxRadius) {
 			const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
-			hits = allEvents.reduce((acc, event) => {
+			hits = hits.reduce((acc, event) => {
 				if (!event.coords) return acc;
 				if (before && event?.mark >= before) return acc; 
 				if (after && event?.mark <= after) return acc;
@@ -73,8 +73,6 @@ async function handleEventsRequest(event) {
 				}
 				return acc;
 			}, []);
-		} else {
-			hits = allEvents;
 		}
 
 		if (plateOnly) {
