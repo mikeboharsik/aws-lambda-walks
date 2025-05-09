@@ -2,6 +2,7 @@
 	import * as L from 'leaflet';
 	import { getJwt } from '../util/jwt';
 	import { waitForElement } from '../util/waitForElement';
+	import { getEvents } from '../util/api';
 
 	const jwt = getJwt();
 	if (jwt) {
@@ -20,13 +21,14 @@
 			).addTo(map);
 
 			if (jwt) {
-				const geoJson = await fetch(`https://walks.mikeboharsik.com/api/events/proximity?targetPoint=42.4997178,-71.1006031&maxRadius=100`, { headers: { Authorization: `Bearer ${jwt}` } }).then(r => r.json());
+				const radius = 100;
+				const geoJson = await getEvents('42.4997178,-71.1006031', radius);
 				L.geoJSON(geoJson).addTo(map);
 				L.circle([42.4997178,-71.1006031], {
 					color: '#f03',
 					fillColor: '#f03',
 					fillOpacity: 0.5,
-					radius: 100
+					radius: radius
 				}).addTo(map);
 			}
 		})

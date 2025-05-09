@@ -23,6 +23,11 @@ export function withAcceptTextPlain(options) {
 	return options;
 }
 
+export function withAcceptGeoJson(options) {
+	options.headers.Accept = 'application/geo+json';
+	return options;
+}
+
 export async function getRoute(date) {
 	const options = withAcceptTextPlain(getApiOptions());
 	return fetch(`${baseApiUrl}/routes?date=${date}`, options)
@@ -51,5 +56,11 @@ export async function getSunx(date) {
 export async function getGlobalStats() {
 	const options = getApiOptions();
 	return fetch(`${baseApiUrl}/globalStats`, options)
+		.then(res => res.json());
+}
+
+export async function getEvents(targetPoint, maxRadius) {
+	const options = withAcceptGeoJson(getApiOptions());
+	return fetch(`${baseApiUrl}/events?targetPoint=${targetPoint}&maxRadius=${maxRadius}`, options)
 		.then(res => res.json());
 }
