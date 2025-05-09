@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { getEvents } from '../util/api';
+	import { getWalks } from '../util/api';
 	import { firstMonth, toFixedDefault } from '../constants/config';
 	import { WALKS_DATA, WALKS_DATA_IN_PROGRESS } from '../stores.js';
 
