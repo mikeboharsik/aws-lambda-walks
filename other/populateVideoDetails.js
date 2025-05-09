@@ -75,11 +75,10 @@
 			}).join('\n');
 		}
 
-		let out = `Route: https://walks.mikeboharsik.com/api/routes?date=${date}\n\n`;
+		let out = `Route: https://2milesaday.com/api/routes?date=${date}\n\n`;
 		if (listeningToContent) {
 			out += `Listening to:\n${listeningToContent}\n\n`;
 		}
-		out += `https://github.com/lindell/JsBarcode`;
 
 		return out;
 	}
