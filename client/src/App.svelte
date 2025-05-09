@@ -75,9 +75,8 @@
      crossorigin=""/>
 
 <svelte:window on:keydown={({ altKey, code, shiftKey }) => {
-	if (getJwt() && originalRoutesData && altKey && shiftKey && code === 'KeyT') {
-		const encodedRouteData = encodeURIComponent(JSON.stringify(originalRoutesData));
-		window.open(`https://geojson.io/#data=data:application/json,${encodedRouteData}`, '_blank', 'noopener');
+	if (getJwt() && altKey && shiftKey && code === 'KeyT') {
+		window.location.href = `https://auth.mikeboharsik.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/oauth&response_type=token&scope=walks.read`;
 	}
 }} />
 
@@ -131,13 +130,7 @@
 				</div>
 			{:else}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div
-					on:click={() => {
-						window.location.href = `https://auth.mikeboharsik.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/oauth&response_type=token&scope=walks.read`;
-					}}
-				>
-					👤
-				</div>
+				<div>👤</div>
 			{/if}
 		</div>
 	{:else}
