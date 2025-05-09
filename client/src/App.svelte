@@ -74,8 +74,8 @@
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
 
-<svelte:window on:keydown={({ altKey, code, shiftKey }) => {
-	if (getJwt() && altKey && shiftKey && code === 'KeyT') {
+<svelte:window on:keydown={({ code, ctrlKey, shiftKey }) => {
+	if (ctrlKey && shiftKey && code === 'KeyN') {
 		window.location.href = `https://auth.mikeboharsik.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/oauth&response_type=token&scope=walks.read`;
 	}
 }} />
