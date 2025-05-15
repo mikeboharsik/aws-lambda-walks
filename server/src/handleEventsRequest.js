@@ -1,15 +1,7 @@
-const fsPromises = require('fs/promises');
-
 const geolib = require('geolib');
 
 const { setJsonContentType } = require('./setJsonContentType.js');
-const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
-
-async function getAllEvents(event) {
-	const content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/events/all.json`);
-	return JSON.parse(content);
-}
-const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
+const { getAllEvents } = require('./getAllEvents.js');
 
 function getPointFeatureFromEvent(event) {
 	const resiProps = event.resi ? {
@@ -67,7 +59,7 @@ async function handleEventsRequest(event) {
 			throw new Error('targetPoint must be provided');
 		}
 
-		let hits = await getAllEventsBenched();
+		let hits = await getAllEvents();
 		if (didRequestGeoJson) {
 			hits = hits.filter(e => e.coords);
 		}
