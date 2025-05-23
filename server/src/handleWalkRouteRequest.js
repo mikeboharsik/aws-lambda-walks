@@ -10,7 +10,10 @@ async function getCoordsByMonth(month) {
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
 async function handleWalkRouteRequest(event) {
-	const { isAuthed, queryStringParameters: { date } } = event;
+	let { isAuthed, queryStringParameters: { date = null, idx = null } } = event;
+	if (idx !== null) {
+		idx = parseInt(idx);
+	}
 
 	if (!date?.match(/\d{4}-\d{2}-\d{2}/)) {
 		return setJsonContentType({
@@ -18,23 +21,38 @@ async function handleWalkRouteRequest(event) {
 			body: JSON.stringify({ error: "date must be provided and in yyyy-MM-dd format" }),
 		});
 	}
+	if (isNaN(idx) || (idx !== null && idx < 0)) {
+		return setJsonContentType({
+			statusCode: 400,
+			body: JSON.stringify({ error: "idx must be at least 0" }),
+		});
+	}
 
 	const [month] = date.match(/\d{4}-\d{2}/);
 
-	const parsed = await getCoordsByMonthBenched(month);
-	const target = parsed.filter(e => e.date === date);
+	const allCoordsByMonth = await getCoordsByMonthBenched(month);
+	const walksForTargetDate = allCoordsByMonth.filter(e => e.date === date);
 
-	let geojson = target.reduce((acc, walk) => {
-		const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
+	if (idx !== null && idx >= walksForTargetDate.length) {
+		return setJsonContentType({
+			statusCode: 400,
+			body: JSON.stringify({ error: `idx must be at least 0 and at most ${walksForTargetDate.length - 1} for date ${date}` }),
+		});
+	}
 
-		newEntry.properties = {
-			date: walk.date,
-			stroke: "#ff0000",
-			"stroke-width": 5,
-			"stroke-opacity": 1
-		};
+	let geojson = walksForTargetDate.reduce((acc, walk, walkIdx) => {
+		if (idx === null || idx === walkIdx) {
+			const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
 
-		acc.push(newEntry);
+			newEntry.properties = {
+				date: walk.date,
+				stroke: "#ff0000",
+				"stroke-width": 5,
+				"stroke-opacity": 1
+			};
+
+			acc.push(newEntry);
+		}
 		return acc;
 	}, []);
 
