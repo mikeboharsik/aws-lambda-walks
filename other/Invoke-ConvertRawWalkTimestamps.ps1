@@ -3,6 +3,7 @@ Param(
 	[string] $Date,
 	[hashtable] $SourceJson,
 
+	[switch] $OnlyPopulateMissing,
 	[switch] $IgnoreExif,
 	[switch] $PrintSegments,
 	[switch] $ReturnData,
@@ -156,6 +157,7 @@ foreach ($json in $walks) {
 
 	foreach ($event in $json.events) {
 		if (!$event.mark) { continue }
+		if ($event.trimmedStart -and $OnlyPopulateMissing) { continue }
 
 		if ($event.trimmedStart -and $event.trimmedEnd -and $event.trimmedStart -ne $event.trimmedEnd) {
 			Write-Host "Skipping event that has already been adjusted"
