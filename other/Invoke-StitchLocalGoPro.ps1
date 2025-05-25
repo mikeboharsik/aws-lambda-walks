@@ -1,5 +1,7 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
+	[string] $PathToWalkRoutes = "$PSScriptRoot\..\..\walk-routes",
+
 	[switch] $DeleteOriginalFiles,
 	[switch] $SkipBackup
 )
@@ -20,6 +22,17 @@ function Get-SensibleGoProFilenamePath {
 		throw "Failed to find a path to $filename"
 	}
 	return $result
+}
+
+$metaArchiveDir = Resolve-Path "$PathToWalkRoutes\meta_archive"
+$expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$clipDay.json"
+$possibleDataPaths = @($expectedTargetFilePath)
+
+foreach ($path in $possibleDataPaths) {
+	if (Test-Path $path) {
+		$dataPath = Resolve-Path $path
+		break
+	}
 }
 
 $outputFolderPath = Resolve-Path $outputFolderPath
@@ -59,6 +72,15 @@ try {
 	$exifPath = "$($stitchedFilename)_exif.json"
 	if ($PSCmdlet.ShouldProcess("$files", "Write exif data to $exifPath")) {
 		exiftool.exe -api largefilesupport=1 -CreateDate -Duration -json $files > $exifPath
+	}
+
+	if (!$dataPath) {
+		$dataPath = & "$PSSciptRoot/Invoke-DownloadRemoteWalkFile.ps1" -Date $mediaCreateDate
+	}
+
+	if (!$dataPath) {
+		Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')] and failed to load from Drive"
+		exit 1
 	}
 
 	if ($PSCmdlet.ShouldProcess("$outputFilename", "Run ffmpeg to produce stitched file")) {

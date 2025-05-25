@@ -11,7 +11,7 @@ Param(
 	[switch] $SkipJson,
 	[switch] $AssumeVideoCreated,
 
-	[string] $PathToWalkRoutes = $null,
+	[string] $PathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes",
 
 	[switch] $WhatIf
 )
@@ -37,10 +37,7 @@ if ($items[0].Name -Match '(\d{4})-(\d{2})-(\d{2})') {
 }
 
 $clipYear, $clipMonth, $clipDay = $dateStr -Split '-'
-if (!$PathToWalkRoutes) {
-	$pathToWalkRoutes = "$PSScriptRoot\..\..\..\walk-routes"
-}
-$metaArchiveDir = Resolve-Path "$pathToWalkRoutes\meta_archive"
+$metaArchiveDir = Resolve-Path "$PathToWalkRoutes\meta_archive"
 $expectedTargetFilePath = "$metaArchiveDir\$clipYear\$clipMonth\$clipDay.json"
 
 $possibleDataPaths = @($expectedTargetFilePath)
