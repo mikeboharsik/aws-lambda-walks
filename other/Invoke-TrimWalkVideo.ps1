@@ -239,8 +239,6 @@ if (!$SkipJson) {
 	}
 }
 
-if (Test-Path "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1") {
-	& "$PSScriptRoot\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr
-} else {
-	& "$PSScriptRoot\..\thumbnail\Invoke-GenerateThumbnail.ps1" -Date $dateStr
+for ($i = 0; $i -lt $dayWalks.Length; $i++) {
+	node "$PSScriptRoot\thumbnail\getMapScreenshot.js" $dateStr $i
 }
