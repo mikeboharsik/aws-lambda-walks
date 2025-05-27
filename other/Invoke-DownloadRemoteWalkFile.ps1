@@ -15,7 +15,7 @@ rclone copyto $expectedRemote $expectedLocal
 
 $obj = Get-Content $expectedLocal | ConvertFrom-Json -AsHashtable
 $array = @($obj)
-ConvertTo-Json $array | Set-Content $expectedLocal
+ConvertTo-Json $array -Depth 10 | Set-Content $expectedLocal
 
 $dataPath = Resolve-Path $expectedLocal
 
