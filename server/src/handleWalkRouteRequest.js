@@ -36,7 +36,7 @@ async function handleWalkRouteRequest(event) {
 	if (idx !== null && idx >= walksForTargetDate.length) {
 		return setJsonContentType({
 			statusCode: 400,
-			body: JSON.stringify({ error: `idx must be at least 0 and at most ${walksForTargetDate.length - 1} for date ${date}` }),
+			body: JSON.stringify({ error: `idx must be at least 0 and less than ${walksForTargetDate.length} for date ${date}, received [${idx}]` }),
 		});
 	}
 
