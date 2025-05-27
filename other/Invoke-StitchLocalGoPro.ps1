@@ -66,21 +66,22 @@ try {
 	$data = (exiftool -api LargeFileSupport=1 -MediaCreateDate $initialFile.FullName)
 	$mediaCreateDate = ($data.Split(': ')[1]) -Replace "(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})", "`$1-`$2-`$3_`$4-`$5-`$6"
 
+	if (!$dataPath) {
+		$dateOnly = $mediaCreateDate.Substring(0, 10)
+		$dataPath = & "$PSScriptRoot/Invoke-DownloadRemoteWalkFile.ps1" -Date $dateOnly
+	}
+
+	if (!$dataPath) {
+		Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')] and failed to load from Drive"
+		exit 1
+	}
+
 	$stitchedFilename = $mediaCreateDate + "_merged"
 	$outputFilename = "$outputFolderPath/$stitchedFilename.mp4"
 
 	$exifPath = "$($stitchedFilename)_exif.json"
 	if ($PSCmdlet.ShouldProcess("$files", "Write exif data to $exifPath")) {
 		exiftool.exe -api largefilesupport=1 -CreateDate -Duration -json $files > $exifPath
-	}
-
-	if (!$dataPath) {
-		$dataPath = & "$PSSciptRoot/Invoke-DownloadRemoteWalkFile.ps1" -Date $mediaCreateDate
-	}
-
-	if (!$dataPath) {
-		Write-Error "Failed to find data path in possible paths [$($possibleDataPaths -Join ', ')] and failed to load from Drive"
-		exit 1
 	}
 
 	if ($PSCmdlet.ShouldProcess("$outputFilename", "Run ffmpeg to produce stitched file")) {

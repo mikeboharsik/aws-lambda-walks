@@ -13,6 +13,10 @@ Write-Host "Attempting data load from Drive [$expectedRemote]"
 
 rclone copyto $expectedRemote $expectedLocal
 
+$obj = Get-Content $expectedLocal | ConvertFrom-Json -AsHashtable
+$array = @($obj)
+ConvertTo-Json $array | Set-Content $expectedLocal
+
 $dataPath = Resolve-Path $expectedLocal
 
 return $dataPath

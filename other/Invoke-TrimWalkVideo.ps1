@@ -236,6 +236,7 @@ if (!$SkipJson) {
 	}
 }
 
+$getMapScreenshotPath = "$PSScriptRoot\thumbnail\getMapScreenshot.js" -Replace '\\pathable',''
 for ($i = 0; $i -lt $dayWalks.Length; $i++) {
-	node "$PSScriptRoot\thumbnail\getMapScreenshot.js" $dateStr $i
+	node $getMapScreenshotPath $dateStr $i
 }
