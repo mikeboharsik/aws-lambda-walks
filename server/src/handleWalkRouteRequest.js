@@ -32,6 +32,12 @@ async function handleWalkRouteRequest(event) {
 
 	const allCoordsByMonth = await getCoordsByMonthBenched(month);
 	const walksForTargetDate = allCoordsByMonth.filter(e => e.date === date);
+	if (walksForTargetDate.length === 0) {
+		return setJsonContentType({
+			statusCode: 404,
+			body: JSON.stringify({ error: `failed to find any walks for date ${date}` }),
+		});
+	}
 
 	if (idx !== null && idx > walksForTargetDate.length - 1) {
 		return setJsonContentType({
