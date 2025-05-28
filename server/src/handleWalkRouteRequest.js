@@ -33,7 +33,7 @@ async function handleWalkRouteRequest(event) {
 	const allCoordsByMonth = await getCoordsByMonthBenched(month);
 	const walksForTargetDate = allCoordsByMonth.filter(e => e.date === date);
 
-	if (idx !== null && idx >= walksForTargetDate.length) {
+	if (idx !== null && idx > walksForTargetDate.length - 1) {
 		return setJsonContentType({
 			statusCode: 400,
 			body: JSON.stringify({ error: `idx must be at least 0 and less than ${walksForTargetDate.length} for date ${date}, received [${idx}]` }),
