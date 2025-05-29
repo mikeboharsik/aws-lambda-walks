@@ -87,7 +87,7 @@ class MikeBWalksAutoStrip(bpy.types.Operator):
             metadataContent = metadataFile.read()
             metadata = json.loads(metadataContent)
             
-            return metadata[-1]
+            return metadata[0]
         else:
             print(f'Failed to load meta file with name [{jsonFilename}]')
             return None
