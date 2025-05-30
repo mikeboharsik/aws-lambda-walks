@@ -1,48 +1,32 @@
 const { makeQueryStringParametersSafe } = require('./makeQueryStringParametersSafe.js');
 
-const { handleCacheInvalidate } = require('./handleCacheInvalidate.js');
-const { handleSunxDataRequest } = require('./handleSunxDataRequest.js');
-const { handleYouTubeThumbnailRequest } = require('./handleYouTubeThumbnailRequest.js');
-const { handleYoutubeIdsRequest } = require('./handleYoutubeIdsRequest.js');
-const { handleJumpToEvent } = require('./handleJumpToEvent.js');
-const { handleWalkRouteRequest } = require('./handleWalkRouteRequest.js');
-const { handlePlatesRequest } = require('./handlePlatesRequest.js');
-const { handlePlatesCoordsRequest } = require('./handlePlatesCoordsRequest.js');
-const { handleGitRequest } = require('./handleGitRequest.js');
-const { handleWalksRequest } = require('./handleWalksRequest.js');
-const { handleEventsRequest } = require('./handleEventsRequest.js');
-const { handleGlobalStatsRequest } = require('./handleGlobalStatsRequest.js');
+const handlers = Object.values(require('./handlers')).map(c => new c());;
 
 async function handleApiRequest(event) {
-	const { queryStringParameters = null, rawPath } = event;
+	try {
+		const { isAuthed, queryStringParameters = null, rawPath } = event;
 
-	console.log(`handle api request for ${rawPath}`, makeQueryStringParametersSafe(queryStringParameters));
+		console.log(`handle api request for ${rawPath}`, makeQueryStringParametersSafe(queryStringParameters));
 
-	const routeMap = {
-		'/api/sunx': handleSunxDataRequest,
-		'/api/yt-thumbnail': handleYouTubeThumbnailRequest,
-		'/api/events': handleEventsRequest,
-		'/api/routes': handleWalkRouteRequest,
-		'/api/walks': handleWalksRequest,
-		'/api/plates': handlePlatesRequest,
-		'/api/plates/coords': handlePlatesCoordsRequest,
-		'/api/youtubeIds': handleYoutubeIdsRequest,
-		'/api/globalStats': handleGlobalStatsRequest,
-		'/api/invalidateCache': handleCacheInvalidate,
-		'/api/jumpToEvent': handleJumpToEvent,
-		'/api/git': handleGitRequest,
-		'/api/authtest': async (event) => {
-			return {
-				statusCode: 200,
-				body: JSON.stringify(event),
-				headers: { 'content-type': 'application/json' },
-			};
-		},
-	};
+		const rawPathWithoutApi = rawPath.replace(/\/api/, '');
+		const handler = handlers.find(handler => rawPathWithoutApi.match(handler.path));
+		if (!handler) {
+			return { statusCode: 404 };
+		}
 
-	const func = routeMap[rawPath] ?? async function() { return { statusCode: 404 }; };
+		if (handler.requiresAuth && !isAuthed) {
+			return { statusCode: 401 };
+		}
 
-	return await func(event);
+		handler.validateRequest(event);
+		
+		return await handler.process(event);
+	} catch (e) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: e.message }),
+		}
+	}
 }
 
 module.exports = {

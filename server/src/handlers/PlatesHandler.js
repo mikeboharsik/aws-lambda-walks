@@ -1,7 +1,8 @@
 const fsPromises = require('fs/promises');
 
-const { setJsonContentType } = require('./setJsonContentType.js');
-const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
+const { ApiRequestHandler } = require('./ApiRequestHandler');
+
+const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
 
 async function getAllEventsByPlate(event) {
 	let {
@@ -86,31 +87,75 @@ async function getAllEventsByPlate(event) {
 }
 const getAllEventsByPlateBenched = getBenchmarkedFunctionAsync(getAllEventsByPlate);
 
-async function handlePlatesRequest(event) {
-	const { isAuthed, headers: { accept } } = event;
-  if (!isAuthed) {
-    return {
-      statusCode: 401
-    };
-  }
-
-	try {
-		const parsed = await getAllEventsByPlateBenched(event);
-		const isCsv = accept === 'text/csv';
-		return {
-			statusCode: 200,
-			body: isCsv ? parsed : JSON.stringify(parsed),
-			headers: { 'content-type': isCsv ? 'text/csv' : 'application/json' }
-		};
-	} catch (e) {
-		console.error('Failed to load plates', e);
-		return setJsonContentType({
-			statusCode: 400,
-			body: JSON.stringify({ error: e.message }),
-		});
+class PlatesHandler extends ApiRequestHandler {
+	constructor() {
+		super();
+		this.path = /\/plates/;
+		this.requiresAuth = true;
 	}
-}
+
+	async process(event) {
+		const { headers: { accept }, rawPath } = event;
+
+		if (rawPath.endsWith('coords')) {
+			const { queryStringParameters: { plate = null, date = null } = {} } = event;
+
+			if (!plate && !date) {
+				return this.getJsonResponse(400, JSON.stringify({ error: 'plate or date must be specified' }));
+			}
+
+			try {
+				const parsed = JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/progressiveStats/plates.json`));
+
+				const filterKey = plate ? 'plate' : 'date';
+
+				const features = parsed.filter(e => e[filterKey] === (plate || date));
+
+				const geoJson = {
+					type: 'FeatureCollection',
+					features: features.map(({ coords, date, plate }) => {
+						return {
+							type: 'Feature',
+							properties: { date, plate },
+							geometry: {
+								coordinates: [
+									parseFloat(coords[1]),
+									parseFloat(coords[0]),
+								],
+								type: 'Point',
+							}
+						}
+					}),
+				};
+
+				const encodedGeojsonData = encodeURIComponent(JSON.stringify(geoJson));
+
+				const body = `<html>
+	<body>
+		<script>
+			window.location = 'https://geojson.io/#data=data:application/json,${encodedGeojsonData}';
+		</script>
+	</body>
+</html>`;
+
+				return this.getHtmlResponse(200, body);
+			} catch (e) {
+				console.error('Failed to load plate coords', e);
+				return this.getJsonResponse(400, JSON.stringify({ error: e.message }));
+			}
+		}
+
+		try {
+			const parsed = await getAllEventsByPlateBenched(event);
+			const isCsv = accept === 'text/csv';
+			return isCsv ? this.getCsvResponse(200, parsed) : this.getJsonResponse(200, JSON.stringify(parsed));
+		} catch (e) {
+			console.error('Failed to load plates', e);
+			return this.getJsonResponse(400, JSON.stringify({ error: e.message }));
+		}
+	}
+};
 
 module.exports = {
-	handlePlatesRequest
+	PlatesHandler
 };

@@ -3,7 +3,7 @@ const fixtures = require('./fixtures.json');
 
 const [handlerInput] = fixtures;
 
-async function callHandler(path = null, query = null, headers = null) {
+async function callHandler(path = null, query = null, headers = null, ignoreAuth = false) {
 	if (path) {
 		handlerInput.rawPath = path;
 	}
@@ -23,9 +23,9 @@ async function callHandler(path = null, query = null, headers = null) {
 		handlerInput.headers = { ...handlerInput.headers, ...headers };
 	}
 
-	return await handler(handlerInput, true);
+	return await handler(handlerInput, ignoreAuth);
 }
 
 module.exports = {
-	callHandler
+	callHandler,
 };
