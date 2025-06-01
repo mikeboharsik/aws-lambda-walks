@@ -38,7 +38,7 @@ function isStringArray(result) {
 			],
 		},
 		{
-			name: 'yt-thumbnail fails without a non-existent videoId',
+			name: 'yt-thumbnail fails with a non-existent videoId',
 			path: '/api/yt-thumbnail',
 			query: '?videoId=does not and will never exist',
 			ignoreAuth: false,
