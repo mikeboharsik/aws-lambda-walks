@@ -1,3 +1,5 @@
+const fsPromises = require('fs/promises');
+
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
