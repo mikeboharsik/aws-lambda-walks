@@ -6,7 +6,7 @@ $expectedLocal = "C:\Users\mboha\Documents\GitHub\walk-routes\meta_archive\$year
 
 if (Test-Path $expectedLocal) {
 	Write-Host "File at [$expectedLocal] already exists, skipping download"
-	exit 0
+	return $expectedRemote
 }
 
 Write-Host "Attempting data load from Drive [$expectedRemote]"
