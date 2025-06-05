@@ -30,6 +30,7 @@ async function authenticate(event) {
 
 		if (verified) {
 			event.isAuthed = true;
+			event.authSubject = verified.sub;
 			event.authExpires = new Date(verified.exp * 1000).toUTCString();
 		} else {
       console.log('Authentication failed', authUrl, event.headers.authorization);

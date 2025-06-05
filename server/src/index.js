@@ -1,4 +1,4 @@
-// look into using https://www.npmjs.com/package/aws-lambda-router
+require('./setupLoggers.js');
 
 const { authenticate } = require('./auth.js');
 const { handleApiRequest } = require('./handleApiRequest.js');
@@ -9,7 +9,7 @@ const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 function logResult(result) {
 	if (Boolean(process.env['LOG_RESULT'])) {
-		console.log('Returning result', JSON.stringify(result, null, '  '));
+		conditionalLog(ogLog, 'Returning result', JSON.stringify(result, null, '  '));
 	}
 }
 
