@@ -1,8 +1,6 @@
 const geolib = require('geolib');
 
-const privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]');
-
-function getGeoJsonFromCoords(coords, isAuthed) {
+function getGeoJsonFromCoords(coords, isAuthed, privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]')) {
 	let coordinates = coords.map(({ lat, lon }) => [lon, lat]);
 
 	if (!isAuthed) {
@@ -15,7 +13,11 @@ function getGeoJsonFromCoords(coords, isAuthed) {
 
 	return {
 		type: "Feature",
-		properties: {},
+		properties: {
+			stroke: "#ff0000",
+			'stroke-width': 5,
+			'stroke-opacity': 1,
+		},
 		geometry: {
 			type: "LineString",
 			coordinates,

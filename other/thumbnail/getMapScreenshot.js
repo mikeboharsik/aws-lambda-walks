@@ -1,20 +1,16 @@
 const { firefox } = require('playwright');
+const WalkFileManager = require('../../../walk-routes/utility/WalkFileManager');
+const { getGeoJsonFromCoords } = require('../../server/src/getGeoJsonFromCoords');
+const privacyZones = require('../../../walk-routes/meta_archive/privacyZones.json');
 
-async function saveScreenshot() {
+async function run(urlToScreenshot) {
 	const [,, date, idx = 0] = process.argv;
 
-	if (!date) {
-		console.error('Missing date');
-		process.exit(1);
-	}
-
 	try {
-		const geojsonUrl = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
-
 		const browser = await firefox.launch();
 		const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
 		const page = await context.newPage();
-		await page.goto(geojsonUrl);
+		await page.goto(urlToScreenshot);
 		await page.click('.mapboxgl-canvas');
 		await page.waitForTimeout(1500);
 
@@ -39,8 +35,33 @@ async function saveScreenshot() {
 		});
 		await browser.close();
 	} catch (e) {
-		console.error(e.message);
+		console.error('Failed to load remote route:', e.message);
+		throw e;
+	}
+}
+
+async function saveScreenshot() {
+	const [,, date, idx = 0] = process.argv;
+
+	if (!date) {
+		console.error('Missing date');
 		process.exit(1);
+	}
+
+	try {
+		const urlToScreenshot = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
+		await run(urlToScreenshot);
+	} catch (e) {
+		const manager = new WalkFileManager();
+		const walksForDate = await manager.loadWalksForDate(date);
+		const walk = walksForDate[idx];
+		const geojson = {
+			type: 'FeatureCollection',
+			features: [getGeoJsonFromCoords(walk.coords, false, privacyZones)],
+		};
+		const encodedGeojson = encodeURIComponent(JSON.stringify(geojson));
+		const urlToScreenshot = `https://geojson.io/#data=data:application/json,${encodedGeojson}`;
+		await run(urlToScreenshot);
 	}
 }
 
