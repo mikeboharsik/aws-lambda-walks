@@ -12,7 +12,7 @@ async function run(urlToScreenshot) {
 		const page = await context.newPage();
 		await page.goto(urlToScreenshot);
 		await page.click('.mapboxgl-canvas');
-		await page.waitForTimeout(1500);
+		await page.waitForTimeout(3000);
 
 		const pageUrl = page.url();
 		const [, zoomLevel] = pageUrl.match(/#map=(.+?)\/.+?\/.+?/);
