@@ -136,7 +136,7 @@
 								{/if}
 							</a>
 
-							{#if walk.youtubeId}
+							{#if walk.youtubeId && walk.youtubeId !== 'undefined'}
 								<a
 									href={`https://youtu.be/${walk.youtubeId}`}
 									noreferrer
