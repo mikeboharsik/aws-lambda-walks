@@ -4,7 +4,7 @@ const { getGeoJsonFromCoords } = require('../../server/src/getGeoJsonFromCoords'
 const privacyZones = require('../../../walk-routes/meta_archive/privacyZones.json');
 
 async function run(urlToScreenshot) {
-	const [,, date, idx = 0] = process.argv;
+	let [,, date, idx = 0, zoom = undefined] = process.argv;
 
 	try {
 		const browser = await firefox.launch();
@@ -16,13 +16,18 @@ async function run(urlToScreenshot) {
 
 		const pageUrl = page.url();
 		const [, zoomLevel] = pageUrl.match(/#map=(.+?)\/.+?\/.+?/);
-		const newZoomLevel = parseFloat(zoomLevel) - 0.5;
-		console.log(zoomLevel, newZoomLevel);
+		let newZoomLevel;
+		if (zoom) {
+			newZoomLevel = zoom;
+		} else {
+			newZoomLevel = parseFloat(zoomLevel) - 0.5;
+			console.log(zoomLevel, newZoomLevel);
+		}
 		const newZoomUrl = pageUrl.replace(zoomLevel, parseFloat(newZoomLevel));
 		console.log(pageUrl, newZoomUrl);
 		await page.goto(newZoomUrl);
 
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(3000);
 		await page.screenshot({
 			clip: {
 				x: 96,
@@ -49,9 +54,6 @@ async function saveScreenshot() {
 	}
 
 	try {
-		const urlToScreenshot = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
-		await run(urlToScreenshot);
-	} catch (e) {
 		const manager = new WalkFileManager();
 		const walksForDate = await manager.loadWalksForDate(date);
 		const walk = walksForDate[idx];
@@ -61,6 +63,9 @@ async function saveScreenshot() {
 		};
 		const encodedGeojson = encodeURIComponent(JSON.stringify(geojson));
 		const urlToScreenshot = `https://geojson.io/#data=data:application/json,${encodedGeojson}`;
+		await run(urlToScreenshot);
+	} catch (e) {
+		const urlToScreenshot = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
 		await run(urlToScreenshot);
 	}
 }
