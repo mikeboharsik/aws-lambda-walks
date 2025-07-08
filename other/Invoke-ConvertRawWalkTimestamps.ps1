@@ -188,7 +188,7 @@ foreach ($json in $walks) {
 			$trimmedEnd = $trimmedStart
 
 			$event['trimmedStart'] = $trimmedStart.ToString() -Replace '(\d{3})\d{4}','$1'
-			if ($null -ne $event.name) {
+			if ($null -eq $event.skip -and $null -ne $event.name) {
 				$event['trimmedEnd'] = $trimmedEnd.ToString() -Replace '(\d{3})\d{4}','$1'
 			}
 		} catch {
