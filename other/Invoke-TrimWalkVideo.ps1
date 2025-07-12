@@ -79,15 +79,15 @@ if ($Videos) {
 }
 
 if ($data.coords -and !$SkipCitiesPopulation) {
-	$testPoints =	($data.coords[0].lat, $data.coords[0].lon),
-		($data.coords[[int]($data.coords.Length / 4)].lat, $data.coords[[int]($data.coords.Length / 4)].lon),
-		($data.coords[[int]($data.coords.Length / 4) * 2].lat, $data.coords[[int]($data.coords.Length / 4) * 2].lon),
-		($data.coords[[int]($data.coords.Length / 4) * 3].lat, $data.coords[[int]($data.coords.Length / 4) * 3].lon),
-		($data.coords[$data.coords.Length - 1].lat, $data.coords[$data.coords.Length - 1].lon)
+	$testPoints = @()
+	for ($i = 0; $i -lt $data.coords.length; $i += 10) {
+		$cur = $data.coords[$i]
+		$testPoints += ,($cur.lat, $cur.lon)
+	}
 
 	$results = [System.Collections.Generic.List[PSCustomObject]]::new()
 
-	$testPoints | ForEach-Object -ThrottleLimit 5 -Parallel {
+	$testPoints | ForEach-Object -ThrottleLimit 15 -Parallel {
 			$lat, $lon = $_
 			try {
 				$scriptPath = "$($using:PSScriptRoot)/Get-DataForGpsCoordinate.ps1"
@@ -116,7 +116,7 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 			if (!$stateIso) { continue }
 
-			$town = $result.address.town
+			$town = $result.address.town ?? $result.address.city
 			if (!$data.towns[$stateIso]) {
 				$data.towns[$stateIso] = @($town)
 			} else {
