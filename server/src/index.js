@@ -2,6 +2,7 @@ require('./setupLoggers.js');
 
 const { authenticate } = require('./auth.js');
 const { handleApiRequest } = require('./handleApiRequest.js');
+const { handleAuthResponseRequest } = require('./handleAuthResponseRequest.js');
 const { handleContentRequest } = require('./handleContentRequest.js');
 const { verifyCacheValue } = require('./verifyCacheValue.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
@@ -35,7 +36,8 @@ exports.handler = async (event, ignoreAuth = false) => {
 		}
 
 		const isApiRequest = rawPath.startsWith('/api');
-		const handlerFunction = isApiRequest ? handleApiRequest : handleContentRequest;
+		const isAuthResponseRequest = rawPath.startsWith('/authresp');
+		const handlerFunction = isAuthResponseRequest ? handleAuthResponseRequest : isApiRequest ? handleApiRequest : handleContentRequest;
 
 		let result = await handlerFunction(event);
 		if (!result.statusCode) {

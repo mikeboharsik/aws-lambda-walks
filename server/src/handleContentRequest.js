@@ -9,7 +9,7 @@ async function handleContentRequest(event) {
 	console.log('handle content request', rawPath, makeQueryStringParametersSafe(event.queryStringParameters));
 
 	let target = `./public/${rawPath}`;
-	if (['/', '/oauth', '/routes'].includes(rawPath)) {
+	if (['/', '/routes'].includes(rawPath)) {
 		target = './public/index.html';
 	}
 

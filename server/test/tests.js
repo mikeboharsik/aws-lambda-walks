@@ -128,7 +128,7 @@ function isStringArray(result) {
 		if (test.skip) {
 			continue;
 		}
-
+		
 		const result = await callHandler(test.path, test.query, test.headers, test.ignoreAuth);
 
 		const assertResults = test.asserts.map(a => a(result));
