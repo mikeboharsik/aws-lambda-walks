@@ -3,7 +3,7 @@ const tokenStorageKey = 'authToken';
 export function storeJwt() {
 	try {
 		const hashParams = new URLSearchParams(window.location.hash.replace('#',''));
-		const token = hashParams.get('access_token');
+		const token = hashParams.get('id_token');
 		if (token) {
 			localStorage.setItem(tokenStorageKey, token);
 			history.pushState('', document.title, '/');
