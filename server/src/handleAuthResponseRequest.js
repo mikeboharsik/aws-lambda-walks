@@ -6,6 +6,7 @@ const dbClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 async function handleAuthResponseRequest(event) {
 	const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
 	const secret = process.env.ACCESS_TOKEN_SECRET;
+	const requestDomain = event.requestContext.domainName;
 
 	const { queryStringParameters: { id_token } = {} } = event;
 
@@ -22,12 +23,14 @@ async function handleAuthResponseRequest(event) {
 	const response = await dbClient.send(command);
 	if (!response.Item) {
 		return {
-			statusCode: 403,
-			body: JSON.stringify({ error: 'User has not been granted access to this application' }),
+			statusCode: 302,
+			headers: {
+				Location: `https://${requestDomain}?authError=User has not been granted access to this application`
+			},
 		};
 	}
 
-	const requestDomain = event.requestContext.domainName;
+	
 
 	const accessToken = jwt.sign({
 		iss: `https://${requestDomain}`,
