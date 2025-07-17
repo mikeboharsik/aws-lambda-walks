@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken');
 const authUrl = process.env.AUTH_URL;
 
 function verifyToken(event) {
+	console.log(event.cookies);
 	const secret = process.env.ACCESS_TOKEN_SECRET;
 	const token = event.cookies.access_token;
-	console.log(event.cookies);
 
 	let verified = false;
 	try {
@@ -27,6 +27,7 @@ function verifyScope(token) {
 
 async function authenticate(event) {
 	try {
+		console.log('attempting to verify token', JSON.stringify(event));
 		let verified = verifyToken(event);
 		verified &&= verifyScope(verified);
 		if (verified) {

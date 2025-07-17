@@ -36,6 +36,7 @@ async function handleAuthResponseRequest(event) {
 		iss: `https://${origin}`,
 		sub: token.sub,
 		aud: token.aud,
+		scope: 'walks.read',
 	}, secret, { expiresIn: '1h' });
 
 	return {
