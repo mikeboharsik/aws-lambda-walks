@@ -44,6 +44,9 @@ class RoutesHandler extends ApiRequestHandler {
 
 		let geojson = walksForTargetDate.reduce((acc, walk, walkIdx) => {
 			if (idx === null || idx === walkIdx) {
+				if (!walk.coords) {
+					throw new Error(`[${date}] walk [${walkIdx}] is missing coords`);
+				}
 				const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
 
 				newEntry.properties = {
