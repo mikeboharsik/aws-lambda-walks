@@ -25,7 +25,7 @@ async function handleAuthResponseRequest(event) {
 		return {
 			statusCode: 302,
 			headers: {
-				Location: `https://${origin}?authError=User has not been granted access to this application`
+				Location: `https://${origin}?authError=${encodeURIComponent('User has not been granted access to this application')}`
 			},
 		};
 	}
