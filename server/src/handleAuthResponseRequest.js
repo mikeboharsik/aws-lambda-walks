@@ -4,9 +4,9 @@ const { DynamoDBClient, GetItemCommand  } = require('@aws-sdk/client-dynamodb');
 const dbClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 
 async function handleAuthResponseRequest(event) {
+	const origin = process.env.PUBLIC_HOST;
 	const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
 	const secret = process.env.ACCESS_TOKEN_SECRET;
-	const requestDomain = event.requestContext.domainName;
 
 	const { queryStringParameters: { id_token } = {} } = event;
 
@@ -25,7 +25,7 @@ async function handleAuthResponseRequest(event) {
 		return {
 			statusCode: 302,
 			headers: {
-				Location: `https://${requestDomain}?authError=User has not been granted access to this application`
+				Location: `https://${origin}?authError=User has not been granted access to this application`
 			},
 		};
 	}
@@ -33,7 +33,7 @@ async function handleAuthResponseRequest(event) {
 	
 
 	const accessToken = jwt.sign({
-		iss: `https://${requestDomain}`,
+		iss: `https://${origin}`,
 		sub: token.sub,
 		aud: token.aud,
 	}, secret, { expiresIn: '1h' });
@@ -41,8 +41,8 @@ async function handleAuthResponseRequest(event) {
 	return {
 		statusCode: 302,
 		headers: {
-			Location: `https://${requestDomain}`,
-			'Set-Cookie': `access_token=${accessToken}; Domain=${requestDomain}; HttpOnly; Expires=${((new Date().getTime() / 1000) + (60 * 60)).toUTCString()}`,
+			Location: `https://${origin}`,
+			'Set-Cookie': `access_token=${accessToken}; Domain=${origin}; HttpOnly; Expires=${((new Date().getTime() / 1000) + (60 * 60)).toUTCString()}`,
 		},
 	}
 }
