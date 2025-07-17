@@ -16,7 +16,7 @@ function logResult(result) {
 
 exports.handler = async (event, ignoreAuth = false) => {
 	try {
-		console.log(JSON.stringify(event));
+		// console.log(JSON.stringify(event));
 
 		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
@@ -33,7 +33,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 
 		if (ignoreAuth === true) {
 			event.isAuthed = true;
-		} else if (event.headers['Cookie']) {
+		} else if (event.cookies) {
 			await authenticate(event);
 		}
 

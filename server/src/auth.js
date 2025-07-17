@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken');
 const authUrl = process.env.AUTH_URL;
 
 function verifyToken(event) {
-	console.log(event.cookies);
 	const secret = process.env.ACCESS_TOKEN_SECRET;
-	const cookies = event.headers['Cookie'].split(';').map(e => e.split('=')).reduce((acc, cur) => { acc[cur[0]] = cur[1]; return acc; }, {});
+	const cookies = event.cookies.reduce((acc, cur) => { let [key, val] = cur.split('='); acc[key] = val; return acc; }, {});
 	const token = cookies.access_token;
 
 	let verified = false;
