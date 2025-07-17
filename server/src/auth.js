@@ -3,20 +3,16 @@ const jwt = require('jsonwebtoken');
 const authUrl = process.env.AUTH_URL;
 
 function verifyToken(event) {
-	const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
-	const [, token = null] = event.headers?.authorization?.split('Bearer ') ?? [];
+	const secret = process.env.ACCESS_TOKEN_SECRET;
+	const token = event.cookies.access_token;
+	console.log(event.cookies);
 
 	let verified = false;
 	try {
 		if (token) {
-			verified = jwt.verify(token, publicKey, { algorithm: 'RS256' });
-		} else {
-			const { queryStringParameters: { jwt: queryJwt } = {} } = event;
-			if (queryJwt) {
-				verified = jwt.verify(queryJwt, publicKey, { algorithm: 'RS256' });
-			}
+			verified = jwt.verify(token, secret, { algorithm: 'RS256' });
+			console.log('Authenticated user:', verified?.sub);
 		}
-		console.log('Authenticated user:', verified?.sub);
 	} catch (e) {
 		console.error('Failed to verify JWT', e, token);
 	}
