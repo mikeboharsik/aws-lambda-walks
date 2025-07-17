@@ -31,7 +31,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 
 		if (ignoreAuth === true) {
 			event.isAuthed = true;
-		} else if (event?.headers?.authorization || event?.queryStringParameters?.jwt) {
+		} else if (event.headers['Cookie']) {
 			await authenticate(event);
 		}
 

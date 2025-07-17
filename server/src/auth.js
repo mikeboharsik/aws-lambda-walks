@@ -5,7 +5,8 @@ const authUrl = process.env.AUTH_URL;
 function verifyToken(event) {
 	console.log(event.cookies);
 	const secret = process.env.ACCESS_TOKEN_SECRET;
-	const token = event.cookies.access_token;
+	const cookies = event.headers['Cookie'].split(';').map(e => e.split('=')).reduce((acc, cur) => { acc[cur[0]] = cur[1]; return acc; }, {});
+	const token = cookies.access_token;
 
 	let verified = false;
 	try {
