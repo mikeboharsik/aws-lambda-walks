@@ -10,14 +10,14 @@ class ApiRequestHandler {
 
 	getGeoJsonResponse(statusCode, body) {
 		return {
-			...this.getResponse(statusCode, body),
+			...this.getJsonResponse(statusCode, body),
 			headers: { 'Content-Type': 'application/geo+json' },
 		};
 	}
 
 	getJsonResponse(statusCode, body = undefined) {
 		return {
-			...this.getResponse(statusCode, body),
+			...this.getResponse(statusCode, typeof body === 'string' ? body : JSON.stringify(body)),
 			headers: { 'Content-Type': 'application/json' },
 		};
 	}

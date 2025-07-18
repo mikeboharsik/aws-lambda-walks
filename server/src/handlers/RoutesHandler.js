@@ -1,4 +1,7 @@
+const fs = require('fs');
 const fsPromises = require('fs/promises');
+
+const geolib = require('geolib');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
@@ -10,6 +13,17 @@ async function getCoordsByMonth(month) {
 }
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
+async function getAllCoords() {
+	const coordsPath = `${process.env.GENERATED_PATH || '.'}/coords`;
+	const monthFiles = fs.readdirSync(coordsPath);
+	const allCoords = monthFiles.reduce((acc, file) => {
+		acc.push(JSON.parse(fs.readFileSync(coordsPath + '/' + file, 'utf8')));
+		return acc;
+	}, []);
+	return allCoords;
+}
+const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
+
 class RoutesHandler extends ApiRequestHandler {
 	constructor() {
 		super();
@@ -18,7 +32,33 @@ class RoutesHandler extends ApiRequestHandler {
 	}
 
 	async process(event) {
-		let { isAuthed, queryStringParameters: { date = null, idx = null } } = event;
+		let { isAuthed, queryStringParameters: { date = null, idx = null, nearPoint = null, nearPointRadius = 20 } } = event;
+		if (nearPoint) {
+			nearPoint = nearPoint.split(',').map(e => parseFloat(e.trim()));
+			const [targetLat, targetLon] = nearPoint;
+
+			const allCoordsByMonth = await getAllCoordsBenched();
+
+			const hitDates = [];
+			allCoordsByMonth.forEach(month => {
+				month.forEach(day => {
+					for (const { lat, lon } of (day?.coords || [])) {
+						const isHit = geolib.isPointWithinRadius(
+							{ latitude: lat, longitude: lon },
+							{ latitude: targetLat, longitude: targetLon },
+							nearPointRadius,
+						);
+						if (isHit) {
+							hitDates.push(day.date);
+							break;
+						}
+					}
+				});
+			});
+
+			return this.getJsonResponse(200, hitDates);
+		}
+
 		if (idx !== null) {
 			idx = parseInt(idx);
 		}
