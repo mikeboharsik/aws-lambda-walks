@@ -16,10 +16,10 @@ const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 async function getAllCoords() {
 	const coordsPath = `${process.env.GENERATED_PATH || '.'}/coords`;
 	const monthFiles = fs.readdirSync(coordsPath);
-	const allCoords = monthFiles.reduce((acc, file) => {
-		acc.push(JSON.parse(fs.readFileSync(coordsPath + '/' + file, 'utf8')));
-		return acc;
-	}, []);
+	const jobs = monthFiles.map(async (file) => {
+		return JSON.parse(fs.readFileSync(coordsPath + '/' + file, 'utf8'))
+	});
+	const allCoords = await Promise.all(jobs);
 	return allCoords;
 }
 const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
@@ -32,7 +32,11 @@ class RoutesHandler extends ApiRequestHandler {
 	}
 
 	async process(event) {
-		let { isAuthed, queryStringParameters: { date = null, idx = null, nearPoint = null, nearPointRadius = 20 } } = event;
+		let { isAuthed, queryStringParameters: { date = null, idx = null, nearPoint = null, nearPointRadius = 20 } = {} } = event;
+		if (!date && !nearPoint) {
+			return this.getJsonResponse(400, { error: 'query parameter date or nearPoint must be provided' });
+		}
+
 		if (nearPoint) {
 			nearPoint = nearPoint.split(',').map(e => parseFloat(e.trim()));
 			const [targetLat, targetLon] = nearPoint;
@@ -42,7 +46,21 @@ class RoutesHandler extends ApiRequestHandler {
 			const hitDates = [];
 			allCoordsByMonth.forEach(month => {
 				month.forEach(day => {
-					for (const { lat, lon } of (day?.coords || [])) {
+					if (day.bounds) {
+						const { bounds: { minLat, minLng, maxLat, maxLng } } = day;
+						const dayBoundingBox = [
+							{ latitude: minLat, longitude: minLng },
+							{ latitude: minLat, longitude: maxLng },
+							{ latitude: maxLat, longitude: maxLng },
+							{ latitude: maxLat, longitude: minLng },
+							{ latitude: minLat, longitude: minLng },
+						];
+						if (!geolib.isPointInPolygon({ latitude: targetLat, longitude: targetLon }, dayBoundingBox)) {
+							return;
+						}
+					}
+
+					for (const [lat, lon] of (day?.coords || [])) {
 						const isHit = geolib.isPointWithinRadius(
 							{ latitude: lat, longitude: lon },
 							{ latitude: targetLat, longitude: targetLon },
