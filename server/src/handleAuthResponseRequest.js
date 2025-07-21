@@ -30,8 +30,6 @@ async function handleAuthResponseRequest(event) {
 		};
 	}
 
-	
-
 	const accessToken = jwt.sign({
 		iss: `https://${origin}`,
 		sub: token.sub,
@@ -39,11 +37,15 @@ async function handleAuthResponseRequest(event) {
 		scope: 'walks.read',
 	}, secret, { expiresIn: '1h' });
 
+	const nowMs = new Date().getTime();
+	const expirationDate = new Date(nowMs + (1000 * 60 * 60));
+
 	return {
 		statusCode: 302,
 		headers: {
 			Location: `https://${origin}`,
-			'Set-Cookie': `access_token=${accessToken}; Domain=${origin}; HttpOnly; Expires=${new Date((((new Date().getTime()) / 1000) + (60 * 60)) * 1000).toUTCString()}`,
+			'Set-Cookie': `access_token=${accessToken}; Domain=${origin}; HttpOnly; Expires=${expirationDate.toUTCString()}`,
+			'Token-Expires-At': expirationDate.getTime(),
 		},
 	}
 }
