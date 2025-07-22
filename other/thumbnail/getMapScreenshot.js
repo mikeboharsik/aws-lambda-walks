@@ -65,6 +65,7 @@ async function saveScreenshot() {
 		const urlToScreenshot = `https://geojson.io/#data=data:application/json,${encodedGeojson}`;
 		await run(urlToScreenshot);
 	} catch (e) {
+		console.error('Failed to load local walk, trying remote', e);
 		const urlToScreenshot = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
 		await run(urlToScreenshot);
 	}
