@@ -1,9 +1,9 @@
 <script>
 	import * as L from 'leaflet';
-	import { getJwt } from '../util/jwt';
 	import { waitForElement } from '../util/waitForElement';
 	import { getEvents } from '../util/api';
 
+	/*
 	const jwt = getJwt();
 	if (jwt) {
 		waitForElement("#map").then(async (el) => {
@@ -33,6 +33,7 @@
 			}
 		})
 	};
+	*/
 </script>
 
 <div>

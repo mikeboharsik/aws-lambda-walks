@@ -12,7 +12,6 @@
 
 	import { getWalks, getGit, getSunx } from './util/api';
 	import { getPaddedDateString } from './util/date';
-	import { getJwt, removeJwt, storeJwt } from './util/jwt';
 
 	const PAGES = { CALENDAR: 'CALENDAR', MAPS: 'MAPS', STATS: 'STATS' };
 
@@ -118,20 +117,6 @@
 			>
 				Maps
 			</span>
-		</div>
-
-		<div style="position: absolute; top: 0.25em; left: 0.25em; cursor: pointer;">
-			{#if getJwt()}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div
-					on:click={removeJwt}
-				>
-					🧑
-				</div>
-			{:else}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div>👤</div>
-			{/if}
 		</div>
 	{:else}
 		<div style="position: absolute">

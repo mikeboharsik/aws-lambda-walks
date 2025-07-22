@@ -1,15 +1,8 @@
 import { baseApiUrl } from '../constants/api';
 import { parseCsv } from './parseCsv';
-import { getJwt } from './jwt';
 
 export function getApiOptions() {
 	let options = { headers: {} };
-
-	let accessToken = getJwt();
-	if (accessToken) {
-		options.headers.Authorization = `Bearer ${accessToken}`;
-	}
-
 	return options;
 }
 
