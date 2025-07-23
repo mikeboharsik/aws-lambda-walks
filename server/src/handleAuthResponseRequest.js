@@ -44,7 +44,7 @@ async function handleAuthResponseRequest(event) {
 		statusCode: 302,
 		cookies: [
 			`access_token=${accessToken}; Domain=${origin}; HttpOnly; Expires=${expirationDate.toUTCString()}`,
-			`access_token_valid=true; Domain=${origin}; Expires=${expirationDate.toUTCString()}`,
+			`access_token_valid_until=${expirationDate.getTime()}; Domain=${origin}; Expires=${expirationDate.toUTCString()}`,
 		],
 		headers: {
 			Location: `https://${origin}`,
