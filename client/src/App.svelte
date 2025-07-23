@@ -26,8 +26,6 @@
 	let gitHashes = {};
 
 	onMount(async() => {
-		storeJwt();
-
 		const dateStr = getPaddedDateString(new Date());
 
 		const tomorrowDate = new Date();
