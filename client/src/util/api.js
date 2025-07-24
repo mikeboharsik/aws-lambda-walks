@@ -23,8 +23,12 @@ export function withAcceptGeoJson(options) {
 
 export async function getRoute(date) {
 	const options = withAcceptTextPlain(getApiOptions());
-	return fetch(`${baseApiUrl}/routes?date=${date}`, options)
-		.then(res => res.text());
+	const res = await fetch(`${baseApiUrl}/routes?date=${date}`, options);
+	const resStr = await res.text();
+	if (res.status !== 200) {
+		throw new Error(resStr);
+	}
+	return Promise.resolve(res.text());
 }
 
 export async function getWalks(q) {
