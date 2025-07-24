@@ -28,7 +28,7 @@ export async function getRoute(date) {
 	if (res.status !== 200) {
 		throw new Error(resStr);
 	}
-	return Promise.resolve(res.text());
+	return Promise.resolve(resStr);
 }
 
 export async function getWalks(q) {
