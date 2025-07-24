@@ -23,6 +23,7 @@ async function handleApiRequest(event) {
 		
 		return await handler.process(event);
 	} catch (e) {
+		console.error('Error occurred while handling API request', e);
 		return {
 			statusCode: 400,
 			body: JSON.stringify({ error: e.message }),
