@@ -1,7 +1,13 @@
 const geolib = require('geolib');
 
 function getGeoJsonFromCoords(coords, isAuthed, privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]')) {
-	let coordinates = coords.map(([ lat, lon ]) => [lon, lat]);
+	let coordinates
+
+	if (coords.at(0) instanceof Array) {
+		coordinates = coords.map(([ lat, lon ]) => [lon, lat]);
+	} else {
+		coordinates = coords.map(({ lat, lon }) => [lon, lat]);
+	}
 
 	if (!isAuthed) {
 		coordinates = coordinates.filter(([longitude, latitude]) => {
