@@ -35,6 +35,7 @@ async function run(urlToScreenshot) {
 				width: 1280,
 				height: 720,
 			},
+			quality: 95,
 			path: `D:/wip/walks/clips/output/${date}_${idx}_thumbnail.jpeg`,
 			fullPage: true,
 		});
