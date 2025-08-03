@@ -136,7 +136,7 @@ if ($data.coords -and !$SkipCitiesPopulation) {
 
 $outputName = "$($dateStr)_trimmed.mp4"
 
-$exifPath = (Get-ChildItem './*exif.json')[0]
+$exifPath = (Get-ChildItem './*exif.json') | Select-Object -First 1
 
 if ($exifPath) {
 	$exif = Get-Content $exifPath | ConvertFrom-Json -Depth 10
