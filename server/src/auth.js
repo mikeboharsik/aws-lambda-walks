@@ -21,8 +21,11 @@ function verifyToken(event) {
 
 function verifyScope(token) {
 	const result = token.scope?.includes('walks.read');
-	if (!result) console.log('Expected token scope to include walks.read but was', token.scope);
-	return result;
+	if (!result) {
+		console.log('Expected token scope to include walks.read but was', token.scope);
+		throw new Error('Invalid scope');
+	}
+	return token;
 }
 
 async function authenticate(event) {
