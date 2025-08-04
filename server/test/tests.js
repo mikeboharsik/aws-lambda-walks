@@ -136,16 +136,19 @@ function isStringArray(result) {
 		failed ||= someFailed;
 
 		if (someFailed) {
+			
 			try {
-				console.log(JSON.parse(result.body).error);
-			} catch {}
+				process.stderr.write('Error response from API: ' + (result?.body ?? JSON.parse(result?.body || 'null')?.error) + '\n');
+			} catch (e) {
+				// process.stderr.write(e.message + '\n');
+			}
 		}
 
 		results.push({ [test.name]: assertResults });
 	}
 
 	if (failed) {
-		console.log(JSON.stringify(results.filter(e => Object.keys(e).find(k => e[k].some(r => r[1] === false))), null, '  '));
+		process.stderr.write(JSON.stringify(results.filter(e => Object.keys(e).find(k => e[k].some(r => r[1] === false))), null, '  '));
 		process.exit(1);
 	} else {
 		process.exit(0);
