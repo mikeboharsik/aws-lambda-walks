@@ -16,7 +16,7 @@ function logResult(result) {
 
 function logEvent(event) {
 	const copy = JSON.parse(JSON.stringify(event));
-	copy.cookies.forEach((cookie, idx) => {
+	copy.cookies?.forEach((cookie, idx) => {
 		if (cookie.startsWith('access_token')) {
 			const newCookie = cookie.slice(0, 10) + '...' + cookie.slice(-10);
 			copy.cookies.splice(idx, 1, newCookie);
@@ -67,6 +67,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 
 		return setJsonContentType({
 			statusCode: 500,
+			body: JSON.stringify({ error: e.message }),
 		});
 	}
 };
