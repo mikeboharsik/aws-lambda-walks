@@ -1,4 +1,4 @@
-require('./setupLoggers.js');
+const { conditionalLog } = require('./setupLoggers.js');
 
 const { authenticate } = require('./auth.js');
 const { handleApiRequest } = require('./handleApiRequest.js');
