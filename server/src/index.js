@@ -9,7 +9,7 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 function logResult(result) {
-	if (Boolean(process.env['LOG_RESULT'])) {
+	if (process.env['LOG_RESULT'] === 'true') {
 		console.log('Returning result', JSON.stringify(result, null, '  '));
 	}
 }
