@@ -16,7 +16,7 @@ function logResult(result) {
 
 exports.handler = async (event, ignoreAuth = false) => {
 	try {
-		// console.log(JSON.stringify(event));
+		console.log(JSON.stringify(event));
 
 		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
