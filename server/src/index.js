@@ -18,7 +18,8 @@ function logEvent(event) {
 	const copy = JSON.parse(JSON.stringify(event));
 	copy.cookies?.forEach((cookie, idx) => {
 		if (cookie.startsWith('access_token')) {
-			const newCookie = cookie.slice(0, 10) + '...' + cookie.slice(-10);
+			const [k, v] = cookie.split('=');
+			const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
 			copy.cookies.splice(idx, 1, newCookie);
 		}
 	});
