@@ -1,5 +1,3 @@
-const { conditionalLog } = require('./setupLoggers.js');
-
 const { authenticate } = require('./auth.js');
 const { handleApiRequest } = require('./handleApiRequest.js');
 const { handleAuthResponseRequest } = require('./handleAuthResponseRequest.js');
@@ -10,7 +8,7 @@ const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 function logResult(result) {
 	if (Boolean(process.env['LOG_RESULT'])) {
-		conditionalLog(ogLog, 'Returning result', JSON.stringify(result, null, '  '));
+		console.log('Returning result', JSON.stringify(result, null, '  '));
 	}
 }
 
@@ -19,8 +17,10 @@ function logEvent(event) {
 	copy.cookies?.forEach((cookie, idx) => {
 		if (cookie.startsWith('access_token')) {
 			const [k, v] = cookie.split('=');
-			const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
-			copy.cookies.splice(idx, 1, newCookie);
+			if (k === 'access_token') {
+				const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
+				copy.cookies.splice(idx, 1, newCookie);
+			}
 		}
 	});
 	console.log(JSON.stringify(copy));

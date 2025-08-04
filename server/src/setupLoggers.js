@@ -12,5 +12,3 @@ console.debug = (message, ...params) => conditionalLog(ogDebug, message, ...para
 console.log = (message, ...params) => conditionalLog(ogLog, message, ...params);
 console.warn = (message, ...params) => conditionalLog(ogWarn, message, ...params);
 console.error = (message, ...params) => conditionalLog(ogError, message, ...params);
-
-module.exports = { conditionalLog };
