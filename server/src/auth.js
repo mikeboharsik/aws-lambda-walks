@@ -27,7 +27,6 @@ function verifyScope(token) {
 
 async function authenticate(event) {
 	try {
-		console.log('attempting to verify token', JSON.stringify(event));
 		let verified = verifyToken(event);
 		verified &&= verifyScope(verified);
 		if (verified) {
