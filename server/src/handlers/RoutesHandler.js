@@ -1,5 +1,6 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
+const path = require('path');
 
 const geolib = require('geolib');
 
@@ -9,7 +10,12 @@ const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
 const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
 async function getCoordsByMonth(month) {
-	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/coords/${month}.json`));
+	try {
+		const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/coords/${month}.json`);
+		return JSON.parse(await fsPromises.readFile(resolvedPath));
+	} catch (e) {
+		throw new Error(`Failed to load data for month ${month}`);
+	}
 }
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
@@ -17,7 +23,8 @@ async function getAllCoords() {
 	const coordsPath = `${process.env.GENERATED_PATH || '.'}/coords`;
 	const monthFiles = fs.readdirSync(coordsPath);
 	const jobs = monthFiles.map(async (file) => {
-		return JSON.parse(fs.readFileSync(coordsPath + '/' + file, 'utf8'))
+		const resolvedPath = path.resolve(coordsPath + '/' + file, 'utf8');
+		return JSON.parse(fs.readFileSync(resolvedPath))
 	});
 	const allCoords = await Promise.all(jobs);
 	return allCoords;

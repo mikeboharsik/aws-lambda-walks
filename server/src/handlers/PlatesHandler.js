@@ -1,4 +1,5 @@
 const fsPromises = require('fs/promises');
+const path = require('path');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
@@ -26,7 +27,8 @@ async function getAllEventsByPlate(event) {
 		}
 	}
 
-	let result = JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/plates/plates.json`));
+	const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/plates/plates.json`);
+	let result = JSON.parse(await fsPromises.readFile(resolvedPath));
 
 	if (filterByName !== false) {
 		console.log(`Applying filterByName [${filterByName}]`);
@@ -105,7 +107,8 @@ class PlatesHandler extends ApiRequestHandler {
 			}
 
 			try {
-				const parsed = JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/progressiveStats/plates.json`));
+				const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/progressiveStats/plates.json`);
+				const parsed = JSON.parse(await fsPromises.readFile(resolvedPath));
 
 				const filterKey = plate ? 'plate' : 'date';
 

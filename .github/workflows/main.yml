@@ -67,7 +67,7 @@ jobs:
     - name: Setup Node.js environment
       uses: actions/setup-node@v4
       with:
-        node-version: 23.11.0
+        node-version: 22.14.0
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -93,10 +93,12 @@ jobs:
 
     - name: Run API tests
       shell: pwsh
+      env:
+        GENERATED_PATH: ${{ vars.GENERATED_PATH }}
       run: |
         Push-Location ./server/test
-        $env:GENERATED_PATH = '../../walk-routes/generated'
-        node ./tests.js
+        npm install
+        npm run test
 
     - name: Build client
       shell: pwsh
