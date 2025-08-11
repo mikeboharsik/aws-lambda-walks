@@ -11,6 +11,8 @@ const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 function logResult(result) {
 	if (process.env['LOG_RESULT'] === 'true') {
 		console.log('Returning result', JSON.stringify(result, null, '  '));
+	} else {
+		console.log('Returning status code', result.statusCode);
 	}
 }
 
@@ -68,6 +70,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 	} catch (e) {
 		console.error('Unhandled exception:', e);
 
+		console.log('Returning status code', 500);
 		return setJsonContentType({
 			statusCode: 500,
 			body: JSON.stringify({ error: e.message }),
