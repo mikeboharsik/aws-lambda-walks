@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
 const inputs = {
 	keepOriginalFiles: false,
 	metaArchiveDir: resolve(__dirname, '../..', 'walk-routes/meta_archive'),
-	nasWalksDir: resolve('H:/do_not_backup/walks'),
+	nasWalksDir: resolve('F:/wip/walks'),
 	pathToMp4s: '/DCIM/100GOPRO',
 	rootDrive: 'G:',
 	walksDir: resolve('D:/wip/walks'),
