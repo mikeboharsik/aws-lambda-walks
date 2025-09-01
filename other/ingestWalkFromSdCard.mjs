@@ -80,7 +80,7 @@ function getDateFromExifOutputs(exifOutputs) {
 	if (!exifOutputs) throw new Error('exifOutputs must have a value');
 	const createDates = exifOutputs.map(({ FileCreateDate }) => {
 		const date = new Date(FileCreateDate);
-		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate()}`;
+		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 	});
 	if (createDates.every(e => e === createDates[0])) {
 		return createDates[0];
