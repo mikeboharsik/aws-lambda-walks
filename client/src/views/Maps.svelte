@@ -2,11 +2,14 @@
 	import * as L from 'leaflet';
 	import { waitForElement } from '../util/waitForElement';
 	import { getEvents } from '../util/api';
+	import { Circle } from 'svelte-loading-spinners';
 
 	let map;
 	let features = [];
 	let clickedCoordinate = null;
 	let hitFeaturesCount = 0;
+	let isLoadingData = false;
+
 	waitForElement("#map").then(async (el) => {
 		map = L.map("map").setView(
 			[42.49982449797383, -71.10087850677222],
@@ -45,20 +48,32 @@
 </script>
 
 <div>
-	<div id="map" style="height: 720px; width: 1280px" />
+	<div id="map" style="height: 720px; width: 1280px">
+		{#if isLoadingData}
+			<div style="display: flex; position: absolute; z-index: 9999; width: 100%; height: 100%; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.2); pointer-events:none">
+				<Circle />
+			</div>
+		{/if}
+	</div>
+
 	<div>
 		<div>
 			<input placeholder="Enter plate without spaces" type="text" id="search-for-plate-value">
-			<input type="button" value="Search for plate" on:click={async (e) => {
-				const plateValue = document.querySelector('#search-for-plate-value').value;
-				const geoJson = await getEvents({ hasPlate: plateValue });
-				addFeaturesToMap(geoJson.features, map);
+			<input type="button" disabled={isLoadingData} value="Search for plate" on:click={async (e) => {
+				try {
+					const plateValue = document.querySelector('#search-for-plate-value').value;
+					isLoadingData = true;
+					const geoJson = await getEvents({ hasPlate: plateValue });
+					addFeaturesToMap(geoJson.features, map);
+				} finally {
+					isLoadingData = false;
+				}
 			}}>
 		</div>
 		<div>
 			<input placeholder="Coordinate" type="text" bind:value={clickedCoordinate} disabled>
 			<input placeholder="Radius" value=25 id="radius" type="number">
-			<input type="button" value="Search within radius" on:click={async (e) => {
+			<input type="button" disabled={isLoadingData} value="Search within radius" on:click={async (e) => {
 				const platesOnly = document.querySelector('#plates-only').checked;
 				const nonPlatesOnly = document.querySelector('#non-plates-only').checked;
 				const radius = document.querySelector('#radius').value;
@@ -72,16 +87,21 @@
 				if (nonPlatesOnly) {
 					queryParams.nonPlateOnly = true;
 				}
-				const geoJson = await getEvents(queryParams);
-				addFeaturesToMap(geoJson.features, map);
-				var circle = L.circle(clickedCoordinate, {
-						color: 'red',
-						fillColor: '#f03',
-						fillOpacity: 0.5,
-						radius: radius
-				});
-				circle.addTo(map);
-				features.push(circle);
+				try {
+					isLoadingData = true;
+					const geoJson = await getEvents(queryParams);
+					addFeaturesToMap(geoJson.features, map);
+					var circle = L.circle(clickedCoordinate, {
+							color: 'red',
+							fillColor: '#f03',
+							fillOpacity: 0.5,
+							radius: radius
+					});
+					circle.addTo(map);
+					features.push(circle);
+				} finally {
+					isLoadingData = false;
+				}
 			}}>
 		</div>
 		<div>
