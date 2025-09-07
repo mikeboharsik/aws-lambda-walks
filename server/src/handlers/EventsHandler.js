@@ -21,6 +21,8 @@ class EventsHandler extends ApiRequestHandler {
 			properties: {
 				id: event.id,
 				name: event.name,
+				time: event.coords.at(2) || 'Unknown',
+				tags: event.tags,
 				plates: event.plates?.map(e => `${e[0]} ${e[1]}`).join(', '),
 				...resiProps
 			},

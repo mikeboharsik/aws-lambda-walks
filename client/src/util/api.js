@@ -56,8 +56,8 @@ export async function getGlobalStats() {
 		.then(res => res.json());
 }
 
-export async function getEvents(targetPoint, maxRadius) {
+export async function getEvents(args) {
 	const options = withAcceptGeoJson(getApiOptions());
-	return fetch(`${baseApiUrl}/events?targetPoint=${targetPoint}&maxRadius=${maxRadius}`, options)
-		.then(res => res.json());
+	const query = Object.entries(args).map(([key, val]) => `${key}=${val}`).join('&');
+	return fetch(`${baseApiUrl}/events?${query}`, options).then(res => res.json());
 }
