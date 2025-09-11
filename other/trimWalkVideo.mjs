@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import child_process, { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { saveScreenshot } from './thumbnail/getMapScreenshot.js';
 
 function fileDoesExist(path) {
 	try {
@@ -28,6 +29,38 @@ function millisecondsToTimespan(ms) {
 	return `${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
+async function getCoordinateData(lat, lon) {
+	return fetch(`http://127.0.0.1:8080/reverse.php?lat=${lat}&lon=${lon}&zoom=18&layer=address&format=jsonv2`)
+		.then(r => r.json())
+		.then(r => ({
+			city: r.address.city,
+			state: r.address['ISO3166-2-lvl4'].replace('US-', ''),
+			town: r.address.town,
+		}));
+}
+
+async function getStatesAndTownsForWalk(walk) {
+	const coordJobs = walk.coords.reduce((acc, cur, idx) => {
+		if (idx % 10 === 0) {
+			acc.push(getCoordinateData(cur.lat, cur.lon));
+		}
+		return acc;
+	}, []);
+	const points = await Promise.all(coordJobs);
+	const statesAndTowns = points.reduce((acc, { city, state, town }) => {
+		const cityOrTown = town || city;
+		if (acc[state]) {
+			if (!acc[state].includes(cityOrTown)) {
+				acc[state].push(cityOrTown);
+			}
+		} else {
+			acc[state] = [town];
+		}
+		return acc;
+	}, {});
+	return statesAndTowns;
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -35,8 +68,10 @@ const inputs = {
 	commit: false,
 	date: null,
 	metaArchiveDir: path.resolve(__dirname, '../..', 'walk-routes/meta_archive'),
-	walksDir: path.resolve('D:/wip/walks'),
+	thumbnailDir: path.resolve(__dirname, 'thumbnail'),
 	outputDir: path.resolve('D:/wip/walks/clips/output'),
+	videos: null,
+	walksDir: path.resolve('D:/wip/walks'),
 };
 
 const inputKeys = Object.keys(inputs);
@@ -50,13 +85,17 @@ process.argv.slice(2).forEach(keyval => {
 });
 
 if (!argWasProvided) {
-	console.log(inputs);
+	console.log(inputKeys);
 	process.exit(0);
 }
 
 if (!inputs.date) {
 	throw new Error(`date must be specified but was [${inputs.date}]`);
 }
+if (inputs.videos) {
+	inputs.videos = JSON.parse(inputs.videos);
+}
+console.log(JSON.stringify(inputs, null, 2));
 
 const [year, month, day] = inputs.date.split('-');
 
@@ -74,12 +113,13 @@ const originalWalks = JSON.parse(fs.readFileSync(expectedMetaFilePath, 'utf8'));
 if (originalWalks.length > 1) {
 	throw new Error('Accounting for multiple walks in a single day is not yet implemented');
 }
+const walk = originalWalks.at(0);
 
 const outputFilePath = path.resolve(inputs.outputDir, `${year}-${month}-${day}_trimmed.mp4`);
 if (fileDoesExist(outputFilePath)) {
 	console.log(`Output file [${outputFilePath}] already exists, skipping ffmpeg`);
 } else {
-	const walk = originalWalks.at(0);
+	
 	const ffmpegArgs = [
 		`-ss ${walk.startMark}`,
 		`-to ${walk.endMark}`,
@@ -87,9 +127,28 @@ if (fileDoesExist(outputFilePath)) {
 		'-c copy',
 		outputFilePath,
 	];
+
 	if (inputs.commit === 'true') {
 		child_process.execSync(`ffmpeg ${ffmpegArgs.join(' ')}`);
 	} else {
 		console.log({ ffmpegArgs });
 	}
 }
+
+getStatesAndTownsForWalk(walk)
+	.then(statesAndTowns => {
+		if (walk.towns) {
+			console.log(`Towns have already been calculated for [${inputs.date}], skipping`);
+		} else {
+			if (inputs.commit) {
+				walk.towns = statesAndTowns;
+				fs.writeFileSync(expectedMetaFilePath, JSON.stringify(originalWalks, null, 2), 'utf8');
+			} else {
+				console.log('walk.towns =', JSON.stringify(statesAndTowns));
+			}
+		}
+
+		if (inputs.commit) {
+			saveScreenshot(inputs.date, 0);
+		}
+	});

@@ -3,8 +3,7 @@ const WalkFileManager = require('../../../walk-routes/utility/WalkFileManager');
 const { getGeoJsonFromCoords } = require('../../server/src/getGeoJsonFromCoords');
 const privacyZones = require('../../../walk-routes/meta_archive/privacyZones.json');
 
-async function run(urlToScreenshot) {
-	let [,, date, idx = 0, zoom = undefined] = process.argv;
+async function run(urlToScreenshot, date, idx, zoom) {
 
 	try {
 		const browser = await firefox.launch();
@@ -46,9 +45,7 @@ async function run(urlToScreenshot) {
 	}
 }
 
-async function saveScreenshot() {
-	const [,, date, idx = 0] = process.argv;
-
+async function saveScreenshot(date, idx = 0, zoom) {
 	if (!date) {
 		console.error('Missing date');
 		process.exit(1);
@@ -64,12 +61,12 @@ async function saveScreenshot() {
 		};
 		const encodedGeojson = encodeURIComponent(JSON.stringify(geojson));
 		const urlToScreenshot = `https://geojson.io/#data=data:application/json,${encodedGeojson}`;
-		await run(urlToScreenshot);
+		await run(urlToScreenshot, date, idx, zoom);
 	} catch (e) {
 		console.error('Failed to load local walk, trying remote', e);
 		const urlToScreenshot = await fetch(`https://2milesaday.com/api/routes?date=${date}&idx=${idx}`, { headers: { accept: 'text/plain' } }).then(r => r.text());
-		await run(urlToScreenshot);
+		await run(urlToScreenshot, date, idx, zoom);
 	}
 }
 
-saveScreenshot();
+module.exports = { saveScreenshot };
