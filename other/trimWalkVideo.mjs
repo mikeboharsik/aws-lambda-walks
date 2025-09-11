@@ -67,8 +67,10 @@ const __dirname = path.dirname(__filename);
 const inputs = {
 	commit: false,
 	date: null,
+	forceThumbnail: false,
 	metaArchiveDir: path.resolve(__dirname, '../..', 'walk-routes/meta_archive'),
 	thumbnailDir: path.resolve(__dirname, 'thumbnail'),
+	thumbnailZoom: null,
 	outputDir: path.resolve('D:/wip/walks/clips/output'),
 	videos: null,
 	walksDir: path.resolve('D:/wip/walks'),
@@ -137,18 +139,40 @@ if (fileDoesExist(outputFilePath)) {
 
 getStatesAndTownsForWalk(walk)
 	.then(statesAndTowns => {
+		let didUpdateWalk = false;
+
 		if (walk.towns) {
 			console.log(`Towns have already been calculated for [${inputs.date}], skipping`);
 		} else {
 			if (inputs.commit) {
 				walk.towns = statesAndTowns;
-				fs.writeFileSync(expectedMetaFilePath, JSON.stringify(originalWalks, null, 2), 'utf8');
+				didUpdateWalk |= true;
 			} else {
 				console.log('walk.towns =', JSON.stringify(statesAndTowns));
 			}
 		}
 
-		if (inputs.commit) {
-			saveScreenshot(inputs.date, 0);
+		if (walk.videos) {
+			console.log(`Videos have already been populated for [${inputs.date}], skipping`);
+		} else {
+			if (inputs.commit) {
+				walk.videos = inputs.videos;
+				didUpdateWalk |= true;
+			} else {
+				console.log('walk.videos =', JSON.stringify(inputs.videos));
+			}
+		}
+
+		if (didUpdateWalk) {
+			fs.writeFileSync(expectedMetaFilePath, JSON.stringify(originalWalks, null, 2), 'utf8');
+		}
+
+		const expectedThumbnailPath = path.resolve(inputs.outputDir, `${inputs.date}_0_thumbnail.jpeg`);
+		if (fileDoesExist(expectedThumbnailPath) && !inputs.forceThumbnail) {
+			console.log(`Thumbnail has already been generated at [${expectedThumbnailPath}], skipping`);
+		} else {
+			if (inputs.commit || inputs.forceThumbnail) {
+				saveScreenshot(inputs.date, 0, inputs.forceThumbnail && parseFloat(inputs.thumbnailZoom));
+			}
 		}
 	});
