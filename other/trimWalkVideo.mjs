@@ -123,8 +123,8 @@ if (fileDoesExist(outputFilePath)) {
 } else {
 	
 	const ffmpegArgs = [
-		`-ss ${walk.startMark}`,
-		`-to ${walk.endMark}`,
+		`-ss ${millisecondsToTimespan(walk.startMark)}`,
+		`-to ${millisecondsToTimespan(walk.endMark)}`,
 		`-i ${expectedMergedFilePath}`,
 		'-c copy',
 		outputFilePath,
