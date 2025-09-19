@@ -10,7 +10,7 @@ async function run(urlToScreenshot, date, idx, zoom) {
 		const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
 		const page = await context.newPage();
 		await page.goto(urlToScreenshot);
-		await page.click('.mapboxgl-canvas');
+		await page.locator('button:text("Outdoors")').click();
 		await page.waitForTimeout(3000);
 
 		const pageUrl = page.url();
@@ -35,7 +35,7 @@ async function run(urlToScreenshot, date, idx, zoom) {
 				height: 720,
 			},
 			quality: 95,
-			path: `D:/wip/walks/clips/output/${date}_${idx}_thumbnail.jpeg`,
+			path: `D:/wip/walks/${date}_${idx}_thumbnail.jpeg`,
 			fullPage: true,
 		});
 		await browser.close();

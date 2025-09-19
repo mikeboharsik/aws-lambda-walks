@@ -124,9 +124,8 @@ function getMetaArchiveFilePathFromDate(date) {
 	return resolve(inputs.metaArchiveDir, year, month, day + '.json');
 }
 
-function getOutputDir(date) {
-	if (!date) throw new Error('date must have a value');
-	return resolve(inputs.walksDir, date);
+function getOutputDir() {
+	return resolve(inputs.walksDir);
 }
 
 function getOutputFilePathFromDate(date) {
@@ -142,9 +141,6 @@ function getNasFilePathFromDate(date) {
 async function createOutputDirIfNecessary(date) {
 	if (!date) throw new Error('date must have a value');
 	const walksDirs = await readdir(inputs.walksDir);
-	if (!walksDirs.includes(date)) {
-		await mkdir(resolve(inputs.walksDir, date));
-	}
 }
 
 async function createMetaArchiveFileIfNecessary(date) {

@@ -71,7 +71,7 @@ const inputs = {
 	metaArchiveDir: path.resolve(__dirname, '../..', 'walk-routes/meta_archive'),
 	thumbnailDir: path.resolve(__dirname, 'thumbnail'),
 	thumbnailZoom: null,
-	outputDir: path.resolve('D:/wip/walks/clips/output'),
+	outputDir: path.resolve('D:/wip/walks'),
 	videos: null,
 	walksDir: path.resolve('D:/wip/walks'),
 };
@@ -106,7 +106,7 @@ if (!fileDoesExist(expectedMetaFilePath)) {
 	throw new Error(`Specified file [${expectedMetaFilePath}] does not exist`);
 }
 
-const expectedMergedFilePath = path.resolve(inputs.walksDir, `${year}-${month}-${day}`, `${year}-${month}-${day}_merged.mp4`);
+const expectedMergedFilePath = path.resolve(inputs.walksDir, `${year}-${month}-${day}_merged.mp4`);
 if (!fileDoesExist(expectedMergedFilePath)) {
 	throw new Error(`Specified file [${expectedMergedFilePath}] does not exist`);
 }
