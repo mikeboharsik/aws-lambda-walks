@@ -34,8 +34,15 @@ class JumpToEventHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
 		
-		const [, hours, minutes, seconds] = result.trimmedStart.match(/(\d{2}):(\d{2}):(\d{2})/);
-		const totalSeconds = (parseInt(hours) * 60 * 60) + (parseInt(minutes) * 60) + parseInt(seconds);
+		let totalSeconds;
+		if (result.start) {
+			totalSeconds = Math.floor(result.start / 1000);
+		} else if (result.trimmedStart) {
+			totalSeconds = Math.floor(result.trimmedStart / 1000);
+		} else {
+			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
+		}
+
 		const redirectUrl = `https://youtu.be/${result.youtubeId}?t=${totalSeconds}`;
 
 		return this.getTemporaryRedirectResponse(redirectUrl);
