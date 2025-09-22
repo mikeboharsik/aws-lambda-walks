@@ -43,7 +43,7 @@ class JumpToEventHandler extends ApiRequestHandler {
 			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
 		}
 
-		const redirectUrl = `https://youtu.be/${result.youtubeId}?t=${totalSeconds}`;
+		const redirectUrl = `https://youtu.be/${result.walkYoutubeId}?t=${totalSeconds}`;
 
 		return this.getTemporaryRedirectResponse(redirectUrl);
 	}
