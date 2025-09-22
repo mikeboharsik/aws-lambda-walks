@@ -61,7 +61,6 @@ class EventsHandler extends ApiRequestHandler {
 			this.validateRequest(event);
 
 			let {
-				isAuthed,
 				queryStringParameters: {
 					targetPoint = null,
 					after = null,
