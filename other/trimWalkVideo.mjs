@@ -3,6 +3,7 @@ import path from 'path';
 import child_process, { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { saveScreenshot } from './thumbnail/getMapScreenshot.js';
+import getSectionsFromExif from './getSectionsFromExif.mjs';
 
 function fileDoesExist(path) {
 	try {
@@ -74,6 +75,8 @@ const inputs = {
 	outputDir: path.resolve('D:/wip/walks'),
 	videos: null,
 	walksDir: path.resolve('D:/wip/walks'),
+	ss: null,
+	to: null,
 };
 
 const inputKeys = Object.keys(inputs);
@@ -121,10 +124,19 @@ const outputFilePath = path.resolve(inputs.outputDir, `${year}-${month}-${day}_t
 if (fileDoesExist(outputFilePath)) {
 	console.log(`Output file [${outputFilePath}] already exists, skipping ffmpeg`);
 } else {
-	
+	const sections = getSectionsFromExif({ exif: walk.exif });
+	walk.sections = sections;
+	const gapMs = sections.reduce((acc, section, idx, arr) => {
+		if (idx < arr.length - 1) {
+			return acc + (arr[idx + 1].start - section.end);
+		}
+		return acc;
+	}, 0);
+	const calculatedEnd = millisecondsToTimespan(walk.endMark - gapMs);
+
 	const ffmpegArgs = [
-		`-ss ${millisecondsToTimespan(walk.startMark)}`,
-		`-to ${millisecondsToTimespan(walk.endMark)}`,
+		`-ss ${inputs.ss || millisecondsToTimespan(walk.startMark)}`,
+		`-to ${inputs.to || calculatedEnd}`,
 		`-i ${expectedMergedFilePath}`,
 		'-c copy',
 		outputFilePath,
