@@ -172,6 +172,18 @@ getStatesAndTownsForWalk(walk)
 				didUpdateWalk |= true;
 			} else {
 				console.log('walk.videos =', JSON.stringify(inputs.videos));
+				Object.keys(inputs.videos).forEach((videoId) => {
+					fetch(`https://www.youtube.com/watch?v=${videoId}`)
+						.then(r => r.text())
+						.then(r => {
+							const matches = r.match(/<meta property="og:title" content="(.*?)">/);
+							if (matches) {
+								console.log(`[${videoId}] title is [${matches[1]}]`);
+							} else {
+								console.log(`Failed to find title for ${videoId}`);
+							}
+						});
+				});
 			}
 		}
 
