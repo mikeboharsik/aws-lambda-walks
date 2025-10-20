@@ -149,6 +149,16 @@ if (fileDoesExist(outputFilePath)) {
 	}
 }
 
+if (inputs.ss) {
+	walk.startMark = timespanToMilliseconds(inputs.ss);
+	console.log(`Set walk.startMark to [${walk.startMark}]`);
+}
+
+if (inputs.to) {
+	walk.endMark = timespanToMilliseconds(inputs.to);
+	console.log(`Set walk.endMark to [${walk.endMark}]`);
+}
+
 getStatesAndTownsForWalk(walk)
 	.then(statesAndTowns => {
 		let didUpdateWalk = false;
