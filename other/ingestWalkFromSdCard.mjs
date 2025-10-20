@@ -76,16 +76,19 @@ async function getAllFiles() {
 	return await renameDefaultFiles(files);
 }
 
-function getDateFromExifOutputs(exifOutputs) {
+function getExifOutputsByDate(exifOutputs) {
 	if (!exifOutputs) throw new Error('exifOutputs must have a value');
-	const createDates = exifOutputs.map(({ FileCreateDate }) => {
+	return exifOutputs.reduce((acc, exif) => {
+		const { FileCreateDate, FileName, SourceFile } = exif;
 		const date = new Date(FileCreateDate);
-		return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-	});
-	if (createDates.every(e => e === createDates[0])) {
-		return createDates[0];
-	}
-	throw new Error(`Detected more than one date associated with the video files, which is not yet supported`);
+		const yyyyMMdd = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+		if (yyyyMMdd in acc) {
+			acc[yyyyMMdd].push(exif);
+		} else {
+			acc[yyyyMMdd] = [exif];
+		}
+		return acc;
+	}, {});
 }
 
 function getNormalizedExifOutputs(videoPaths) {
@@ -197,7 +200,7 @@ async function writeExifOutputs(exifOutputs, date) {
 	console.log('Wrote exifOutputs to', filePath);
 }
 
-async function getWalkUpload(date) {
+async function getWalkUpload(date, idx = 0) {
 	if (!date) throw new Error('date must have a value');
 
 	const expectedFilePath = getMetaArchiveFilePathFromDate(date);
@@ -206,12 +209,12 @@ async function getWalkUpload(date) {
 		return;
 	}
 
-	const from = `personalgdrive:/Walk Uploads/${date}_1.json`;
+	const from = `personalgdrive:/Walk Uploads/${date}_${idx+1}.json`;
 	const to = resolve(expectedFilePath, '..');
 	const command = `rclone copy "${from}" "${to}"`;
 	console.log('Executing command', command);
 	child_process.execSync(command);
-	await rename(resolve(to, `${date}_1.json`), resolve(to, expectedFilePath));
+	await rename(resolve(to, `${date}_${idx+1}.json`), resolve(to, expectedFilePath));
 	const parsed = JSON.parse(await readFile(expectedFilePath, 'utf8'));
 	await writeFile(expectedFilePath, JSON.stringify([parsed], null, 2), 'utf8');
 }
@@ -317,9 +320,8 @@ async function backupMergedFileToNas(date) {
 	throw new Error(`Tried to find [${localFilePath}] for backup to NAS but it does not exist`);
 }
 
-async function deleteOriginalFiles(allFiles, date) {
+async function deleteOriginalFiles(allFiles) {
 	if (!allFiles) throw new Error('allFiles must have a value');
-	if (!date) throw new Error('date must have a value');
 
 	if (inputs.keepOriginalFiles === 'true') {
 		console.log('Leaving original files as-is');
@@ -347,12 +349,17 @@ const allFiles = await getAllFiles();
 const videoFiles = allFiles.filter(e => e.match('.MP4'));
 const videoPaths = videoFiles.map(e => resolve(fullPathToFiles, e));
 const exifOutputs = getNormalizedExifOutputs(videoPaths);
-const date = getDateFromExifOutputs(exifOutputs);
+const exifOutputsByDate = getExifOutputsByDate(exifOutputs);
 
-await getWalkUpload(date);
-await writeExifOutputs(exifOutputs, date);
-commitWalkFile(date);
-await copyOriginalFilesToLocal(videoPaths, date);
-await backupMergedFileToNas(date);
-await deleteOriginalFiles(allFiles, date);
+for (const date of Object.keys(exifOutputsByDate)) {
+	const exifsForDate = exifOutputsByDate[date];
+	await getWalkUpload(date);
+	await writeExifOutputs(exifsForDate, date);
+	commitWalkFile(date);
+	const videoPathsForDate = videoPaths.filter(vp => exifsForDate.some(ex => resolve(ex.SourceFile) === vp));
+	await copyOriginalFilesToLocal(videoPathsForDate, date);
+	await backupMergedFileToNas(date);
+};
+
+await deleteOriginalFiles(allFiles);
 ejectSdCard();
