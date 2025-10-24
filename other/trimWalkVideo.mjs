@@ -77,6 +77,7 @@ const inputs = {
 	walksDir: path.resolve('D:/wip/walks'),
 	ss: null,
 	to: null,
+	skipGit: false,
 };
 
 const inputKeys = Object.keys(inputs);
@@ -203,13 +204,13 @@ getStatesAndTownsForWalk(walk)
 		const commitCommand = `git commit -m "feat: add sections, towns, and videos to ${dateReplaced}.json"`;
 		const pushCommand = 'git push';
 
-		if (!inputs.commit) {
+		if (!inputs.commit || inputs.skipGit) {
 			console.log(`Would run command [${stageCommand}]`);
 			console.log(`Would run command [${commitCommand}]`);
 			console.log(`Would run command [${pushCommand}]`);
 		}
 
-		if (didUpdateWalk) {
+		if (didUpdateWalk && !inputs.skipGit) {
 			fs.writeFileSync(expectedMetaFilePath, JSON.stringify(originalWalks, null, 2), 'utf8');
 
 			child_process.execSync(stageCommand, { cwd });
