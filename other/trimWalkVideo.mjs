@@ -197,8 +197,29 @@ getStatesAndTownsForWalk(walk)
 			}
 		}
 
+		const cwd = inputs.metaArchiveDir;
+		const dateReplaced = inputs.date.replace(/-/g, '/');
+		const stageCommand = `git add *${dateReplaced}.json`;
+		const commitCommand = `git commit -m "add sections, towns, and videos to ${dateReplaced}.json"`;
+		const pushCommand = 'git push';
+
+		if (!inputs.commit) {
+			console.log(`Would run command [${stageCommand}]`);
+			console.log(`Would run command [${commitCommand}]`);
+			console.log(`Would run command [${pushCommand}]`);
+		}
+
 		if (didUpdateWalk) {
 			fs.writeFileSync(expectedMetaFilePath, JSON.stringify(originalWalks, null, 2), 'utf8');
+
+			child_process.execSync(stageCommand, { cwd });
+			console.log(`Ran command [${stageCommand}]`);
+
+			child_process.execSync(commitCommand, { cwd });
+			console.log(`Ran command [${commitCommand}]`);
+
+			child_process.execSync(pushCommand, { cwd });
+			console.log(`Ran command [${pushCommand}]`);
 		}
 
 		const expectedThumbnailPath = path.resolve(inputs.outputDir, `${inputs.date}_0_thumbnail.jpeg`);
