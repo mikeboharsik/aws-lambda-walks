@@ -200,7 +200,7 @@ getStatesAndTownsForWalk(walk)
 		const cwd = inputs.metaArchiveDir;
 		const dateReplaced = inputs.date.replace(/-/g, '/');
 		const stageCommand = `git add *${dateReplaced}.json`;
-		const commitCommand = `git commit -m "add sections, towns, and videos to ${dateReplaced}.json"`;
+		const commitCommand = `git commit -m "feat: add sections, towns, and videos to ${dateReplaced}.json"`;
 		const pushCommand = 'git push';
 
 		if (!inputs.commit) {
