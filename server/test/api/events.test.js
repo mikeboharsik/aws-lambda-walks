@@ -14,6 +14,14 @@ test('returns 200 with JSON if authed', async () => {
 	const body = JSON.parse(result.body);
 
 	expect(result.statusCode).toBe(200);
+
+	expect(body instanceof Array).toBe(true);	
+
 	const expectedKeys = ['id'];
-	expectedKeys.forEach(key => body.forEach(event => expect(event).toHaveProperty(key)));
+	expectedKeys.forEach(key => {
+		body.forEach(event => {
+			expect(event instanceof Object).toBe(true);
+			expect(event).toHaveProperty(key)
+		});
+	});
 });
