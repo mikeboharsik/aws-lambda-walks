@@ -2,7 +2,7 @@ const fsPromises = require('fs/promises');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
-const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
+const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
 async function getAllYoutubeIds() {
 	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/youtubeIds/youtubeIds.json`));

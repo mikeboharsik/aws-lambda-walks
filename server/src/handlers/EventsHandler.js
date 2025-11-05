@@ -1,8 +1,8 @@
 const geolib = require('geolib');
 
-const { getAllEvents } = require('../getAllEvents.js');
-
 const { ApiRequestHandler } = require('./ApiRequestHandler');
+
+const getAllEvents = require('../util/getAllEvents.js');
 
 class EventsHandler extends ApiRequestHandler {
 	constructor() {

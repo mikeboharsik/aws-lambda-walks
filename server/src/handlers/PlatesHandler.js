@@ -3,7 +3,7 @@ const path = require('path');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
-const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
+const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
 async function getAllEventsByPlate(event) {
 	let {

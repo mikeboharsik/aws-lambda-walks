@@ -1,5 +1,5 @@
 const fsPromises = require('fs/promises');
-const { getBenchmarkedFunctionAsync } = require('./getBenchmarkedFunction.js');
+const { getBenchmarkedFunctionAsync } = require('./util/getBenchmarkedFunction.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
 
 async function getWalksByMonth(event) {

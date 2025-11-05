@@ -6,7 +6,7 @@ const geolib = require('geolib');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
-const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
+const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
 async function getCoordsByMonth(month) {

@@ -1,14 +1,5 @@
-const fsPromises = require('fs/promises');
-
 const { ApiRequestHandler } = require('./ApiRequestHandler');
-
-const { getBenchmarkedFunctionAsync } = require('../getBenchmarkedFunction.js');
-
-async function getAllEvents(event) {
-	const content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/events/all.json`);
-	return JSON.parse(content);
-}
-const getAllEventsBenched = getBenchmarkedFunctionAsync(getAllEvents);
+const getEvent = require('../util/getEvent.js');
 
 class JumpToEventHandler extends ApiRequestHandler {
 	constructor() {
@@ -27,9 +18,7 @@ class JumpToEventHandler extends ApiRequestHandler {
 			});
 		}
 
-		const allEvents = await getAllEventsBenched();
-		const result = allEvents.find(ev => ev.id === id);
-
+		const result = await getEvent(id);
 		if (!result) {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
