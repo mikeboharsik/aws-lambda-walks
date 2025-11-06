@@ -3,6 +3,7 @@ const geolib = require('geolib');
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const getAllEvents = require('../util/getAllEvents.js');
+const getEvent = require('../util/getEvent.js');
 
 class EventsHandler extends ApiRequestHandler {
 	constructor() {
@@ -62,6 +63,7 @@ class EventsHandler extends ApiRequestHandler {
 
 			let {
 				queryStringParameters: {
+					id = null,
 					targetPoint = null,
 					after = null,
 					before = null,
@@ -75,6 +77,19 @@ class EventsHandler extends ApiRequestHandler {
 			const { headers: { accept } } = event;
 			const acceptHeader = accept?.toLowerCase() || 'application/json';
 			const didRequestGeoJson = acceptHeader === 'application/geo+json';
+
+			if (id) {
+				try {
+					const event = await getEvent(id);
+					if (event) {
+						return this.getJsonResponse(200, event);
+					} else {
+						throw new Error(`Failed to find event ${id}`);
+					}
+				} catch (e) {
+					return this.getJsonResponse(404, { error: e.message });
+				}
+			}
 
 			let hits = await getAllEvents();
 			if (didRequestGeoJson) {
