@@ -15,7 +15,7 @@ async function getEvent(id) {
 	}
 
 	const events = JSON.parse(await fsPromises.readFile(targetPath));
-	return events.find(ev => ev.id === id);
+	return events[id];
 }
 
 module.exports = getEvent;
