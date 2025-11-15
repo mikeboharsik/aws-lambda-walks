@@ -126,10 +126,13 @@
 			>
 		</div>
 		{#if tab === TABS.WALK_DISTANCE}
+			{@const longestRun = globalStatsData.runs.toSorted(({ length: a }, { length: b }) => a < b ? 1 : a > b ? -1 : 0).at(0)}
 			<div style="width: 540px; margin-top: 3em">
 				Summary across {globalStatsData.totalWalks} walks
 				<br>
 				Total distance: {(globalStatsData.totalDistance / 1609).toFixed(2)} miles
+				<br>
+				Most consecutive walk days: {longestRun.length} ({longestRun.startDate} to {longestRun.endDate})
 			</div>
 		{:else if tab === TABS.TOWNS}
 			<div style="width: 540px; margin-top: 3em">
