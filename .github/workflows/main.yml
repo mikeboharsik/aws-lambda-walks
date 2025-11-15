@@ -78,10 +78,10 @@ jobs:
     - name: Generate walk data
       run: |
         pushd ./walk-routes
-        pushd utility
+        pushd ./utility
         npm install
-        popd
-        node -e "const g = require('./utility/WalkDataGenerator'); new g().generateAll();"
+        pushd ./WalkDataGenerator
+        node -e "const g = require('./index.js'); new g().generate();"
 
     - name: Install server packages
       shell: pwsh
