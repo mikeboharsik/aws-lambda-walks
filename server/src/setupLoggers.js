@@ -4,7 +4,7 @@ const ogWarn = console.warn;
 const ogError = console.error;
 
 function conditionalLog(func, message, ...params) {
-	if (process.env.AWS_EXECUTION_ENV) {
+	if (process.env.AWS_EXECUTION_ENV || process.env.ENABLE_LOGGING) {
 		return func(message, ...params);
 	}
 }
