@@ -96,7 +96,7 @@ if (!argWasProvided) {
 }
 
 if (!inputs.date) {
-	throw new Error(`date must be specified but was [${inputs.date}]`);
+	inputs.date = new Date().toISOString().substring(0, 10);
 }
 if (inputs.videos) {
 	inputs.videos = JSON.parse(inputs.videos);
