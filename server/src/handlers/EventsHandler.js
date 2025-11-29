@@ -71,6 +71,7 @@ class EventsHandler extends ApiRequestHandler {
 					nonPlateOnly = false,
 					maxRadius = null,
 					hasPlate = null,
+					missingYoutubeIdOnly = false,
 				} = {},
 			} = event;
 
@@ -127,6 +128,9 @@ class EventsHandler extends ApiRequestHandler {
 			}
 			if (nonPlateOnly) {
 				hits = hits.filter(e => e.name && !e.plates?.length);
+			}
+			if (missingYoutubeIdOnly) {
+				hits = hits.filter(e => !e.youtubeId);
 			}
 		
 			if (didRequestGeoJson) {
