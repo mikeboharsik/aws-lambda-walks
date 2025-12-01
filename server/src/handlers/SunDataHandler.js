@@ -19,13 +19,20 @@ class SunDataHandler extends ApiRequestHandler {
 		}
 
 		try {
-			const response = await fetch(`https://api.sunrise-sunset.org/json?lat=${process.env.SUNX_LATITUDE}&lng=${process.env.SUNX_LONGITUDE}&formatted=0&date=${date}`);
-			const responseJson = await response.json();
+			const url = `https://api.sunrise-sunset.org/json?lat=${process.env.SUNX_LATITUDE}&lng=${process.env.SUNX_LONGITUDE}&formatted=0&date=${date}`;
+			const options = {
+				headers: {
+					Referer: process.env.PUBLIC_HOST,
+				}
+			};
+			console.log(`Fetching sun data from URL [${url}] with options [${JSON.stringify(options)}]`);
 
+			const response = await fetch(url, options);
 			if (!response.ok) {
 				throw new Error(responseJson.status);
 			}
 
+			const responseJson = await response.json();
 			return this.getJsonResponse(200, JSON.stringify(responseJson));
 		} catch(e) {
 			return this.getJsonResponse(400, JSON.stringify({ message: e.message }));
