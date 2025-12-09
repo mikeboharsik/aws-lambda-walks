@@ -19,7 +19,7 @@ async function handleApiRequest(event) {
 			return { statusCode: 401 };
 		}
 
-		handler.validateRequest(event);
+		await handler.validateRequest(event);
 		
 		return await handler.process(event);
 	} catch (e) {

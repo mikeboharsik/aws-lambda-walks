@@ -38,6 +38,8 @@ class EventsHandler extends ApiRequestHandler {
 	async validateRequest(event) {
 		const {
 			queryStringParameters: {
+				after = null,
+				before = null,
 				targetPoint = null,
 				plateOnly = false,
 				nonPlateOnly = false,
@@ -46,14 +48,26 @@ class EventsHandler extends ApiRequestHandler {
 			} = {},
 		} = event;
 
+		const errors = [];
+
 		if (hasPlate && nonPlateOnly) {
-			throw new Error('hasPlate and nonPlateOnly are mutually exclusive');
+			errors.push('hasPlate and nonPlateOnly are mutually exclusive');
 		}
 		if (plateOnly && nonPlateOnly) {
-			throw new Error('plateOnly and nonPlateOnly are mutually exclusive');
+			errors.push('plateOnly and nonPlateOnly are mutually exclusive');
 		}
 		if (!targetPoint && maxRadius) {
-			throw new Error('targetPoint must be provided');
+			errors.push('targetPoint must be provided');
+		}
+		if (after && isNaN(after)) {
+			errors.push('after must be a valid timestamp');
+		}
+		if (before && isNaN(before)) {
+			errors.push('before must be a valid timestamp');
+		}
+
+		if (errors.length) {
+			throw new Error(errors.join(', '));
 		}
 	}
 
@@ -103,12 +117,18 @@ class EventsHandler extends ApiRequestHandler {
 				hits = hits.filter(e => e.plates?.map(([state, value]) => state + value.replace(validPlateCharacterPattern, '')).includes(hasPlate));
 			}
 			
+			if (after) {
+				hits = hits.filter(e => (e.mark && e.mark >= after) || (e.coords && e.coords[2] >= after));
+			}
+
+			if (before) {
+				hits = hits.filter(e => (e.mark && e.mark <= before) || (e.coords && e.coords[2] <= before));
+			}
+
 			if (maxRadius) {
 				const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
 				hits = hits.reduce((acc, event) => {
 					if (!event.coords) return acc;
-					if (before && event?.mark >= before) return acc; 
-					if (after && event?.mark <= after) return acc;
 
 					const [lat, lon] = event.coords;
 					const isHit = geolib.isPointWithinRadius(
