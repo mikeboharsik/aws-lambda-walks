@@ -127,8 +127,10 @@ class EventsHandler extends ApiRequestHandler {
 			}
 
 			if (nameNotIncludes) {
-				const target = nameNotIncludes.toLowerCase();
-				hits = hits.filter(e => !e.name || !e.name.toLowerCase().includes(target));
+				const targets = nameNotIncludes.split(',').map(e => e.toLowerCase());
+				targets.forEach(target => {
+					hits = hits.filter(e => !e.name || !e.name.toLowerCase().includes(target));
+				});
 			}
 
 			if (maxRadius) {
