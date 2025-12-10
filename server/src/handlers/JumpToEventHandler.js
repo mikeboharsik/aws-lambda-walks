@@ -9,7 +9,7 @@ class JumpToEventHandler extends ApiRequestHandler {
 	}
 
 	async process(event) {
-		const { queryStringParameters: { id = null } = {} } = event;
+		const { isAuthed, queryStringParameters: { id = null } = {} } = event;
 
 		if (!id) {
 			return setJsonContentType({
@@ -23,18 +23,20 @@ class JumpToEventHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
 		
-		let totalSeconds;
-		if (result.start) {
-			totalSeconds = Math.floor(result.start / 1000);
-		} else if (result.trimmedStart) {
-			totalSeconds = Math.floor(result.trimmedStart / 1000);
-		} else {
+		const eventStartTime = result.coords?.[2] || result.start || result.trimmedStart;
+		const walkStartTime = result.walkStartTime;
+		if (!eventStartTime) {
 			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
 		}
 
-		const redirectUrl = `https://youtu.be/${result.walkYoutubeId}?t=${totalSeconds}`;
+		const eventStartTimeInSeconds = Math.floor((eventStartTime - walkStartTime) / 1000);
 
-		return this.getTemporaryRedirectResponse(redirectUrl);
+		if (isAuthed && result.walkPrivateYoutubeId) {
+			return this.getTemporaryRedirectResponse(`https://youtu.be/${result.walkPrivateYoutubeId}?t=${eventStartTimeInSeconds}`);
+		} else {
+			const trimmedOffset = Math.floor(result.walkTrimmedOffset / 1000);
+			return this.getTemporaryRedirectResponse(`https://youtu.be/${result.walkYoutubeId}?t=${eventStartTimeInSeconds - trimmedOffset}`);
+		}
 	}
 };
 
