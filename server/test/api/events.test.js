@@ -40,7 +40,7 @@ test('returns single event when id is provided', async () => {
 	});
 });
 
-test('returns only events after after', async () => {
+test('returns only events after after when it\'s a timestamp', async () => {
 	const cutoff = new Date('2025-01-01').getTime();
 	const result = await callHandler(PATH, `?after=${cutoff}`, null, true);
 	const body = JSON.parse(result.body);
@@ -54,16 +54,30 @@ test('returns only events after after', async () => {
 	});
 });
 
+test('returns only events after after when it\'s an ISO datetime', async () => {
+	const cutoff = '2025-01-01T00:00:00Z';
+	const result = await callHandler(PATH, `?after=${cutoff}`, null, true);
+	const body = JSON.parse(result.body);
+
+	expect(result.statusCode).toBe(200);
+	expect(body instanceof Array).toBe(true);
+
+	body.forEach(ev => {
+		ev.mark && expect(ev.mark >= cutoff);
+		!ev.mark && ev.coords && expect(ev.coords[2]).toBeGreaterThanOrEqual(new Date(cutoff).getTime());
+	});
+});
+
 test('returns error if after is not a valid timestamp', async () => {
 	const result = await callHandler(PATH, `?after=whocares`, null, true);
 	const body = JSON.parse(result.body);
 
 	expect(result.statusCode).toBe(400);
 	expect(body instanceof Object).toBe(true);
-	expect(body.error).toBe('after must be a valid timestamp');
+	expect(body.error).toBe('after must be a valid timestamp or ISO datetime');
 });
 
-test('returns only events before before', async () => {
+test('returns only events before before when it\'s a timestamp', async () => {
 	const cutoff = new Date('2024-01-01').getTime();
 	const result = await callHandler(PATH, `?before=${cutoff}`, null, true);
 	const body = JSON.parse(result.body);
@@ -77,13 +91,27 @@ test('returns only events before before', async () => {
 	});
 });
 
+test('returns only events before before when it\'s an ISO datetime', async () => {
+	const cutoff = '2025-06-01T00:00:00Z';
+	const result = await callHandler(PATH, `?before=${cutoff}`, null, true);
+	const body = JSON.parse(result.body);
+
+	expect(result.statusCode).toBe(200);
+	expect(body instanceof Array).toBe(true);
+
+	body.forEach(ev => {
+		ev.mark && expect(ev.mark >= cutoff);
+		!ev.mark && ev.coords && expect(ev.coords[2]).toBeLessThanOrEqual(new Date(cutoff).getTime());
+	});
+});
+
 test('returns error if before is not a valid timestamp', async () => {
 	const result = await callHandler(PATH, `?before=whocares`, null, true);
 	const body = JSON.parse(result.body);
 
 	expect(result.statusCode).toBe(400);
 	expect(body instanceof Object).toBe(true);
-	expect(body.error).toBe('before must be a valid timestamp');
+	expect(body.error).toBe('before must be a valid timestamp or ISO datetime');
 });
 
 test('returns error if after and before are not valid timestamps', async () => {
@@ -92,7 +120,7 @@ test('returns error if after and before are not valid timestamps', async () => {
 
 	expect(result.statusCode).toBe(400);
 	expect(body instanceof Object).toBe(true);
-	expect(body.error).toBe('after must be a valid timestamp, before must be a valid timestamp');
+	expect(body.error).toBe('after must be a valid timestamp or ISO datetime, before must be a valid timestamp or ISO datetime');
 });
 
 test('returns only events whose name does not include specified strings', async () => {

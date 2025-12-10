@@ -60,10 +60,20 @@ class EventsHandler extends ApiRequestHandler {
 			errors.push('targetPoint must be provided');
 		}
 		if (after && isNaN(after)) {
-			errors.push('after must be a valid timestamp');
+			const datetime = new Date(after);
+			if (isNaN(datetime)) {
+				errors.push('after must be a valid timestamp or ISO datetime');
+			} else {
+				event.queryStringParameters.after = datetime.getTime();
+			}
 		}
 		if (before && isNaN(before)) {
-			errors.push('before must be a valid timestamp');
+			const datetime = new Date(before);
+			if (isNaN(datetime)) {
+				errors.push('before must be a valid timestamp or ISO datetime');
+			} else {
+				event.queryStringParameters.before = datetime.getTime();
+			}
 		}
 
 		if (errors.length) {
