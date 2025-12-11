@@ -176,6 +176,12 @@ class EventsHandler extends ApiRequestHandler {
 				delete e.walkTrimmedOffset;
 				delete e.walkExif;
 			});
+
+			hits.sort((a, b) => {
+				const aTime = a.coords?.[2] || a.mark;
+				const bTime = b.coords?.[2] || b.mark; 
+				return aTime < bTime ? -1 : aTime > bTime ? 1 : 0;
+			});
 		
 			if (didRequestGeoJson) {
 				const geojson = {
