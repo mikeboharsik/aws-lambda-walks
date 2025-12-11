@@ -170,6 +170,12 @@ class EventsHandler extends ApiRequestHandler {
 			if (missingYoutubeIdOnly) {
 				hits = hits.filter(e => !e.youtubeId);
 			}
+
+			hits.forEach(e => {
+				delete e.walkStartTime;
+				delete e.walkTrimmedOffset;
+				delete e.walkExif;
+			});
 		
 			if (didRequestGeoJson) {
 				const geojson = {
