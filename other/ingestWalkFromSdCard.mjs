@@ -3,6 +3,7 @@ import { createReadStream } from 'fs';
 import { basename, dirname, resolve } from 'path';
 import child_process from 'child_process';
 import { createHash } from 'crypto';
+import { getVideoDurationInSeconds } from 'get-video-duration';
 
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -93,7 +94,18 @@ function getExifOutputsByDate(exifOutputs) {
 
 function getNormalizedExifOutputs(videoPaths) {
 	if (!videoPaths) throw new Error('videoPaths must have a value');
-	const raw = child_process.execSync(`exiftool -api LargeFileSupport=1 ${videoPaths.join(' ')} -json`).toString();
+	const properties = [
+		'AudioBitsPerSample',
+		'AudioSampleRate',
+		'BitDepth',
+		'FileCreateDate',
+		'ImageSize',
+		'SourceFile',
+		'VideoFrameRate'
+	].map(e => '-' + e).join(' ');
+	const exifToolCommand = `exiftool -api LargeFileSupport=1 ${properties} ${videoPaths.join(' ')} -json`;
+	console.log(`Running exiftool command [${exifToolCommand}]`);
+	const raw = child_process.execSync(exifToolCommand).toString();
 	const parsed = JSON.parse(raw);
 	parsed.forEach(entry => {
 		Object.entries(entry).forEach(([k, v]) => {
@@ -121,6 +133,31 @@ function getNormalizedExifOutputs(videoPaths) {
 	return parsed;
 }
 
+async function getVideoDurations(videoPaths) {
+	const jobs = videoPaths.map((path) => {
+		return (async () => {
+			const duration = await getVideoDurationInSeconds(path).then(dur => Math.round(dur * 1000));
+			return { path: path.replace(/\\/g, '/'), duration };
+		})();
+	});
+
+	return await Promise.all(jobs);
+}
+
+function mergeVideoDurationsIntoExifByDate(exifByDate, videoDurations) {
+	const dates = Object.keys(exifByDate);
+	dates.forEach(date => {
+		const exifForDate = exifByDate[date];
+		exifForDate.forEach(exif => {
+			videoDurations.forEach(videoDuration => {
+				if (exif.SourceFile === videoDuration.path) {
+					exif.DurationMs = videoDuration.duration;
+				}
+			});
+		});
+	});
+}
+
 function getMetaArchiveFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
 	const [year, month, day] = date.split('-');
@@ -143,7 +180,7 @@ function getNasFilePathFromDate(date) {
 
 async function createOutputDirIfNecessary(date) {
 	if (!date) throw new Error('date must have a value');
-	const walksDirs = await readdir(inputs.walksDir);
+	await readdir(inputs.walksDir);
 }
 
 async function createMetaArchiveFileIfNecessary(date) {
@@ -354,6 +391,8 @@ const videoFiles = allFiles.filter(e => e.match('.MP4'));
 const videoPaths = videoFiles.map(e => resolve(fullPathToFiles, e));
 const exifOutputs = getNormalizedExifOutputs(videoPaths);
 const exifOutputsByDate = getExifOutputsByDate(exifOutputs);
+const videoDurations = await getVideoDurations(videoPaths);
+mergeVideoDurationsIntoExifByDate(exifOutputsByDate, videoDurations);
 
 for (const date of Object.keys(exifOutputsByDate)) {
 	const exifsForDate = exifOutputsByDate[date];

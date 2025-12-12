@@ -25,16 +25,14 @@ function getSectionsFromExif({ date, exif } = {}) {
 		exif = getExifForDate(date);
 	}
 
-	const startsAndEnds = exif.map(({ Duration, FileCreateDate, FileModifyDate, SourceFile }) => {
+	const startsAndEnds = exif.map(({ DurationMs, FileCreateDate, FileModifyDate, SourceFile }) => {
 		const [chapter, idx] = SourceFile.match(/(GX)_(\d{4})_(\d{2})/).slice(2);
-		const [hours, minutes, seconds] = Duration.split(':').map(e => parseInt(e));
-		const duration = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000);
 		const start = new Date(FileCreateDate).getTime();
 		const end = new Date(FileModifyDate).getTime();
 		return {
 			chapter,
 			idx,
-			duration,
+			duration: DurationMs,
 			start,
 			end,
 		}

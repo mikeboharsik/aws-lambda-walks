@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "geolib": "^3.3.4"
+    "geolib": "^3.3.4",
+    "get-video-duration": "^5.0.0"
   }
 }
