@@ -23,7 +23,7 @@ class JumpToEventHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
 		
-		const eventStartTime = result.coords?.[2] || result.start || result.trimmedStart;
+		const eventStartTime = result.timestamp || result.start || result.trimmedStart;
 		const walkStartTime = result.walkStartTime;
 		if (!eventStartTime) {
 			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
