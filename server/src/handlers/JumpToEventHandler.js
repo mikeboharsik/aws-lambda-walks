@@ -18,24 +18,34 @@ class JumpToEventHandler extends ApiRequestHandler {
 			});
 		}
 
-		const result = await getEvent(id);
-		if (!result) {
+		const event = await getEvent(id);
+		if (!event) {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
 		
-		const eventStartTime = result.timestamp || result.start || result.trimmedStart;
-		const walkStartTime = result.walkStartTime;
+		let eventStartTime = 0;
+		if (event.start) {
+			eventStartTime = event.start;
+		} else if (event.timestamp) {
+			eventStartTime = event.timestamp;
+		}
+		
 		if (!eventStartTime) {
 			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
 		}
 
+		const walkStartTime = event.walkStartTime;
+		if (!walkStartTime) {
+			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event\'s walk' }));
+		}		
+
 		const eventStartTimeInSeconds = Math.floor((eventStartTime - walkStartTime) / 1000);
 
-		if (isAuthed && result.walkPrivateYoutubeId) {
-			return this.getTemporaryRedirectResponse(`https://youtu.be/${result.walkPrivateYoutubeId}?t=${eventStartTimeInSeconds}`);
+		if (isAuthed && event.walkPrivateYoutubeId) {
+			return this.getTemporaryRedirectResponse(`https://youtu.be/${event.walkPrivateYoutubeId}?t=${eventStartTimeInSeconds}`);
 		} else {
-			const trimmedOffset = Math.floor(result.walkTrimmedOffset / 1000);
-			return this.getTemporaryRedirectResponse(`https://youtu.be/${result.walkYoutubeId}?t=${eventStartTimeInSeconds - trimmedOffset}`);
+			const trimmedStart = Math.floor(event.walkTrimmedStart / 1000);
+			return this.getTemporaryRedirectResponse(`https://youtu.be/${event.walkYoutubeId}?t=${eventStartTimeInSeconds - trimmedStart}`);
 		}
 	}
 };
