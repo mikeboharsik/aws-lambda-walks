@@ -23,9 +23,14 @@ class JumpToEventHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `Failed to find event with ID [${id}]` }));
 		}
 		
+		const walkStartTime = event.walkStartTime;
+		if (!walkStartTime) {
+			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event\'s walk' }));
+		}
+
 		let eventStartTime = 0;
 		if (event.start) {
-			eventStartTime = event.start;
+			eventStartTime = walkStartTime + event.start;
 		} else if (event.timestamp) {
 			eventStartTime = event.timestamp;
 		}
@@ -33,11 +38,6 @@ class JumpToEventHandler extends ApiRequestHandler {
 		if (!eventStartTime) {
 			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event' }));
 		}
-
-		const walkStartTime = event.walkStartTime;
-		if (!walkStartTime) {
-			return this.getJsonResponse(500, JSON.stringify({ error: 'Could not find a start time for the event\'s walk' }));
-		}		
 
 		const eventStartTimeInSeconds = Math.floor((eventStartTime - walkStartTime) / 1000);
 
