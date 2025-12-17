@@ -219,3 +219,16 @@ test('returns error when maxRadius is used without targetPoint', async () => {
 	expect(body instanceof Object).toBe(true);
 	expect(body.error).toBe('targetPoint must be provided');
 });
+
+test('returns events that only contain the props given in the select parameter', async () => {
+	const select = ['id'];
+	const result = await callHandler(PATH, `?&select=${select.join(',')}`, null, true);
+	const body = JSON.parse(result.body);
+
+	expect(result.statusCode).toBe(200);
+	expect(body instanceof Array).toBe(true);
+
+	body.forEach(event => {
+		expect(Object.keys(event)).toEqual(select);
+	});
+});

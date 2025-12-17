@@ -97,6 +97,7 @@ class EventsHandler extends ApiRequestHandler {
 					hasPlate = null,
 					missingYoutubeIdOnly = false,
 					nameNotIncludes = null,
+					select = null,
 				} = {},
 			} = event;
 
@@ -182,6 +183,16 @@ class EventsHandler extends ApiRequestHandler {
 				const bTime = b.coords?.[2] || b.mark; 
 				return aTime < bTime ? -1 : aTime > bTime ? 1 : 0;
 			});
+
+			if (select) {
+				select = select.split(',');
+				hits = hits.reduce((acc, hit) => {
+					const truncated = {};
+					select.forEach(prop => truncated[prop] = hit[prop]);
+					acc.push(truncated);
+					return acc;
+				}, []);
+			}
 		
 			if (didRequestGeoJson) {
 				const geojson = {
