@@ -130,11 +130,11 @@ class EventsHandler extends ApiRequestHandler {
 			}
 			
 			if (after) {
-				hits = hits.filter(e => (e.mark && e.mark >= after) || (e.coords && e.coords[2] >= after));
+				hits = hits.filter(e => (e.timestamp && e.timestamp >= after) || (e.mark && e.mark >= after));
 			}
 
 			if (before) {
-				hits = hits.filter(e => (e.mark && e.mark <= before) || (e.coords && e.coords[2] <= before));
+				hits = hits.filter(e => (e.timestamp && e.timestamp <= before) || (e.mark && e.mark <= before));
 			}
 
 			if (nameNotIncludes) {
