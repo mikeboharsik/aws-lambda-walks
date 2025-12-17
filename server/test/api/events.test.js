@@ -50,7 +50,7 @@ test('returns only events after after when it\'s a timestamp', async () => {
 
 	body.forEach(ev => {
 		ev.mark && expect(ev.mark >= cutoff);
-		!ev.mark && ev.coords && expect(ev.coords[2]).toBeGreaterThanOrEqual(cutoff);
+		!ev.mark && ev.coords && expect(ev.timestamp).toBeGreaterThanOrEqual(cutoff);
 	});
 });
 
@@ -64,7 +64,7 @@ test('returns only events after after when it\'s an ISO datetime', async () => {
 
 	body.forEach(ev => {
 		ev.mark && expect(ev.mark >= cutoff);
-		!ev.mark && ev.coords && expect(ev.coords[2]).toBeGreaterThanOrEqual(new Date(cutoff).getTime());
+		!ev.mark && ev.coords && expect(ev.timestamp).toBeGreaterThanOrEqual(new Date(cutoff).getTime());
 	});
 });
 
@@ -87,7 +87,7 @@ test('returns only events before before when it\'s a timestamp', async () => {
 
 	body.forEach(ev => {
 		ev.mark && expect(ev.mark >= cutoff);
-		!ev.mark && ev.coords && expect(ev.coords[2]).toBeLessThanOrEqual(cutoff);
+		!ev.mark && ev.coords && expect(ev.timestamp).toBeLessThanOrEqual(cutoff);
 	});
 });
 
@@ -101,7 +101,7 @@ test('returns only events before before when it\'s an ISO datetime', async () =>
 
 	body.forEach(ev => {
 		ev.mark && expect(ev.mark >= cutoff);
-		!ev.mark && ev.coords && expect(ev.coords[2]).toBeLessThanOrEqual(new Date(cutoff).getTime());
+		!ev.mark && ev.coords && expect(ev.timestamp).toBeLessThanOrEqual(new Date(cutoff).getTime());
 	});
 });
 
