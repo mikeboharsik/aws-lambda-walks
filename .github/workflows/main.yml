@@ -22,9 +22,11 @@ permissions:
   contents: read  # This is required for actions/checkout
 
 jobs:
-  aws_deploy:
-    name: Deploy to AWS
+  test_and_build_client_and_server:
+    name: Test and build client and server
     runs-on: ubuntu-latest
+    outputs:
+      client_and_server_artifact-id: ${{ steps.publish-build-folder.outputs.artifact-id }}
     steps:
     - name: Generate a token
       id: generate-token
@@ -68,12 +70,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 22.14.0
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-region: us-east-1
-        role-to-assume: ${{ vars.AWS_ROLE_ARN }}
 
     - name: Generate walk data
       run: |
@@ -119,11 +115,51 @@ jobs:
         New-Item -Type Directory "./build" | Out-Null
         $gitData | ConvertTo-Json -Depth 10 -Compress | Set-Content "./build/git.json"
 
-    - name: Deploy to CloudFront
+    - name: Create build artifact
       shell: pwsh
       run: |
         Push-Location ./server
-        
+        .\Invoke-CreateArtifact.ps1
+
+    - name: Publish build folder
+      id: publish-build-folder
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: server/build/deployable.zip
+        retention-days: 1
+
+  aws_deploy_client_and_server:
+    name: Deploy client and server to AWS
+    runs-on: ubuntu-latest
+    needs: test_and_build_client_and_server
+    steps:
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ vars.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+        repositories: "aws-lambda-walks"
+
+    - name: Checkout aws-lambda-walks
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: us-east-1
+        role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v7
+      with:
+        artifact-ids: ${{needs.test_and_build_client_and_server.outputs.client_and_server_artifact-id}}
+
+    - name: Deploy to CloudFront
+      shell: pwsh
+      run: |        
         $distId = "${{ vars.CLOUDFLARE_DISTRIBUTION_ID }}"
         Write-Host "Deploying to CF distribution $($distId)`n"
 
@@ -146,13 +182,7 @@ jobs:
 
         Write-Host "Running Invoke-Upload.ps1 with args [$(ConvertTo-Json -Depth 10 $scriptArgs)]"
 
+        Push-Location ./server
         .\Invoke-Upload.ps1 @scriptArgs
 
         Write-Host "Invoke-Upload.ps1 completed with result [$?]`n"
-
-    - name: Publish build folder
-      uses: actions/upload-artifact@v4
-      with:
-        name: build
-        path: server/build
-        retention-days: 1
