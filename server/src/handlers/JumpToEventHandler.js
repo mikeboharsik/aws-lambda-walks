@@ -8,8 +8,8 @@ class JumpToEventHandler extends ApiRequestHandler {
 		this.requiresAuth = false;
 	}
 
-	async process(event) {
-		const { isAuthed, queryStringParameters: { id = null } = {} } = event;
+	async process(requestEvent) {
+		const { isAuthed, queryStringParameters: { id = null } = {} } = requestEvent;
 
 		if (!id) {
 			return setJsonContentType({
