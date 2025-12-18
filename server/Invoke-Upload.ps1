@@ -23,11 +23,13 @@ Write-Host "Using arguments:`n"
 
 $ErrorActionPreference = 'Stop'
 
+Write-Host "Get-ChildItem: $(Get-ChildItem)"
+
 if (!$DistributionId) {
 	$DistributionId = Read-Host "No CloudFront distribution ID provided, please enter one or hit Enter to skip cache invalidation"
 }
 
-aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/build/deployable.zip" | ConvertFrom-Json -AsHashtable -Depth 10 | ConvertTo-Json -Depth 10 -Compress
+aws --no-cli-pager lambda update-function-code --function-name "walks" --zip-file "fileb://$PSScriptRoot/deployable.zip" | ConvertFrom-Json -AsHashtable -Depth 10 | ConvertTo-Json -Depth 10 -Compress
 
 if ($DistributionId) {
 	$result = aws cloudfront create-invalidation --distribution-id $DistributionId --paths $InvalidationPaths | ConvertFrom-Json -AsHashtable

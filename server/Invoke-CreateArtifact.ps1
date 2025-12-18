@@ -15,7 +15,8 @@ Copy-Item -Path @("$PSScriptRoot/src/**", "$PSScriptRoot/node_modules") -Recurse
 
 Copy-Item -Path "$PSScriptRoot/../client/public" -Recurse -Destination "$PSScriptRoot/build/public" -Force | Out-Null
 
-Copy-Item -Recurse $GeneratedPath "$PSScriptRoot/build"
+New-Item -Path "$PSScriptRoot/build/generated" -ItemType Directory -Force | Out-Null
+Copy-Item -Recurse $GeneratedPath "$PSScriptRoot/build/generated"
 
 Write-Host "Everything except node_modules:" (Get-ChildItem "$PSScriptRoot/build/**" -Recurse -File | Where-Object { $_.FullName -NotMatch "node_modules" } | ForEach-Object { $_.FullName } | ConvertTo-Json -Depth 10 -Compress)
 

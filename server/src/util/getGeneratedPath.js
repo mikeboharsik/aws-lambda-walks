@@ -1,10 +1,10 @@
 const path = require('path');
 
 function getGeneratedPath(subfolder = null) {
-	const rootPath = path.resolve(process.env.GENERATED_PATH || '.');
+	const rootPath = path.resolve(process.env.GENERATED_PATH || './generated');
 
 	if (subfolder) {
-		return path.resolve(rootPath, 'events');
+		return path.resolve(rootPath, subfolder);
 	}
 	
 	return rootPath;

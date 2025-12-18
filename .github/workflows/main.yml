@@ -156,6 +156,7 @@ jobs:
       uses: actions/download-artifact@v7
       with:
         artifact-ids: ${{needs.test_and_build_client_and_server.outputs.client_and_server_artifact-id}}
+        path: ./server
 
     - name: Deploy to CloudFront
       shell: pwsh
