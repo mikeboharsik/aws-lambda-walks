@@ -1,6 +1,7 @@
 const fsPromises = require('fs/promises');
 const { getBenchmarkedFunctionAsync } = require('./util/getBenchmarkedFunction.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
+const getGeneratedPath = require('./util/getGeneratedPath.js');
 
 async function getWalksByMonth(event) {
 	const { headers: { accept }, queryStringParameters: { q: month } = {} } = event;
@@ -15,7 +16,7 @@ async function getWalksByMonth(event) {
 	}
 
 	const ext = didRequestCsv ? '.csv' : '.json';
-	let content = await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/walks/${month}${ext}`);
+	let content = await fsPromises.readFile(`${getGeneratedPath()}/walks/${month}${ext}`);
 	content = didRequestCsv ? content.toString() : JSON.parse(content);
 	const contentHeader = { 'content-type': didRequestCsv ? 'text/csv' : 'application/json' };
 	return {

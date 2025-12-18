@@ -5,6 +5,8 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
+const getGeneratedPath = require('./util/getGeneratedPath.js');
+
 async function getAllEventsByPlate(event) {
 	let {
 		queryStringParameters: {
@@ -27,7 +29,7 @@ async function getAllEventsByPlate(event) {
 		}
 	}
 
-	const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/plates/plates.json`);
+	const resolvedPath = path.resolve(`${getGeneratedPath()}/plates/plates.json`);
 	let result = JSON.parse(await fsPromises.readFile(resolvedPath));
 
 	if (filterByName !== false) {
@@ -107,7 +109,7 @@ class PlatesHandler extends ApiRequestHandler {
 			}
 
 			try {
-				const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/progressiveStats/plates.json`);
+				const resolvedPath = path.resolve(`${getGeneratedPath()}/progressiveStats/plates.json`);
 				const parsed = JSON.parse(await fsPromises.readFile(resolvedPath));
 
 				const filterKey = plate ? 'plate' : 'date';

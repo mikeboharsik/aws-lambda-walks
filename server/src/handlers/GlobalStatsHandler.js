@@ -4,8 +4,10 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
+const getGeneratedPath = require('./util/getGeneratedPath.js');
+
 async function getGlobalStats() {
-	return JSON.parse(await fsPromises.readFile(`${process.env.GENERATED_PATH || '.'}/globalStats/globalStats.json`));
+	return JSON.parse(await fsPromises.readFile(`${getGeneratedPath()}/globalStats/globalStats.json`));
 }
 const getGlobalStatsBenched = getBenchmarkedFunctionAsync(getGlobalStats);
 

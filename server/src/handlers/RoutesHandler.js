@@ -9,9 +9,11 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
+const getGeneratedPath = require('./util/getGeneratedPath.js');
+
 async function getCoordsByMonth(month) {
 	try {
-		const resolvedPath = path.resolve(`${process.env.GENERATED_PATH || '.'}/coords/${month}.json`);
+		const resolvedPath = path.resolve(`${getGeneratedPath()}/coords/${month}.json`);
 		return JSON.parse(await fsPromises.readFile(resolvedPath));
 	} catch (e) {
 		throw new Error(`Failed to load data for month ${month}`);
@@ -20,7 +22,7 @@ async function getCoordsByMonth(month) {
 const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
 
 async function getAllCoords() {
-	const coordsPath = `${process.env.GENERATED_PATH || '.'}/coords`;
+	const coordsPath = `${getGeneratedPath()}/coords`;
 	const monthFiles = fs.readdirSync(coordsPath);
 	const jobs = monthFiles.map(async (file) => {
 		const resolvedPath = path.resolve(coordsPath + '/' + file, 'utf8');
