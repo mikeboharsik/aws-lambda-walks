@@ -96,6 +96,7 @@ class EventsHandler extends ApiRequestHandler {
 					maxRadius = null,
 					hasPlate = null,
 					missingYoutubeIdOnly = false,
+					nameIncludes = null,
 					nameNotIncludes = null,
 					select = null,
 				} = {},
@@ -135,6 +136,13 @@ class EventsHandler extends ApiRequestHandler {
 
 			if (before) {
 				hits = hits.filter(e => (e.timestamp && e.timestamp <= before) || (e.mark && e.mark <= before));
+			}
+
+			if (nameIncludes) {
+				const targets = nameIncludes.split(',').map(e => e.toLowerCase());
+				targets.forEach(target => {
+					hits = hits.filter(e => e.name && e.name.toLowerCase().includes(target));
+				});
 			}
 
 			if (nameNotIncludes) {
