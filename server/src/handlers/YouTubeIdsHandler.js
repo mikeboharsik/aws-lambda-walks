@@ -4,7 +4,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
-const getGeneratedPath = require('./util/getGeneratedPath.js');
+const getGeneratedPath = require('../util/getGeneratedPath.js');
 
 async function getAllYoutubeIds() {
 	return JSON.parse(await fsPromises.readFile(`${getGeneratedPath()}/youtubeIds/youtubeIds.json`));

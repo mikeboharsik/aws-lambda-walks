@@ -5,7 +5,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 
-const getGeneratedPath = require('./util/getGeneratedPath.js');
+const getGeneratedPath = require('../util/getGeneratedPath.js');
 
 async function getAllEventsByPlate(event) {
 	let {

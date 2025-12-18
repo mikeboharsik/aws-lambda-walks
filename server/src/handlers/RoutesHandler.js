@@ -9,7 +9,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
 const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
-const getGeneratedPath = require('./util/getGeneratedPath.js');
+const getGeneratedPath = require('../util/getGeneratedPath.js');
 
 async function getCoordsByMonth(month) {
 	try {
