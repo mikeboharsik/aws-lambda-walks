@@ -49,7 +49,7 @@
 		features.push(circle);
 
 		events.forEach((f) => {
-			const feature = L.circle([f.coords[0], f.coords[1]], { color: f.resi ? 'yellow' : 'blue', radius: 0.5 }).addTo(map);
+			const feature = L.circle([f.coords[0], f.coords[1]], { color: f.resi ? 'yellow' : f.name?.startsWith('Camera|') ? 'green' : 'blue', radius: 0.5 }).addTo(map);
 			const { id, name, plates, tags, timestamp } = f;
 			feature.bindPopup(
 `<div title="${id}" style="cursor: pointer" onclick="navigator.clipboard.writeText('${id}'); return false;">
