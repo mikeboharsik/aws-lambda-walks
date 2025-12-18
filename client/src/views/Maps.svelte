@@ -36,23 +36,33 @@
 		}
 	}
 
-	function addFeaturesToMap(fs, map) {
+	function addFeaturesToMap(events, map) {
 		removeFeaturesFromMap(map);
-		fs.forEach((f) => {
-			const feature = L.geoJSON(f).addTo(map);
-			const { properties: { id, name, plates, tags, time } } = f;
+
+		var circle = L.circle(clickedCoordinate, {
+			color: 'red',
+			fillColor: '#f03',
+			fillOpacity: 0.5,
+			radius: document.querySelector('#radius').value,
+		});
+		circle.addTo(map);
+		features.push(circle);
+
+		events.forEach((f) => {
+			const feature = L.circle([f.coords[0], f.coords[1]], { color: f.resi ? 'yellow' : 'blue', radius: 0.5 }).addTo(map);
+			const { id, name, plates, tags, timestamp } = f;
 			feature.bindPopup(
-`<div title="${id}" style="cursor: pointer" onclick="navigator.clipboard.writeText('${id}')">
+`<div title="${id}" style="cursor: pointer" onclick="navigator.clipboard.writeText('${id}'); return false;">
 	${name ?? plates ?? 'Tags: ' + tags}
 	<br>
-	${time === 'Unknown' ? 'Unknown time' : new Date(time).toISOString()}
+	${timestamp ? new Date(timestamp).toISOString() : 'Unknown'}
 	<br>
 	<a href="https://2milesaday.com/api/jumpToEvent?id=${id}" target="_blank">Jump to event</a>
 </div>`
 );
 			features.push(feature);
 		});
-		hitFeaturesCount = fs.length;
+		hitFeaturesCount = events.length;
 	}
 </script>
 
@@ -72,8 +82,8 @@
 				try {
 					const plateValue = document.querySelector('#search-for-plate-value').value;
 					isLoadingData = true;
-					const geoJson = await getEvents({ hasPlate: plateValue });
-					addFeaturesToMap(geoJson.features, map);
+					const events = await getEvents({ hasPlate: plateValue });
+					addFeaturesToMap(events, map);
 				} finally {
 					isLoadingData = false;
 				}
@@ -98,16 +108,8 @@
 				}
 				try {
 					isLoadingData = true;
-					const geoJson = await getEvents(queryParams);
-					addFeaturesToMap(geoJson.features, map);
-					var circle = L.circle(clickedCoordinate, {
-							color: 'red',
-							fillColor: '#f03',
-							fillOpacity: 0.5,
-							radius: radius
-					});
-					circle.addTo(map);
-					features.push(circle);
+					const events = await getEvents(queryParams);
+					addFeaturesToMap(events, map);
 				} finally {
 					isLoadingData = false;
 				}
