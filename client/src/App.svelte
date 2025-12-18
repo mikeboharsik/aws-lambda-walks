@@ -73,7 +73,7 @@
 
 <svelte:window on:keydown={({ altKey, code, shiftKey }) => {
 	if (altKey && shiftKey && code === 'KeyN') {
-		window.location.href = `https://auth.mikeboharsik.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/authresp&response_type=id_token`;
+		window.location.href = `https://auth.2milesaday.com/authorize?client_id=walks_20250427_140121&redirect_uri=${window.location.origin}/authresp&response_type=id_token`;
 	}
 }} />
 
@@ -107,6 +107,7 @@
 			>
 				Stats
 			</span>
+			{#if document.cookie.includes('access_token_valid_until')}
 			|
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<span
@@ -115,6 +116,7 @@
 			>
 				Maps
 			</span>
+			{/if}
 		</div>
 	{:else}
 		<div style="position: absolute">

@@ -63,16 +63,28 @@
 			},
 			{},
 		);
+		const biggestN = 6;
+		const entries = Object.entries(data);
+		const biggest = entries.slice(0, biggestN);
+		const rest = entries.slice(biggestN);
+		const result = biggest.reduce((acc, [key, val]) => {
+			acc[key] = val;
+			return acc;
+		}, {});
+		rest.reduce((acc, [key, val]) => {
+			acc.Other ? acc.Other += val : acc.Other = val;
+			return acc;
+		}, result);
 		chart?.destroy();
 		waitForElement('#testChart').then(() => {
 			chart = new Chart(document.getElementById("testChart"), {
 				type: "pie",
 				data: {
-					labels: Object.keys(data),
+					labels: Object.keys(result),
 					datasets: [
 						{
-							label: "Town",
-							data: Object.values(data),
+							label: "Walks",
+							data: Object.values(result),
 						},
 					],
 				},
