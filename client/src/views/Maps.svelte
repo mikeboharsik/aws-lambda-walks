@@ -40,7 +40,16 @@
 		removeFeaturesFromMap(map);
 		fs.forEach((f) => {
 			const feature = L.geoJSON(f).addTo(map);
-			feature.bindPopup(`<div title="${f.properties.id}">${f.properties.name ?? f.properties.plates ?? 'Tags: ' + f.properties.tags}<br>${f.properties.time === 'Unknown' ? 'Unknown time' : new Date(f.properties.time).toISOString()}<br><a href="https://2milesaday.com/api/jumpToEvent?id=${f.properties.id}" target="_blank">Jump to event</a></div>`);
+			const { properties: { id, name, plates, tags, time } } = f;
+			feature.bindPopup(
+`<div title="${id}" style="cursor: pointer" onclick="navigator.clipboard.writeText('${id}')">
+	${name ?? plates ?? 'Tags: ' + tags}
+	<br>
+	${time === 'Unknown' ? 'Unknown time' : new Date(time).toISOString()}
+	<br>
+	<a href="https://2milesaday.com/api/jumpToEvent?id=${id}" target="_blank">Jump to event</a>
+</div>`
+);
 			features.push(feature);
 		});
 		hitFeaturesCount = fs.length;
