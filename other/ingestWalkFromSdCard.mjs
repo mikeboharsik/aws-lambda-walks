@@ -394,7 +394,11 @@ const exifOutputsByDate = getExifOutputsByDate(exifOutputs);
 const videoDurations = await getVideoDurations(videoPaths);
 mergeVideoDurationsIntoExifByDate(exifOutputsByDate, videoDurations);
 
-for (const date of Object.keys(exifOutputsByDate)) {
+
+const dates = Object.keys(exifOutputsByDate);
+console.log(`Found videos for the following dates: [${dates.join(', ')}]`);
+
+for (const date of dates) {
 	const exifsForDate = exifOutputsByDate[date];
 	await getWalkUpload(date);
 	await writeExifOutputs(exifsForDate, date);
