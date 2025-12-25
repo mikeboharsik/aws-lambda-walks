@@ -1,5 +1,5 @@
 import { copyFile, mkdir, open, readdir, rename, readFile, rm, writeFile } from 'fs/promises';
-import { createReadStream } from 'fs';
+import { createReadStream, readdirSync } from 'fs';
 import { basename, dirname, resolve } from 'path';
 import child_process from 'child_process';
 import { createHash } from 'crypto';
@@ -379,7 +379,10 @@ function ejectSdCard() {
 	try {
 		const command = `(New-Object -ComObject Shell.Application).NameSpace(17).ParseName('${inputs.rootDrive}').InvokeVerb("Eject")`;
 		child_process.execSync(command, { shell: 'pwsh' });
-		child_process.execSync(command, { shell: 'pwsh' });
+		try {
+			readdirSync(inputs.rootDrive);
+			child_process.execSync(command, { shell: 'pwsh' });
+		} catch (e) {}
 		console.log('Successfully ejected SD card');
 	} catch (e) {
 		console.error('Failed to eject SD card', e);
