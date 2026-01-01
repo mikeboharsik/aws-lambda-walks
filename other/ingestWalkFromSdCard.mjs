@@ -1,6 +1,6 @@
 import { copyFile, mkdir, open, readdir, rename, readFile, rm, writeFile } from 'fs/promises';
 import { createReadStream, readdirSync } from 'fs';
-import { basename, dirname, resolve } from 'path';
+import { basename, dirname, join, resolve } from 'path';
 import child_process from 'child_process';
 import { createHash } from 'crypto';
 import { getVideoDurationInSeconds } from 'get-video-duration';
@@ -10,11 +10,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const inputs = {
+	exifToolPathOverride: null,
 	keepOriginalFiles: false,
 	metaArchiveDir: resolve(__dirname, '../..', 'walk-routes/meta_archive'),
 	nasWalksDir: resolve('F:/wip/walks'),
 	pathToMp4s: '/DCIM/100GOPRO',
 	rootDrive: 'G:',
+	skipBackup: false,
 	walksDir: resolve('D:/wip/walks'),
 };
 
@@ -26,13 +28,15 @@ process.argv.slice(2).forEach(keyval => {
 	}
 });
 
+console.log(inputs);
+
 const defaultFileNamePattern = /(G[XL])(\d{2})(\d{4})/;
 const sensibleFileNamePatern = /G[XL]_\d{4}_\d{2}\.(MP4|LRV|THM)/;
 const fileDatePattern = /(\d{4}):(\d{2}):(\d{2}) (\d{2}:\d{2}:\d{2})([+-]\d{2}:\d{2})*/;
 const timePattern = /\d{1}:\d{2}:\d{2}/;
 const secondsPattern = /(\d{1,2}) s/;
 
-const fullPathToFiles = resolve(inputs.rootDrive, inputs.pathToMp4s);
+const fullPathToFiles = resolve(join(inputs.rootDrive, inputs.pathToMp4s));
 
 async function fileDoesExist(fullPath) {
 	try {
@@ -98,12 +102,14 @@ function getNormalizedExifOutputs(videoPaths) {
 		'AudioBitsPerSample',
 		'AudioSampleRate',
 		'BitDepth',
+		'CreationDate',
 		'FileCreateDate',
 		'ImageSize',
 		'SourceFile',
 		'VideoFrameRate'
 	].map(e => '-' + e).join(' ');
-	const exifToolCommand = `exiftool -api LargeFileSupport=1 ${properties} ${videoPaths.join(' ')} -json`;
+	const exifToolPath = inputs.exifToolPathOverride || 'exiftool';
+	const exifToolCommand = `${exifToolPath} -api LargeFileSupport=1 ${properties} ${videoPaths.join(' ')} -json`;
 	console.log(`Running exiftool command [${exifToolCommand}]`);
 	const raw = child_process.execSync(exifToolCommand).toString();
 	const parsed = JSON.parse(raw);
@@ -364,7 +370,7 @@ async function backupMergedFileToNas(date) {
 async function deleteOriginalFiles(allFiles) {
 	if (!allFiles) throw new Error('allFiles must have a value');
 
-	if (inputs.keepOriginalFiles === 'true') {
+	if (inputs.skipBackup === 'true' || inputs.keepOriginalFiles === 'true') {
 		console.log('Leaving original files as-is');
 		return;
 	}
@@ -393,6 +399,7 @@ const allFiles = await getAllFiles();
 const videoFiles = allFiles.filter(e => e.match('.MP4'));
 const videoPaths = videoFiles.map(e => resolve(fullPathToFiles, e));
 const exifOutputs = getNormalizedExifOutputs(videoPaths);
+console.log(exifOutputs);
 const exifOutputsByDate = getExifOutputsByDate(exifOutputs);
 const videoDurations = await getVideoDurations(videoPaths);
 mergeVideoDurationsIntoExifByDate(exifOutputsByDate, videoDurations);
@@ -408,7 +415,10 @@ for (const date of dates) {
 	commitWalkFile(date);
 	const videoPathsForDate = videoPaths.filter(vp => exifsForDate.some(ex => resolve(ex.SourceFile) === vp));
 	await copyOriginalFilesToLocal(videoPathsForDate, date);
-	await backupMergedFileToNas(date);
+
+	if (inputs.skipBackup !==  'true') {
+		await backupMergedFileToNas(date);
+	}
 };
 
 await deleteOriginalFiles(allFiles);
