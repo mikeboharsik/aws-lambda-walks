@@ -5,30 +5,69 @@ import child_process from 'child_process';
 import { createHash } from 'crypto';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 
+import 'dotenv/config';
+
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const inputs = {
-	exifToolPathOverride: null,
-	keepOriginalFiles: false,
-	metaArchiveDir: resolve(__dirname, '../..', 'walk-routes/meta_archive'),
-	nasWalksDir: resolve('F:/wip/walks'),
-	pathToMp4s: '/DCIM/100GOPRO',
-	rootDrive: 'G:',
-	skipBackup: false,
-	walksDir: resolve('D:/wip/walks'),
+const CONFIG_KEYS = {
+	EXIF_TOOL_PATH: 'EXIF_TOOL_PATH',
+	RCLONE_PATH: 'RCLONE_PATH',
+	RCLONE_REMOTE_NAME: 'RCLONE_REMOTE_NAME',
+	KEEP_ORIGINAL_FILES: 'KEEP_ORIGINAL_FILES',
+	META_ARCHIVE_DIR: 'META_ARCHIVE_DIR',
+	NAS_WALKS_DIR: 'NAS_WALKS_DIR',
+	PATH_TO_MP4S: 'PATH_TO_MP4S',
+	ROOT_DRIVE: 'ROOT_DRIVE',
+	SKIP_BACKUP: 'SKIP_BACKUP',
+	WALKS_DIR: 'WALKS_DIR',
 };
 
-const inputKeys = Object.keys(inputs);
-process.argv.slice(2).forEach(keyval => {
-	const [key, val] = keyval.split('=');
-	if (inputKeys.includes(key)) {
-		inputs[key] = val;
-	}
-});
+function getConfig(key) {
+	return process.env[key];
+}
 
-console.log(inputs);
+function getExifToolPath() {
+	return getConfig(CONFIG_KEYS.EXIF_TOOL_PATH) || 'exiftool';
+}
+
+function getRclonePath() {
+	return getConfig(CONFIG_KEYS.RCLONE_PATH) || 'rclone';
+}
+
+function getRcloneRemoteName() {
+	return getConfig(CONFIG_KEYS.RCLONE_REMOTE_NAME) || 'personalgdrive';
+}
+
+function getSkipBackup() {
+	return getConfig(CONFIG_KEYS.SKIP_BACKUP) === 'true';
+}
+
+function getKeepOriginalFiles() {
+	return getConfig(CONFIG_KEYS.KEEP_ORIGINAL_FILES) === 'true';
+}
+
+function validateEnvironment() {
+	const successes = [];
+
+	function run(command, name) {
+		try { child_process.execSync(command, { stdio: 'ignore' }); successes.push({ [name]: true }) }
+		catch { successes.push({ [name]: false }); }
+	}
+
+	run(getExifToolPath(), 'exiftool');
+	run(getRclonePath() + ' version', 'exiftool');
+
+	const failures = successes.filter(e => !Object.values(e).every(v => v === true))
+	if (failures.length) {
+		throw new Error(`Failed to validate [${failures}]`);
+	}
+}
+
+console.log(Object.keys(CONFIG_KEYS).reduce((acc, key) => { acc['process.env.' + key] = process.env[key]; return acc; }, {}));
+
+validateEnvironment();
 
 const defaultFileNamePattern = /(G[XL])(\d{2})(\d{4})/;
 const sensibleFileNamePatern = /G[XL]_\d{4}_\d{2}\.(MP4|LRV|THM)/;
@@ -36,7 +75,7 @@ const fileDatePattern = /(\d{4}):(\d{2}):(\d{2}) (\d{2}:\d{2}:\d{2})([+-]\d{2}:\
 const timePattern = /\d{1}:\d{2}:\d{2}/;
 const secondsPattern = /(\d{1,2}) s/;
 
-const fullPathToFiles = resolve(join(inputs.rootDrive, inputs.pathToMp4s));
+const fullPathToFiles = resolve(join(getConfig(CONFIG_KEYS.ROOT_DRIVE), getConfig(CONFIG_KEYS.PATH_TO_MP4S)));
 
 async function fileDoesExist(fullPath) {
 	try {
@@ -84,8 +123,8 @@ async function getAllFiles() {
 function getExifOutputsByDate(exifOutputs) {
 	if (!exifOutputs) throw new Error('exifOutputs must have a value');
 	return exifOutputs.reduce((acc, exif) => {
-		const { FileCreateDate, FileName, SourceFile } = exif;
-		const date = new Date(FileCreateDate);
+		const { CreationDate, FileCreateDate } = exif;
+		const date = new Date(FileCreateDate || CreationDate);
 		const yyyyMMdd = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 		if (yyyyMMdd in acc) {
 			acc[yyyyMMdd].push(exif);
@@ -108,7 +147,7 @@ function getNormalizedExifOutputs(videoPaths) {
 		'SourceFile',
 		'VideoFrameRate'
 	].map(e => '-' + e).join(' ');
-	const exifToolPath = inputs.exifToolPathOverride || 'exiftool';
+	const exifToolPath = getExifToolPath();
 	const exifToolCommand = `${exifToolPath} -api LargeFileSupport=1 ${properties} ${videoPaths.join(' ')} -json`;
 	console.log(`Running exiftool command [${exifToolCommand}]`);
 	const raw = child_process.execSync(exifToolCommand).toString();
@@ -167,11 +206,11 @@ function mergeVideoDurationsIntoExifByDate(exifByDate, videoDurations) {
 function getMetaArchiveFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
 	const [year, month, day] = date.split('-');
-	return resolve(inputs.metaArchiveDir, year, month, day + '.json');
+	return resolve(getConfig(CONFIG_KEYS.META_ARCHIVE_DIR), year, month, day + '.json');
 }
 
 function getOutputDir() {
-	return resolve(inputs.walksDir);
+	return resolve(getConfig(CONFIG_KEYS.WALKS_DIR));
 }
 
 function getOutputFilePathFromDate(date) {
@@ -181,35 +220,37 @@ function getOutputFilePathFromDate(date) {
 
 function getNasFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
-	return resolve(inputs.nasWalksDir, `${date}_merged.mp4`);
+	return resolve(getConfig(CONFIG_KEYS.NAS_WALKS_DIR), `${date}_merged.mp4`);
 }
 
 async function createOutputDirIfNecessary(date) {
 	if (!date) throw new Error('date must have a value');
-	await readdir(inputs.walksDir);
+	await readdir(getConfig(CONFIG_KEYS.WALKS_DIR));
 }
 
 async function createMetaArchiveFileIfNecessary(date) {
 	if (!date) throw new Error('date must have a value');
 	const [year, month, day] = date.split('-');
+
+	const metaArchiveDir = getConfig(CONFIG_KEYS.META_ARCHIVE_DIR);
 	
-	const rootDirs = await readdir(inputs.metaArchiveDir);
+	const rootDirs = await readdir(metaArchiveDir);
 	if (!rootDirs.includes(year)) {
-		const path = resolve(inputs.metaArchiveDir, year);
+		const path = resolve(metaArchiveDir, year);
 		await mkdir(path);
 		console.log('Created directory', path);
 	}
 
-	const yearDirs = await readdir(resolve(inputs.metaArchiveDir, year));
+	const yearDirs = await readdir(resolve(metaArchiveDir, year));
 	if (!yearDirs.includes(month)) {
-		const path = resolve(inputs.metaArchiveDir, year, month);
+		const path = resolve(metaArchiveDir, year, month);
 		await mkdir(path);
 		console.log('Created directory', path);
 	}
 
-	const monthFiles = await readdir(resolve(inputs.metaArchiveDir, year, month));
+	const monthFiles = await readdir(resolve(metaArchiveDir, year, month));
 	const fileName = day + '.json';
-	const filePath = resolve(inputs.metaArchiveDir, year, month, fileName);
+	const filePath = resolve(metaArchiveDir, year, month, fileName);
 	if (!monthFiles.includes(fileName)) {
 		await writeFile(filePath, JSON.stringify([{ date }], null, 2), 'utf8');
 		console.log('Created file', filePath);
@@ -252,9 +293,11 @@ async function getWalkUpload(date, idx = 0) {
 		return;
 	}
 
-	const from = `personalgdrive:/Walk Uploads/${date}_${idx+1}.json`;
+	const rcloneRemoteName = getRcloneRemoteName();
+	const from = `${rcloneRemoteName}:/Walk Uploads/${date}_${idx+1}.json`;
 	const to = resolve(expectedFilePath, '..');
-	const command = `rclone copy "${from}" "${to}"`;
+	const rclonePath = getRclonePath();
+	const command = `${rclonePath} copy "${from}" "${to}"`;
 	console.log('Executing command', command);
 	try {
 		child_process.execSync(command);
@@ -268,7 +311,7 @@ async function getWalkUpload(date, idx = 0) {
 
 function hasFileBeenCommitted(date) {
 	if (!date) throw new Error('date must have a value');
-	const cwd = inputs.metaArchiveDir;
+	const cwd = getConfig(CONFIG_KEYS.META_ARCHIVE_DIR);
 	const formattedDate = date.replace(/-/g, '/');
 	const command = `git --no-pager log --all --grep="add ${formattedDate}.json" --format=oneline`;
 	console.log(`Executing command [${command}]`);
@@ -280,7 +323,7 @@ function hasFileBeenCommitted(date) {
 function commitWalkFile(date) {
 	if (!date) throw new Error('date must have a value');
 
-	const cwd = inputs.metaArchiveDir;
+	const cwd = getConfig(CONFIG_KEYS.META_ARCHIVE_DIR);
 
 	if (hasFileBeenCommitted(date)) {
 		console.warn(`File for date ${date} has already been committed to git; skipping`);
@@ -289,7 +332,7 @@ function commitWalkFile(date) {
 
 	const formattedDate = date.replace(/-/g, '/');
 
-	const stageCommand = `git add *${formattedDate}.json"`;
+	const stageCommand = `git add *${formattedDate}.json`;
 	child_process.execSync(stageCommand, { cwd });
 
 	const commitMessage = `feat: add ${formattedDate}.json to meta_archive`;
@@ -370,8 +413,8 @@ async function backupMergedFileToNas(date) {
 async function deleteOriginalFiles(allFiles) {
 	if (!allFiles) throw new Error('allFiles must have a value');
 
-	if (inputs.skipBackup === 'true' || inputs.keepOriginalFiles === 'true') {
-		console.log('Leaving original files as-is');
+	if (getSkipBackup() || getKeepOriginalFiles()) {
+		console.log('Leaving original files as-is. If you wish to delete the original files, do so manually.');
 		return;
 	}
 
@@ -382,16 +425,24 @@ async function deleteOriginalFiles(allFiles) {
 }
 
 function ejectSdCard() {
-	try {
-		const command = `(New-Object -ComObject Shell.Application).NameSpace(17).ParseName('${inputs.rootDrive}').InvokeVerb("Eject")`;
-		child_process.execSync(command, { shell: 'pwsh' });
-		try {
-			readdirSync(inputs.rootDrive);
+	if (process.platform === 'linux') {
+		const command = 'udisksctl unmount -b /dev/mmcblk0p1';
+		child_process.execSync(command);
+	}
+	else {
+		const rootDrive = getConfig(CONFIG_KEYS.ROOT_DRIVE);
+
+		try {		
+			const command = `(New-Object -ComObject Shell.Application).NameSpace(17).ParseName('${rootDrive}').InvokeVerb("Eject")`;
 			child_process.execSync(command, { shell: 'pwsh' });
-		} catch (e) {}
-		console.log('Successfully ejected SD card');
-	} catch (e) {
-		console.error('Failed to eject SD card', e);
+			try {
+				readdirSync(rootDrive);
+				child_process.execSync(command, { shell: 'pwsh' });
+			} catch (e) {}
+			console.log('Successfully ejected SD card');
+		} catch (e) {
+			console.error('Failed to eject SD card', e);
+		}
 	}
 }
 
@@ -399,13 +450,16 @@ const allFiles = await getAllFiles();
 const videoFiles = allFiles.filter(e => e.match('.MP4'));
 const videoPaths = videoFiles.map(e => resolve(fullPathToFiles, e));
 const exifOutputs = getNormalizedExifOutputs(videoPaths);
-console.log(exifOutputs);
 const exifOutputsByDate = getExifOutputsByDate(exifOutputs);
 const videoDurations = await getVideoDurations(videoPaths);
 mergeVideoDurationsIntoExifByDate(exifOutputsByDate, videoDurations);
 
-
 const dates = Object.keys(exifOutputsByDate);
+const garbage = dates.filter(date => date.includes('NaN'));
+if (garbage.length) {
+	throw new Error(`Failed to parse date for at least one of the groups of video files [${garbage.join(', ')}]`);
+}
+
 console.log(`Found videos for the following dates: [${dates.join(', ')}]`);
 
 for (const date of dates) {
@@ -416,7 +470,7 @@ for (const date of dates) {
 	const videoPathsForDate = videoPaths.filter(vp => exifsForDate.some(ex => resolve(ex.SourceFile) === vp));
 	await copyOriginalFilesToLocal(videoPathsForDate, date);
 
-	if (inputs.skipBackup !==  'true') {
+	if (getConfig(CONFIG_KEYS.SKIP_BACKUP) !==  'true') {
 		await backupMergedFileToNas(date);
 	}
 };
