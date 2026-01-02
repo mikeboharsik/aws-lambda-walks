@@ -304,7 +304,7 @@ async function getWalkUpload(date, idx = 0) {
 	} catch (e) {
 		throw new Error(`Failed to find walk upload for [${date}]`, e);
 	}
-	await rename(resolve(to, `${date}_${idx+1}.json`), resolve(to, expectedFilePath));
+	await rename(resolve(to, `${date}_${idx+1}.json`), resolve(join(to, expectedFilePath)));
 	const parsed = JSON.parse(await readFile(expectedFilePath, 'utf8'));
 	await writeFile(expectedFilePath, JSON.stringify([parsed], null, 2), 'utf8');
 }
