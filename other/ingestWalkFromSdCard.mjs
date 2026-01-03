@@ -5,11 +5,12 @@ import child_process from 'child_process';
 import { createHash } from 'crypto';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 
-import 'dotenv/config';
-
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+import dotenv from 'dotenv';
+dotenv.config({ path: ['.', __dirname + '/.env'], quiet: true });
 
 const CONFIG_KEYS = {
 	EXIF_TOOL_PATH: 'EXIF_TOOL_PATH',
