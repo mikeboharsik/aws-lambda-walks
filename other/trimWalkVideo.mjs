@@ -96,7 +96,8 @@ if (!argWasProvided) {
 }
 
 if (!inputs.date) {
-	inputs.date = new Date().toISOString().substring(0, 10);
+	const now = new Date();
+	inputs.date = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
 }
 if (inputs.videos) {
 	inputs.videos = JSON.parse(inputs.videos);

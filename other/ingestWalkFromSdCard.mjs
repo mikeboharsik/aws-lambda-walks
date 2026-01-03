@@ -62,7 +62,7 @@ function validateEnvironment() {
 
 	const failures = successes.filter(e => !Object.values(e).every(v => v === true))
 	if (failures.length) {
-		throw new Error(`Failed to validate [${failures}]`);
+		throw new Error(`Failed to validate ${JSON.stringify(failures)}`);
 	}
 }
 
@@ -207,7 +207,7 @@ function mergeVideoDurationsIntoExifByDate(exifByDate, videoDurations) {
 function getMetaArchiveFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
 	const [year, month, day] = date.split('-');
-	return resolve(getConfig(CONFIG_KEYS.META_ARCHIVE_DIR), year, month, day + '.json');
+	return resolve(join(getConfig(CONFIG_KEYS.META_ARCHIVE_DIR), year, month, day + '.json'));
 }
 
 function getOutputDir() {
@@ -216,12 +216,12 @@ function getOutputDir() {
 
 function getOutputFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
-	return resolve(getOutputDir(date), `${date}_merged.mp4`);
+	return resolve(join(getOutputDir(date), `${date}_merged.mp4`));
 }
 
 function getNasFilePathFromDate(date) {
 	if (!date) throw new Error('date must have a value');
-	return resolve(getConfig(CONFIG_KEYS.NAS_WALKS_DIR), `${date}_merged.mp4`);
+	return resolve(join(getConfig(CONFIG_KEYS.NAS_WALKS_DIR), `${date}_merged.mp4`));
 }
 
 async function createOutputDirIfNecessary(date) {
@@ -296,7 +296,7 @@ async function getWalkUpload(date, idx = 0) {
 
 	const rcloneRemoteName = getRcloneRemoteName();
 	const from = `${rcloneRemoteName}:/Walk Uploads/${date}_${idx+1}.json`;
-	const to = resolve(expectedFilePath, '..');
+	const to = resolve(join(expectedFilePath, '..'));
 	const rclonePath = getRclonePath();
 	const command = `${rclonePath} copy "${from}" "${to}"`;
 	console.log('Executing command', command);
@@ -305,7 +305,7 @@ async function getWalkUpload(date, idx = 0) {
 	} catch (e) {
 		throw new Error(`Failed to find walk upload for [${date}]`, e);
 	}
-	await rename(resolve(to, `${date}_${idx+1}.json`), resolve(join(to, expectedFilePath)));
+	await rename(resolve(join(to, `${date}_${idx+1}.json`)), expectedFilePath);
 	const parsed = JSON.parse(await readFile(expectedFilePath, 'utf8'));
 	await writeFile(expectedFilePath, JSON.stringify([parsed], null, 2), 'utf8');
 }
