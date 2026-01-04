@@ -124,8 +124,8 @@ async function getAllFiles() {
 function getExifOutputsByDate(exifOutputs) {
 	if (!exifOutputs) throw new Error('exifOutputs must have a value');
 	return exifOutputs.reduce((acc, exif) => {
-		const { CreationDate, FileCreateDate } = exif;
-		const date = new Date(FileCreateDate || CreationDate);
+		const { CreateDate, FileCreateDate } = exif;
+		const date = new Date(FileCreateDate || CreateDate);
 		const yyyyMMdd = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 		if (yyyyMMdd in acc) {
 			acc[yyyyMMdd].push(exif);
@@ -142,7 +142,7 @@ function getNormalizedExifOutputs(videoPaths) {
 		'AudioBitsPerSample',
 		'AudioSampleRate',
 		'BitDepth',
-		'CreationDate',
+		'CreateDate',
 		'FileCreateDate',
 		'ImageSize',
 		'SourceFile',
