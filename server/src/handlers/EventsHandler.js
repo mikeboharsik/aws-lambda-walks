@@ -98,6 +98,7 @@ class EventsHandler extends ApiRequestHandler {
 					missingYoutubeIdOnly = false,
 					nameIncludes = null,
 					nameNotIncludes = null,
+					convertToDate = null,
 					select = null,
 				} = {},
 			} = event;
@@ -120,6 +121,7 @@ class EventsHandler extends ApiRequestHandler {
 			}
 
 			let hits = await getAllEvents();
+
 			if (didRequestGeoJson) {
 				hits = hits.filter(e => e.coords);
 			}
@@ -149,6 +151,21 @@ class EventsHandler extends ApiRequestHandler {
 				const targets = nameNotIncludes.split(',').map(e => e.toLowerCase());
 				targets.forEach(target => {
 					hits = hits.filter(e => !e.name || !e.name.toLowerCase().includes(target));
+				});
+			}
+
+			hits = hits.toSorted(({ timestamp: a }, { timestamp: b }) => a < b ? -1 : a > b ? 1 : 0);
+
+			if (convertToDate) {
+				const targets = convertToDate.split(',').map(e => e.toLowerCase());
+				targets.forEach(target => {
+					hits.forEach(event => {
+						Object.keys(event).forEach(key => {
+							if (key.toLowerCase() === target) {
+								event[key] = new Date(event[key]).toLocaleString();
+							}
+						});
+					});
 				});
 			}
 
