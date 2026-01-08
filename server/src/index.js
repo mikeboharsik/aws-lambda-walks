@@ -1,4 +1,7 @@
+const path = require('path');
+
 require('./setupLoggers.js');
+require('dotenv').config({ path: [path.resolve(`${__dirname}/../.env`)], quiet: true });
 
 const { authenticate } = require('./auth.js');
 const { handleApiRequest } = require('./handleApiRequest.js');

@@ -1,17 +1,22 @@
 const fs = require('fs');
 const fsPromises = require('fs/promises');
+const path = require('path');
 
+const getPublicPath = require('./util/getPublicPath.js');
 const { makeQueryStringParametersSafe } = require('./makeQueryStringParametersSafe.js');
 
+const publicPath = getPublicPath();
+
 async function handleContentRequest(event) {
-	const { isAuthed, rawPath } = event;
+	const { rawPath } = event;
 
 	console.log('handle content request', rawPath, makeQueryStringParametersSafe(event.queryStringParameters));
 
-	let target = `./public/${rawPath}`;
+	let target = `${publicPath}/${rawPath}`;
 	if (['/', '/routes'].includes(rawPath)) {
-		target = './public/index.html';
+		target = `${publicPath}/index.html`;
 	}
+	target = path.resolve(target);
 
 	if (fs.existsSync(target)) {
 		const ext = target.match(/\.(\w+)$/)?.[1];
