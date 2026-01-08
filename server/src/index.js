@@ -40,6 +40,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 		logEvent(event);
 
 		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers.host)) {
+			console.log(event.headers.host, 'is not an allowed host');
 			const result = { statusCode: 404 };
 			logResult(result);
 			return result;

@@ -1,7 +1,9 @@
+const path = require('path');
+require('dotenv').config({ path: [path.resolve(__dirname + '/../' + '.env')], quiet: true });
 const http = require('http');
 const { callHandler } = require('./callHandler');
 
-const port = 2312;
+const port = process.env.SERVER_PORT ?? 2312;
 
 process.env.ENABLE_LOGGING = true;
 

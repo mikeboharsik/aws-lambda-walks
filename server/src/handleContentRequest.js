@@ -43,6 +43,7 @@ async function handleContentRequest(event) {
 		}
 	}
 
+	console.log('Failed to find target:', target);
 	return {
 		statusCode: 404
 	}
