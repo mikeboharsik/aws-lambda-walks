@@ -11,6 +11,8 @@ const { verifyCacheValue } = require('./verifyCacheValue.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
+const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
+
 function logResult(result) {
 	if (process.env['LOG_RESULT'] === 'true') {
 		console.log('Returning result', JSON.stringify(result, null, '  '));
@@ -36,6 +38,12 @@ function logEvent(event) {
 exports.handler = async (event, ignoreAuth = false) => {
 	try {
 		logEvent(event);
+
+		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers.host)) {
+			const result = { statusCode: 404 };
+			logResult(result);
+			return result;
+		}
 
 		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
