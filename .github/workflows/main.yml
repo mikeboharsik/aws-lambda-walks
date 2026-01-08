@@ -1,12 +1,5 @@
 name: Deploy to AWS
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'client/**'
-      - 'server/**'
-      - '.github/**'
   workflow_dispatch:
     inputs:
       invalidationPaths:
