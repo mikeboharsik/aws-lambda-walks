@@ -7,12 +7,12 @@ const port = process.env.SERVER_PORT ?? 2312;
 
 process.env.ENABLE_LOGGING = true;
 
-const disableAuth = process.argv[2] === 'true';
-console.log({ disableAuth });
+const ignoreAuth = process.argv[2] === 'true';
+console.log({ ignoreAuth });
 
 const server = http.createServer(async (req, res) => {
 	const [path, query] = req.url.split('?');
-	const result = await callHandler(path, query, req.headers, !disableAuth);
+	const result = await callHandler(path, query, req.headers, ignoreAuth);
 	res.writeHead(result.statusCode, { 'Access-Control-Allow-Origin': '*', ...result.headers });
 	res.write(result.body || '');
 	res.end();

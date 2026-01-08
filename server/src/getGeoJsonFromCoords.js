@@ -1,6 +1,6 @@
 const geolib = require('geolib');
 
-function getGeoJsonFromCoords(coords, isAuthed, privacyZones = JSON.parse(process.env.PRIVACY_ZONES ?? '[]')) {
+function getGeoJsonFromCoords(coords, isAuthed, privacyZones) {
 	if (!privacyZones || !privacyZones.length) {
 		throw new Error('Unsafe: no privacy zones defined');
 	}

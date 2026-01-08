@@ -33,6 +33,17 @@ async function getAllCoords() {
 }
 const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
 
+async function getPrivacyZones() {
+	try {
+		const expectedFile = path.resolve(`${__dirname}/../../../../walk-routes/meta_archive/privacyZones.json`);
+		console.log('Trying to load privacy zones from', expectedFile);
+		return JSON.parse(await fsPromises.readFile(expectedFile, 'utf8'));
+	} catch (e) {
+		console.log('Error loading privacy zones', e);
+		return null;
+	}
+}
+
 class RoutesHandler extends ApiRequestHandler {
 	constructor() {
 		super();
@@ -109,12 +120,13 @@ class RoutesHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `idx must be at least 0 and less than ${walksForTargetDate.length} for date ${date}, received [${idx}]` }));
 		}
 
+		const privacyZones = await getPrivacyZones();
 		let geojson = walksForTargetDate.reduce((acc, walk, walkIdx) => {
 			if (idx === null || idx === walkIdx) {
 				if (!walk.coords) {
 					throw new Error(`[${date}] walk [${walkIdx}] is missing coords`);
 				}
-				const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed);
+				const newEntry = getGeoJsonFromCoords(walk.coords, isAuthed, privacyZones);
 
 				newEntry.properties = {
 					date: walk.date,
