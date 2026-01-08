@@ -75,7 +75,9 @@ exports.handler = async (event, ignoreAuth = false) => {
 		}
 
 		verifyBodyIsString(result);
-		verifyCacheValue(event, result, rawPath);
+		if (process.env.ENABLE_CACHING === 'true') {
+			verifyCacheValue(event, result, rawPath);
+		}
 		logResult(result);
 
 		return result;
