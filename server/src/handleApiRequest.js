@@ -6,12 +6,12 @@ async function handleApiRequest(event) {
 	try {
 		const { isAuthed, queryStringParameters = null, rawPath } = event;
 
-		console.log(`handle api request for ${rawPath}`, makeQueryStringParametersSafe(queryStringParameters));
+		event.log(`handle api request for ${rawPath}`, makeQueryStringParametersSafe(queryStringParameters));
 
 		const rawPathWithoutApi = rawPath.replace(/\/api/, '');
 		const handler = handlers.find(handler => rawPathWithoutApi.match(handler.path));
 		if (!handler) {
-			console.log(`failed to find handler for [${rawPathWithoutApi}]`);
+			event.log(`failed to find handler for [${rawPathWithoutApi}]`);
 			return { statusCode: 404 };
 		}
 
@@ -23,7 +23,7 @@ async function handleApiRequest(event) {
 		
 		return await handler.process(event);
 	} catch (e) {
-		console.error('Error occurred while handling API request', e);
+		event.logError('Error occurred while handling API request', e);
 		return {
 			statusCode: 400,
 			body: JSON.stringify({ error: e.message }),

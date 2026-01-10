@@ -10,7 +10,7 @@ const publicPath = getPublicPath();
 async function handleContentRequest(event) {
 	const { rawPath } = event;
 
-	console.log('handle content request', rawPath, makeQueryStringParametersSafe(event.queryStringParameters));
+	event.log('handle content request', rawPath, makeQueryStringParametersSafe(event.queryStringParameters));
 
 	let target = `${publicPath}/${rawPath}`;
 	if (['/', '/routes'].includes(rawPath)) {
@@ -43,7 +43,7 @@ async function handleContentRequest(event) {
 		}
 	}
 
-	console.log('Failed to find target:', target);
+	event.log('Failed to find target:', target);
 	return {
 		statusCode: 404
 	}

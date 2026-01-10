@@ -230,7 +230,7 @@ class EventsHandler extends ApiRequestHandler {
 				return this.getJsonResponse(200, JSON.stringify(hits));
 			}
 		} catch (e) {
-			console.error('Failed to load proximity events', e);
+			event.logError('Failed to load proximity events', e);
 			return this.getJsonResponse(400, JSON.stringify({ error: e.message }));
 		}
 	}

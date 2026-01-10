@@ -1,4 +1,5 @@
 const path = require('path');
+const crypto = require('crypto');
 
 require('./setupLoggers.js');
 require('dotenv').config({ path: [path.resolve(`${__dirname}/../.env`)], quiet: true });
@@ -13,11 +14,11 @@ const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
 
-function logResult(result) {
+function logResult(result, event) {
 	if (process.env['LOG_RESULT'] === 'true') {
-		console.log('Returning result', JSON.stringify(result, null, '  '));
+		event.log('Returning result', JSON.stringify(result, null, '  '));
 	} else {
-		console.log('Returning status code', result.statusCode);
+		event.log('Returning status code', result.statusCode);
 	}
 }
 
@@ -32,15 +33,23 @@ function logEvent(event) {
 			}
 		}
 	});
-	console.log(JSON.stringify(copy));
+	event.log(JSON.stringify(copy));
 }
 
 exports.handler = async (event, ignoreAuth = false) => {
+	const requestId = crypto.randomUUID();
+	event.log = function log(...args) {
+		console.log(`[${requestId}]`, ...args);
+	};
+	event.logError = function logError(...args) {
+		console.error(`[${requestId}]`, ...args);
+	};
+
 	try {
 		logEvent(event);
 
 		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers.host)) {
-			console.log(event.headers.host, 'is not an allowed host');
+			event.log(event.headers.host, 'is not an allowed host');
 			const result = { statusCode: 404 };
 			logResult(result);
 			return result;
@@ -48,7 +57,7 @@ exports.handler = async (event, ignoreAuth = false) => {
 
 		const { rawPath } = event;
 		if (Boolean(process.env['LOG_RAW_PATH'])) {
-			console.log(rawPath);
+			event.log(rawPath);
 		}
 
 		try {
@@ -78,13 +87,13 @@ exports.handler = async (event, ignoreAuth = false) => {
 		if (process.env.ENABLE_CACHING === 'true') {
 			verifyCacheValue(event, result, rawPath);
 		}
-		logResult(result);
+		logResult(result, event);
 
 		return result;
 	} catch (e) {
-		console.error('Unhandled exception:', e);
+		event.logError('Unhandled exception:', e);
 
-		console.log('Returning status code', 500);
+		event.log('Returning status code', 500);
 		return setJsonContentType({
 			statusCode: 500,
 			body: JSON.stringify({ error: e.message }),

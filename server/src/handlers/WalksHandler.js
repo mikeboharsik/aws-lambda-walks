@@ -13,7 +13,7 @@ class WalksHandler extends ApiRequestHandler {
 		try {
 			return await getWalksByMonth(event);
 		} catch (e) {
-			console.error(e);
+			event.logError(e);
 			return {
 				statusCode: 400
 			};

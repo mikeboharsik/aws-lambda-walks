@@ -30,9 +30,9 @@ class CacheHandler extends ApiRequestHandler {
 		const cfClient = new CloudFrontClient({ region: process.env.AWS_REGION });
 		const cfCommand = new CreateInvalidationCommand(cfInput);
 	
-		console.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
+		event.log(`Invalidating CloudFront cache using command:\n${JSON.stringify(cfCommand)}`);
 		const result = JSON.stringify(await cfClient.send(cfCommand));
-		console.log('Invalidation result', result);
+		event.log('Invalidation result', result);
 	
 		return this.getJsonResponse(200, result);
 	}

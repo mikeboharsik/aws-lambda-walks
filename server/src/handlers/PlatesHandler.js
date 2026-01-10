@@ -33,7 +33,7 @@ async function getAllEventsByPlate(event) {
 	let result = JSON.parse(await fsPromises.readFile(resolvedPath));
 
 	if (filterByName !== false) {
-		console.log(`Applying filterByName [${filterByName}]`);
+		event.log(`Applying filterByName [${filterByName}]`);
 		result = Object.keys(result)
 			.filter(key => result[key].some(event => event.name))
 			.reduce((acc, key) => {
@@ -42,7 +42,7 @@ async function getAllEventsByPlate(event) {
 			}, {});
 	}
 	if (nameContains !== false) {
-		console.log(`Applying nameContains [${nameContains}]`);
+		event.log(`Applying nameContains [${nameContains}]`);
 		result = Object.keys(result)
 			.reduce((acc, key) => {
 				acc[key] = result[key].filter(e => e.name?.toUpperCase().includes(nameContains.toUpperCase()));
@@ -50,7 +50,7 @@ async function getAllEventsByPlate(event) {
 			}, {});
 	}
 	if (filterByCount !== false) {
-		console.log(`Applying filterByCount [${filterByCount}]`);
+		event.log(`Applying filterByCount [${filterByCount}]`);
 		result = Object.keys(result)
 			.filter(key => result[key].length >= filterByCount)
 			.reduce((acc, key) => {
@@ -59,7 +59,7 @@ async function getAllEventsByPlate(event) {
 			}, {});
 	}
 	if (sortByCount !== false) {
-		console.log(`Applying sortByCount [${sortByCount}]`);
+		event.log(`Applying sortByCount [${sortByCount}]`);
 		result = Object.keys(result)
 			.toSorted((a, b) => result[a].length > result[b].length ? -1 : result[a].length < result[b].length ? 1 : 0)
 			.reduce((acc, key) => {
@@ -145,7 +145,7 @@ class PlatesHandler extends ApiRequestHandler {
 
 				return this.getHtmlResponse(200, body);
 			} catch (e) {
-				console.error('Failed to load plate coords', e);
+				event.logError('Failed to load plate coords', e);
 				return this.getJsonResponse(400, JSON.stringify({ error: e.message }));
 			}
 		}
@@ -155,7 +155,7 @@ class PlatesHandler extends ApiRequestHandler {
 			const isCsv = accept === 'text/csv';
 			return isCsv ? this.getCsvResponse(200, parsed) : this.getJsonResponse(200, JSON.stringify(parsed));
 		} catch (e) {
-			console.error('Failed to load plates', e);
+			event.logError('Failed to load plates', e);
 			return this.getJsonResponse(400, JSON.stringify({ error: e.message }));
 		}
 	}

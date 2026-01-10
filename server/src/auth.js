@@ -11,18 +11,18 @@ function verifyToken(event) {
 	try {
 		if (token) {
 			verified = jwt.verify(token, secret, { algorithm: 'RS256' });
-			console.log('Authenticated user:', verified?.sub);
+			event.log('Authenticated user:', verified?.sub);
 		}
 	} catch (e) {
-		console.error('Failed to verify JWT', e, token);
+		event.logError('Failed to verify JWT', e, token);
 	}
 	return verified;
 }
 
-function verifyScope(token) {
+function verifyScope(token, event) {
 	const result = token.scope?.includes('walks.read');
 	if (!result) {
-		console.log('Expected token scope to include walks.read but was', token.scope);
+		event.log('Expected token scope to include walks.read but was', token.scope);
 		throw new Error('Invalid scope');
 	}
 	return token;
@@ -31,17 +31,17 @@ function verifyScope(token) {
 async function authenticate(event) {
 	try {
 		let verified = verifyToken(event);
-		verified &&= verifyScope(verified);
+		verified &&= verifyScope(verified, event);
 		if (verified) {
 			event.isAuthed = true;
 			event.authSubject = verified.sub;
 			event.authExpires = new Date(verified.exp * 1000).toUTCString();
 			event.authScope = verified.scope;
 		} else {
-      console.log('Authentication failed', authUrl, event.headers.authorization);
+      event.log('Authentication failed', authUrl, event.headers.authorization);
     }
 	} catch (e) {
-    console.error('Something went wrong during authentication', e);
+    event.logError('Something went wrong during authentication', e);
   }
 }
 

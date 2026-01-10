@@ -11,7 +11,7 @@ const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
 const getGeneratedPath = require('../util/getGeneratedPath.js');
 
-async function getCoordsByMonth(month) {
+async function getCoordsByMonth(event, month) {
 	try {
 		const resolvedPath = path.resolve(`${getGeneratedPath()}/coords/${month}.json`);
 		return JSON.parse(await fsPromises.readFile(resolvedPath));
@@ -33,13 +33,13 @@ async function getAllCoords() {
 }
 const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
 
-async function getPrivacyZones() {
+async function getPrivacyZones(event) {
 	try {
 		const expectedFile = path.resolve(`${__dirname}/../../../../walk-routes/meta_archive/privacyZones.json`);
-		console.log('Trying to load privacy zones from', expectedFile);
+		event.log('Trying to load privacy zones from', expectedFile);
 		return JSON.parse(await fsPromises.readFile(expectedFile, 'utf8'));
 	} catch (e) {
-		console.log('Error loading privacy zones', e);
+		event.log('Error loading privacy zones', e);
 		return null;
 	}
 }
@@ -61,7 +61,7 @@ class RoutesHandler extends ApiRequestHandler {
 			nearPoint = nearPoint.split(',').map(e => parseFloat(e.trim()));
 			const [targetLat, targetLon] = nearPoint;
 
-			const allCoordsByMonth = await getAllCoordsBenched();
+			const allCoordsByMonth = await getAllCoordsBenched(event);
 
 			const hitDates = [];
 			allCoordsByMonth.forEach(month => {
@@ -110,7 +110,7 @@ class RoutesHandler extends ApiRequestHandler {
 
 		const [month] = date.match(/\d{4}-\d{2}/);
 
-		const allCoordsByMonth = await getCoordsByMonthBenched(month);
+		const allCoordsByMonth = await getCoordsByMonthBenched(event, month);
 		const walksForTargetDate = allCoordsByMonth.filter(e => e.date === date);
 		if (walksForTargetDate.length === 0) {
 			return this.getJsonResponse(404, JSON.stringify({ error: `failed to find any walks for date ${date}` }));
@@ -120,7 +120,7 @@ class RoutesHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, JSON.stringify({ error: `idx must be at least 0 and less than ${walksForTargetDate.length} for date ${date}, received [${idx}]` }));
 		}
 
-		const privacyZones = await getPrivacyZones();
+		const privacyZones = await getPrivacyZones(event);
 		let geojson = walksForTargetDate.reduce((acc, walk, walkIdx) => {
 			if (idx === null || idx === walkIdx) {
 				if (!walk.coords) {

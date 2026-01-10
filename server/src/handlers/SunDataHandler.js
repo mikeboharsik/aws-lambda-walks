@@ -25,7 +25,7 @@ class SunDataHandler extends ApiRequestHandler {
 					Referer: process.env.PUBLIC_HOST,
 				}
 			};
-			console.log(`Fetching sun data from URL [${url}] with options [${JSON.stringify(options)}]`);
+			event.log(`Fetching sun data from URL [${url}] with options [${JSON.stringify(options)}]`);
 
 			const response = await fetch(url, options);
 			if (!response.ok) {
