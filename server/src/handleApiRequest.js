@@ -11,7 +11,7 @@ async function handleApiRequest(event) {
 		const rawPathWithoutApi = rawPath.replace(/\/api/, '');
 		const handler = handlers.find(handler => rawPathWithoutApi.match(handler.path));
 		if (!handler) {
-			console.log(`failed to find handler for [${handler.path}]`);
+			console.log(`failed to find handler for [${rawPathWithoutApi}]`);
 			return { statusCode: 404 };
 		}
 
