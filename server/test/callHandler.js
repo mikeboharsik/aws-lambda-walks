@@ -1,8 +1,8 @@
 const handler = require('../src/index').handler;
 
-const [handlerInput] = [{}];
-
 async function callHandler(path = null, query = null, headers = null, ignoreAuth = false) {
+	const [handlerInput] = [{}];
+
 	if (path) {
 		handlerInput.rawPath = path;
 	}
