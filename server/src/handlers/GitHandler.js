@@ -2,6 +2,8 @@ const fsPromises = require('fs/promises');
 
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
+const getPublicPath = require('../util/getPublicPath.js');
+
 class GitHandler extends ApiRequestHandler {
 	constructor() {
 		super();
@@ -10,7 +12,7 @@ class GitHandler extends ApiRequestHandler {
 	}
 
 	async process(event) {
-		const content = await fsPromises.readFile('./git.json', 'utf8');
+		const content = await fsPromises.readFile(getPublicPath() + '/git.json', 'utf8');
 		return this.getJsonResponse(200, content);
 	}
 };
