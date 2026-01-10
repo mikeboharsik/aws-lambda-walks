@@ -1,7 +1,6 @@
 const handler = require('../src/index').handler;
-const fixtures = require('./fixtures.json');
 
-const [handlerInput] = fixtures;
+const [handlerInput] = [{}];
 
 async function callHandler(path = null, query = null, headers = null, ignoreAuth = false) {
 	if (path) {
