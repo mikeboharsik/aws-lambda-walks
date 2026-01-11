@@ -18,7 +18,7 @@ class YouTubeThumbnailHandler extends ApiRequestHandler {
 		if (res.ok) {
 			const buffer = await res.arrayBuffer();
 
-			return this.getJpegResponse(buffer);
+			return this.getJpegResponseWithYearExpiration(buffer);
 		}
 
 		return this.getPlaintextResponse(404);

@@ -50,10 +50,10 @@ class ApiRequestHandler {
 		};
 	}
 
-	getJpegResponse(buffer) {
+	getJpegResponseWithYearExpiration(buffer) {
 		return {
 			body: Buffer.from(buffer),
-			headers: { 'content-type': 'image/jpeg' },
+			headers: { 'content-type': 'image/jpeg', 'cache-control': 'max-age=31556926' },
 			statusCode: 200
 		};
 	}
