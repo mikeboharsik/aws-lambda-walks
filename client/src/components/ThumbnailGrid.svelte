@@ -63,11 +63,8 @@
 		if (!response.ok) {
 			throw new Error('Failed to load YouTube thumbnail image');
 		}
-		console.log(response.status);
 		const blob = await response.blob();
-		console.log({ blob });
 		const bitmap = await createImageBitmap(blob);
-		console.log({ bitmap });
 		return bitmap;
 	}
 
