@@ -22,6 +22,13 @@ class ApiRequestHandler {
 		};
 	}
 
+	getJsonResponseWithYearExpiration(statusCode, body = undefined) {
+		return {
+			...this.getResponse(statusCode, typeof body === 'string' ? body : JSON.stringify(body)),
+			headers: { 'Content-Type': 'application/json', 'cache-control': 'max-age=31556926' },
+		};
+	}
+
 	getCsvResponse(statusCode, body = undefined) {
 		return {
 			...this.getResponse(statusCode, body),

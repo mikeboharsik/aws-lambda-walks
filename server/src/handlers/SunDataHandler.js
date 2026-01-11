@@ -33,7 +33,7 @@ class SunDataHandler extends ApiRequestHandler {
 			}
 
 			const responseJson = await response.json();
-			return this.getJsonResponse(200, JSON.stringify(responseJson));
+			return this.getJsonResponseWithYearExpiration(200, JSON.stringify(responseJson));
 		} catch(e) {
 			return this.getJsonResponse(400, JSON.stringify({ message: e.message }));
 		}
