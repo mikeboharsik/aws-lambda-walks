@@ -1,5 +1,5 @@
 function makeQueryStringParametersSafe(qsp) {
-	if (!qsp) return null;
+	if (!qsp) return '';
 
 	const copy = JSON.parse(JSON.stringify(qsp));
 
