@@ -340,10 +340,9 @@ function commitWalkFile(date) {
 	const commitCommand = `git commit -m "${commitMessage}"`;
 	child_process.execSync(commitCommand, { cwd });
 
-	const pushCommand = `git push`;
-	child_process.execSync(pushCommand, { cwd });
+	child_process.execSync('Backup-Repos -RepoNames walk-routes', { shell: 'pwsh' }).toString();
 
-	console.log(`Pushed new commit with message [${commitMessage}]`);
+	console.log(`Created new commit with message [${commitMessage}]`);
 }
 
 async function getFileHash(fullPath) {

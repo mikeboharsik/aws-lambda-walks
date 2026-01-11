@@ -203,12 +203,10 @@ getStatesAndTownsForWalk(walk)
 		const dateReplaced = inputs.date.replace(/-/g, '/');
 		const stageCommand = `git add *${dateReplaced}.json`;
 		const commitCommand = `git commit -m "feat: add sections, towns, and videos to ${dateReplaced}.json"`;
-		const pushCommand = 'git push';
 
 		if (!inputs.commit || inputs.skipGit) {
 			console.log(`Would run command [${stageCommand}]`);
 			console.log(`Would run command [${commitCommand}]`);
-			console.log(`Would run command [${pushCommand}]`);
 		}
 
 		if (didUpdateWalk && !inputs.skipGit) {
@@ -220,8 +218,8 @@ getStatesAndTownsForWalk(walk)
 			child_process.execSync(commitCommand, { cwd });
 			console.log(`Ran command [${commitCommand}]`);
 
-			child_process.execSync(pushCommand, { cwd });
-			console.log(`Ran command [${pushCommand}]`);
+			child_process.execSync('Backup-Repos -RepoNames walk-routes', { shell: 'pwsh' }).toString();
+			console.log('Backed up walk-routes repo');
 		}
 
 		const expectedThumbnailPath = path.resolve(inputs.outputDir, `${inputs.date}_0_thumbnail.jpeg`);
