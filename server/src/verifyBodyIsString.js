@@ -1,5 +1,7 @@
 function verifyBodyIsString(result) {
-	if (result.body && typeof result.body !== 'string' && !result instanceof Buffer) {
+	const isBuffer = Buffer.isBuffer(result.body);
+	const isString = typeof result.body === 'string';
+	if (result.body && !isString && !isBuffer) {
 		result.body = JSON.stringify(result.body);
 	}
 }
