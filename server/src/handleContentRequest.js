@@ -39,7 +39,7 @@ async function handleContentRequest(event) {
 		return {
 			body,
 			statusCode: 200,
-			headers: { 'content-type': contentType }
+			headers: { 'content-type': contentType, 'cache-control': 'max-age=300' }
 		}
 	}
 
