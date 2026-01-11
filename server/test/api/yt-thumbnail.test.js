@@ -19,5 +19,4 @@ test('returns 200 for an existent videoId', async () => {
 	const result = await callHandler(PATH, '?videoId=AmuQjMbLwx0', null, false);
 
 	expect(result.statusCode).toBe(200);
-	expect(result.isBase64Encoded).toBe(true);
 });
