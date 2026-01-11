@@ -36,7 +36,6 @@ const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
 async function getPrivacyZones(event) {
 	try {
 		const expectedFile = path.resolve(`${__dirname}/../../../../walk-routes/meta_archive/privacyZones.json`);
-		event.log('Trying to load privacy zones from', expectedFile);
 		return JSON.parse(await fsPromises.readFile(expectedFile, 'utf8'));
 	} catch (e) {
 		event.log('Error loading privacy zones', e);
