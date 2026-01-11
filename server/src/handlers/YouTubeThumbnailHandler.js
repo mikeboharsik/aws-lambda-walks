@@ -16,7 +16,7 @@ class YouTubeThumbnailHandler extends ApiRequestHandler {
 
 		const res = await fetch(`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`);
 		if (res.ok) {
-			const buffer = await fetch(`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`).then(res => res.arrayBuffer());
+			const buffer = await res.arrayBuffer();
 
 			return this.getJpegResponse(buffer);
 		}

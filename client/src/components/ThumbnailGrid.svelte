@@ -59,9 +59,16 @@
 			return cached;
 		}
 
-		return await fetch(`${baseApiUrl}/yt-thumbnail?videoId=${videoId}`)
-			.then(res => res.blob())
-			.then(imgData => createImageBitmap(imgData));
+		const response = await fetch(`${baseApiUrl}/yt-thumbnail?videoId=${videoId}`)
+		if (!response.ok) {
+			throw new Error('Failed to load YouTube thumbnail image');
+		}
+		console.log(response.status);
+		const blob = await response.blob();
+		console.log({ blob });
+		const bitmap = await createImageBitmap(blob);
+		console.log({ bitmap });
+		return bitmap;
 	}
 
 	function populateImageArray() {
@@ -215,11 +222,15 @@
 			const vidIdx = getRandomWithMax(availableVideoIds.length);
 			const vidId = availableVideoIds[vidIdx];
 
-			cell.image = await getBitmapForThumbnail(vidId);
-			cell.timeLeft = imageFadeTime;
-			cell.videoId = vidId;
+			try {
+				cell.image = await getBitmapForThumbnail(vidId);
+				cell.timeLeft = imageFadeTime;
+				cell.videoId = vidId;
 
-			thumbnailCache[vidId] = cell.image;
+				thumbnailCache[vidId] = cell.image;
+			} catch (e) {
+				console.log('Error loading thumbnail', e);
+			}
 		} else {
 			log('bad index', cell, imageCells);
 		}

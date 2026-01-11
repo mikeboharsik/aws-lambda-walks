@@ -50,11 +50,10 @@ class ApiRequestHandler {
 		};
 	}
 
-	getJpegResponse(arrayBuffer) {
+	getJpegResponse(buffer) {
 		return {
-			body: Buffer.from(arrayBuffer).toString('base64'),
-			headers: { 'content-type': 'image/jpg' },
-			isBase64Encoded: true,
+			body: Buffer.from(buffer),
+			headers: { 'content-type': 'image/jpeg' },
 			statusCode: 200
 		};
 	}
