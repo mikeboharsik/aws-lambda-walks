@@ -15,7 +15,7 @@ const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
 
 function logResult(result, event) {
-	if (process.env['LOG_RESULT'] === 'true') {
+	if (process.env.LOG_RESULT === 'true') {
 		event.log('Returning result', JSON.stringify(result, null, '  '));
 	} else {
 		event.log('Returning status code', result.statusCode);
@@ -48,10 +48,10 @@ exports.handler = async (event, ignoreAuth = false) => {
 	try {
 		logEvent(event);
 
-		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers.host)) {
-			event.log(event.headers.host, 'is not an allowed host');
+		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers?.host)) {
+			event.log(event.headers?.host, 'is not an allowed host');
 			const result = { statusCode: 404 };
-			logResult(result);
+			logResult(result, event);
 			return result;
 		}
 

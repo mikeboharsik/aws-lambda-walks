@@ -26,7 +26,7 @@ class YouTubeIdsHandler extends ApiRequestHandler {
 				({ radius, targetPoint } = queryStringParameters);
 			}
 
-			const parsed = await getAllYoutubeIdsBenched();
+			const parsed = await getAllYoutubeIdsBenched(event);
 			return this.getJsonResponse(200, JSON.stringify(parsed));
 		} catch (e) {
 			return this.getJsonResponse(400, JSON.stringify({ error: e.message }));

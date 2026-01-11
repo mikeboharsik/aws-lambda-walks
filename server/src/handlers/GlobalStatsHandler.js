@@ -20,7 +20,7 @@ class GlobalStatsHandler extends ApiRequestHandler {
 
 	async process(event) {
 		try {
-			const parsed = await getGlobalStatsBenched();
+			const parsed = await getGlobalStatsBenched(event);
 			return this.getJsonResponse(200, JSON.stringify(parsed));
 		} catch (e) {
 			return this.getJsonResponse(400, JSON.stringify({ error: e.message }));

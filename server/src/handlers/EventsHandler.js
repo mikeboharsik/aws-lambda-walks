@@ -103,7 +103,7 @@ class EventsHandler extends ApiRequestHandler {
 				} = {},
 			} = event;
 
-			const { headers: { accept } } = event;
+			const { headers: { accept } = {} } = event;
 			const acceptHeader = accept?.toLowerCase() || 'application/json';
 			const didRequestGeoJson = acceptHeader === 'application/geo+json';
 
@@ -120,7 +120,7 @@ class EventsHandler extends ApiRequestHandler {
 				}
 			}
 
-			let hits = await getAllEvents();
+			let hits = await getAllEvents(event);
 
 			if (didRequestGeoJson) {
 				hits = hits.filter(e => e.coords);
