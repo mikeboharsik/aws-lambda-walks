@@ -26,15 +26,22 @@ function logResult(result, event) {
 
 function logEvent(event) {
 	const copy = JSON.parse(JSON.stringify(event));
-	copy.cookies?.forEach((cookie, idx) => {
-		if (cookie.startsWith('access_token')) {
-			const [k, v] = cookie.split('=');
-			if (k === 'access_token') {
-				const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
-				copy.cookies.splice(idx, 1, newCookie);
+	if (copy.cookies) {
+		copy.cookies?.forEach?.((cookie, idx) => {
+			if (cookie.startsWith('access_token')) {
+				const [k, v] = cookie.split('=');
+				if (k === 'access_token') {
+					const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
+					copy.cookies.splice(idx, 1, newCookie);
+				}
 			}
-		}
-	});
+		});
+		delete copy.cookiesParsed;
+		delete copy.headers?.cookie;
+		delete copy.headers?.cookies;
+		delete copy.headers?.Cookie;
+		delete copy.headers?.Cookies;
+	}
 	event.log(JSON.stringify(copy));
 }
 
@@ -67,6 +74,8 @@ exports.handler = async (event, ignoreAuth = false) => {
 	event.logError = function logError(...args) {
 		console.error(`[${requestId}]`, ...args);
 	};
+	event.cookies = event.cookies || event.headers?.cookie?.split(';').map(e => e.trim()) || [];
+	event.cookiesParsed = event.cookies.map(e => e.split('=')).reduce((acc, [k, v]) => { if (k) { acc[k] = v; } return acc; }, {});
 
 	try {
 		logEvent(event);

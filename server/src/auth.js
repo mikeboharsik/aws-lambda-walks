@@ -4,8 +4,7 @@ const authUrl = process.env.AUTH_URL;
 
 function verifyToken(event) {
 	const secret = process.env.ACCESS_TOKEN_SECRET;
-	const cookies = event.cookies.reduce((acc, cur) => { let [key, val] = cur.split('='); acc[key] = val; return acc; }, {});
-	const token = cookies.access_token;
+	const token = event.cookiesParsed.access_token;
 
 	let verified = false;
 	try {
@@ -38,7 +37,7 @@ async function authenticate(event) {
 			event.authExpires = new Date(verified.exp * 1000).toUTCString();
 			event.authScope = verified.scope;
 		} else {
-      event.log('Authentication failed', authUrl, event.headers.authorization);
+      event.log(`Authentication failed, authUrl: [${authUrl}], authorization header: [${event.headers?.authorization}]`);
     }
 	} catch (e) {
     event.logError('Something went wrong during authentication', e);

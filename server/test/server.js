@@ -13,7 +13,11 @@ console.log({ ignoreAuth });
 const server = http.createServer(async (req, res) => {
 	const [path, query] = req.url.split('?');
 	const result = await callHandler(path, query, { ...req.headers, method: req.method }, ignoreAuth);
-	res.writeHead(result.statusCode, { ...result.headers, 'Access-Control-Allow-Origin': '*' });
+	const headers = { ...result.headers };
+	if (result.cookies) {
+		headers['set-cookie'] = result.cookies;
+	}
+	res.writeHead(result.statusCode, headers);
 	res.write(result.body || '');
 	res.end();
 });

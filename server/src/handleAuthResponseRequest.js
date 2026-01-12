@@ -1,34 +1,18 @@
 const jwt = require('jsonwebtoken');
-const { DynamoDBClient, GetItemCommand  } = require('@aws-sdk/client-dynamodb');
-
-const dbClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 
 async function handleAuthResponseRequest(event) {
 	const origin = process.env.PUBLIC_HOST;
 	const publicKey = Buffer.from(process.env.AUTH_PUBLIC_KEY, 'base64').toString();
 	const secret = process.env.ACCESS_TOKEN_SECRET;
 
-	const { queryStringParameters: { id_token } = {} } = event;
-
-	const token = jwt.verify(id_token, publicKey, { algorithm: 'RS256' });
-
-	const command = new GetItemCommand({
-		TableName: 'walks-users',
-		Key: {
-			username: {
-				S: token.sub,
-			},
-		}
-	});
-	const response = await dbClient.send(command);
-	if (!response.Item) {
+	const cookies = event.cookiesParsed;
+	if (event.cookiesParsed.id_token) {
 		return {
-			statusCode: 302,
-			headers: {
-				Location: `https://${origin}?authError=${encodeURIComponent('User has not been granted access to this application')}`
-			},
+			statusCode: 400,
 		};
 	}
+	
+	const token = jwt.verify(cookies.id_token, publicKey, { algorithm: 'RS256' });
 
 	const accessToken = jwt.sign({
 		iss: `https://${origin}`,
@@ -45,6 +29,7 @@ async function handleAuthResponseRequest(event) {
 		cookies: [
 			`access_token=${accessToken}; Domain=${origin}; HttpOnly; Expires=${expirationDate.toUTCString()}`,
 			`access_token_valid_until=${expirationDate.getTime()}; Domain=${origin}; Expires=${expirationDate.toUTCString()}`,
+			`id_token=; Domain=${origin}; HttpOnly; Expires=${new Date().toUTCString()}`
 		],
 		headers: {
 			Location: `https://${origin}`,
