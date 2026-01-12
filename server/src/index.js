@@ -13,6 +13,8 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
+const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
+const DISALLOWED_USER_AGENTS = JSON.parse(process.env.DISALLOWED_USER_AGENTS || '[]');
 
 function logResult(result, event) {
 	if (process.env.LOG_RESULT === 'true') {
@@ -36,6 +38,27 @@ function logEvent(event) {
 	event.log(JSON.stringify(copy));
 }
 
+function getPrevalidationResult(event) {
+	if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers?.host)) {
+		event.log(event.headers?.host, 'is not an allowed host');
+		const result = { statusCode: 404 };
+		logResult(result, event);
+		return result;
+	}
+	if (DISALLOWED_IP_ADDRESSES && DISALLOWED_IP_ADDRESSES.includes(event.headers?.['cf-connecting-ip'])) {
+		event.log(event.headers?.['cf-connecting-ip'], 'is not an allowed IP address');
+		const result = { statusCode: 403 };
+		logResult(result, event);
+		return result;
+	}
+	if (DISALLOWED_USER_AGENTS && DISALLOWED_USER_AGENTS.includes(event.headers?.['user-agent'])) {
+		event.log(event.headers?.['user-agent'], 'is not an allowed user-agent');
+		const result = { statusCode: 403 };
+		logResult(result, event);
+		return result;
+	}
+}
+
 exports.handler = async (event, ignoreAuth = false) => {
 	const requestId = crypto.randomUUID();
 	event.log = function log(...args) {
@@ -48,11 +71,9 @@ exports.handler = async (event, ignoreAuth = false) => {
 	try {
 		logEvent(event);
 
-		if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers?.host)) {
-			event.log(event.headers?.host, 'is not an allowed host');
-			const result = { statusCode: 404 };
-			logResult(result, event);
-			return result;
+		const prevalidationResult = getPrevalidationResult(event);
+		if (prevalidationResult) {
+			return prevalidationResult;
 		}
 
 		const { rawPath } = event;
