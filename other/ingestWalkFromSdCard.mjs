@@ -374,7 +374,7 @@ async function copyOriginalFilesToLocal(videoPaths, date) {
 	const outputFilePath = resolve(outputDir, `${date}_merged.mp4`);
 	if (await fileDoesExist(outputFilePath)) {
 		console.warn(outputFilePath, 'already exists; skipping');
-		return;
+		return outputFilePath;
 	}
 
 	const filesContent = videoPaths.reduce((acc, cur) => {
@@ -384,12 +384,20 @@ async function copyOriginalFilesToLocal(videoPaths, date) {
 
 	await writeFile(filesTxtPath, filesContent, 'utf8');
 
-	const command = `ffmpeg -f concat -i ${filesTxtPath} -c copy ${outputFilePath}`;
-	console.log('Executing command', command);
-	const result = child_process.execSync(command);
-	console.log('Output from ffmpeg:', result.toString());
+	try {
+		const command = `ffmpeg -f concat -i ${filesTxtPath} -c copy ${outputFilePath}`;
+		console.log('Executing command', command);
+		const result = child_process.execSync(command);
+		console.log('Output from ffmpeg:', result.toString());
+	} catch (e) {
+		console.error('Failed to complete ffmpeg concat operation, deleting partial output file');
+		await rm(outputFilePath);
+		throw new Error('Concat failed');
+	} finally {
+		await rm(filesTxtPath);
+	}
 
-	await rm(filesTxtPath);
+	return outputFilePath;
 }
 
 async function backupMergedFileToNas(date) {
@@ -410,7 +418,7 @@ async function backupMergedFileToNas(date) {
 	throw new Error(`Tried to find [${localFilePath}] for backup to NAS but it does not exist`);
 }
 
-async function deleteOriginalFiles(allFiles) {
+async function deleteOriginalFiles(date, allFiles, mergedFilePath, exifOutputsByDate) {
 	if (!allFiles) throw new Error('allFiles must have a value');
 
 	if (getSkipBackup() || getKeepOriginalFiles()) {
@@ -418,7 +426,17 @@ async function deleteOriginalFiles(allFiles) {
 		return;
 	}
 
-	console.log('Deleting files', allFiles);
+	const outputFileLengthMs = await getVideoDurationInSeconds(mergedFilePath) * 1000;
+	const stripped = exifOutputsByDate[date].map(e => basename(e.SourceFile).replace('.MP4', '').replace('GX_', ''));
+	const filesToDelete = allFiles.filter(e => stripped.some(f => e.includes(f)));
+	const durations = await Promise.all(filesToDelete.filter(e => e.endsWith('.MP4')).map(async file => (await getVideoDurationInSeconds(resolve(join(fullPathToFiles, file)))) * 1000));
+	const durationsSum = durations.reduce((acc, cur) => acc + cur, 0);
+
+	if (outputFileLengthMs !== durationsSum) {
+		throw new Error(`Output file length [${outputFileLengthMs}] does not match the sum of the constituent files' lengths [${durationsSum}], not deleting`);
+	}
+
+	console.log('Deleting files', filesToDelete);
 	const jobs = allFiles.map(async (path) => await rm(resolve(fullPathToFiles, path)));
 	await Promise.all(jobs);
 	console.log('Deleted files');
@@ -468,12 +486,13 @@ for (const date of dates) {
 	await writeExifOutputs(exifsForDate, date);
 	commitWalkFile(date);
 	const videoPathsForDate = videoPaths.filter(vp => exifsForDate.some(ex => resolve(ex.SourceFile) === vp));
-	await copyOriginalFilesToLocal(videoPathsForDate, date);
+	const mergedFilePath = await copyOriginalFilesToLocal(videoPathsForDate, date);
 
 	if (getConfig(CONFIG_KEYS.SKIP_BACKUP) !==  'true') {
 		await backupMergedFileToNas(date);
 	}
+
+	await deleteOriginalFiles(date, allFiles, mergedFilePath, exifOutputsByDate);
 };
 
-await deleteOriginalFiles(allFiles);
 ejectSdCard();
