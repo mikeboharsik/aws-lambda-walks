@@ -13,8 +13,11 @@ const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
+console.log('ALLOWED_HOSTS count:', ALLOWED_HOSTS.length);
 const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
+console.log('DISALLOWED_IP_ADDRESSES count:', DISALLOWED_IP_ADDRESSES.length);
 const DISALLOWED_USER_AGENTS = JSON.parse(process.env.DISALLOWED_USER_AGENTS || '[]');
+console.log('DISALLOWED_USER_AGENTS count:', DISALLOWED_USER_AGENTS.length);
 
 function logResult(result, event) {
 	if (process.env.LOG_RESULT === 'true') {
