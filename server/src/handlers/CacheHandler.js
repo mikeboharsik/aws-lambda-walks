@@ -5,7 +5,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 class CacheHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/cache/;
+		this.path = /^\/cache$/;
 		this.requiresAuth = true;
 	}
 

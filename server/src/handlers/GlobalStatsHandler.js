@@ -14,7 +14,7 @@ const getGlobalStatsBenched = getBenchmarkedFunctionAsync(getGlobalStats);
 class GlobalStatsHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/globalStats/;
+		this.path = /^\/globalStats$/;
 		this.requiresAuth = false;
 	}
 

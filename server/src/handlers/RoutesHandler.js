@@ -46,7 +46,7 @@ async function getPrivacyZones(event) {
 class RoutesHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/routes/;
+		this.path = /^\/routes$/;
 		this.requiresAuth = false;
 	}
 

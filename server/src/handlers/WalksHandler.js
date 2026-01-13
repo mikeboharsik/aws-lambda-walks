@@ -5,7 +5,7 @@ const { getWalksByMonth } = require('../getWalksByMonth.js');
 class WalksHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/walks/;
+		this.path = /^\/walks$/;
 		this.requiresAuth = false;
 	}
 

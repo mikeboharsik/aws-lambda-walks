@@ -3,7 +3,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 class SunDataHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = '/sunx';
+		this.path = /^\/sunx$/;
 		this.requiresAuth = false;
 	}
 

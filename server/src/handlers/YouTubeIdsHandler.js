@@ -14,7 +14,7 @@ const getAllYoutubeIdsBenched = getBenchmarkedFunctionAsync(getAllYoutubeIds);
 class YouTubeIdsHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/youtubeIds/;
+		this.path = /^\/youtubeIds$/;
 		this.requiresAuth = false;
 	}
 

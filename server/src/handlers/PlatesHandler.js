@@ -94,7 +94,7 @@ const getAllEventsByPlateBenched = getBenchmarkedFunctionAsync(getAllEventsByPla
 class PlatesHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/plates/;
+		this.path = /^\/plates$/;
 		this.requiresAuth = true;
 	}
 

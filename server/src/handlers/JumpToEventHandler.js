@@ -4,7 +4,7 @@ const getEvent = require('../util/getEvent.js');
 class JumpToEventHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/jumpToEvent/;
+		this.path = /^\/jumpToEvent$/;
 		this.requiresAuth = false;
 	}
 

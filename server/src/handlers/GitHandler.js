@@ -7,7 +7,7 @@ const getPublicPath = require('../util/getPublicPath.js');
 class GitHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/git/;
+		this.path = /^\/git$/;
 		this.requiresAuth = false;
 	}
 

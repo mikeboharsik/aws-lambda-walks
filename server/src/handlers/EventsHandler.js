@@ -8,7 +8,7 @@ const getEvent = require('../util/getEvent.js');
 class EventsHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/events/;
+		this.path = /^\/events$/;
 		this.requiresAuth = true;
 	}
 

@@ -3,7 +3,7 @@ const { ApiRequestHandler } = require('./ApiRequestHandler');
 class YouTubeThumbnailHandler extends ApiRequestHandler {
 	constructor() {
 		super();
-		this.path = /\/yt-thumbnail/;
+		this.path = /^\/yt-thumbnail$/;
 		this.requiresAuth = false;
 	}
 
