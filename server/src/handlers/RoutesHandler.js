@@ -1,37 +1,11 @@
-const fs = require('fs');
 const fsPromises = require('fs/promises');
 const path = require('path');
 
-const geolib = require('geolib');
-
 const { ApiRequestHandler } = require('./ApiRequestHandler');
 
-const { getBenchmarkedFunctionAsync } = require('../util/getBenchmarkedFunction.js');
+const { getCoordsByMonth, getCoordsNearPoint } = require('../util/getCoords.js');
 const { getGeoJsonFromCoords } = require('../getGeoJsonFromCoords.js');
 
-const getGeneratedPath = require('../util/getGeneratedPath.js');
-
-async function getCoordsByMonth(event, month) {
-	try {
-		const resolvedPath = path.resolve(`${getGeneratedPath()}/coords/${month}.json`);
-		return JSON.parse(await fsPromises.readFile(resolvedPath));
-	} catch (e) {
-		throw new Error(`Failed to load data for month ${month}`);
-	}
-}
-const getCoordsByMonthBenched = getBenchmarkedFunctionAsync(getCoordsByMonth);
-
-async function getAllCoords() {
-	const coordsPath = `${getGeneratedPath()}/coords`;
-	const monthFiles = fs.readdirSync(coordsPath);
-	const jobs = monthFiles.map(async (file) => {
-		const resolvedPath = path.resolve(coordsPath + '/' + file, 'utf8');
-		return JSON.parse(fs.readFileSync(resolvedPath))
-	});
-	const allCoords = await Promise.all(jobs);
-	return allCoords;
-}
-const getAllCoordsBenched = getBenchmarkedFunctionAsync(getAllCoords);
 
 async function getPrivacyZones(event) {
 	try {
@@ -56,44 +30,9 @@ class RoutesHandler extends ApiRequestHandler {
 			return this.getJsonResponse(400, { error: 'query parameter date or nearPoint must be provided' });
 		}
 
-		if (nearPoint) {
-			nearPoint = nearPoint.split(',').map(e => parseFloat(e.trim()));
-			const [targetLat, targetLon] = nearPoint;
-
-			const allCoordsByMonth = await getAllCoordsBenched(event);
-
-			const hitDates = [];
-			allCoordsByMonth.forEach(month => {
-				month.forEach(day => {
-					if (day.bounds) {
-						const { bounds: { minLat, minLng, maxLat, maxLng } } = day;
-						const dayBoundingBox = [
-							{ latitude: minLat, longitude: minLng },
-							{ latitude: minLat, longitude: maxLng },
-							{ latitude: maxLat, longitude: maxLng },
-							{ latitude: maxLat, longitude: minLng },
-							{ latitude: minLat, longitude: minLng },
-						];
-						if (!geolib.isPointInPolygon({ latitude: targetLat, longitude: targetLon }, dayBoundingBox)) {
-							return;
-						}
-					}
-
-					for (const [lat, lon] of (day?.coords || [])) {
-						const isHit = geolib.isPointWithinRadius(
-							{ latitude: lat, longitude: lon },
-							{ latitude: targetLat, longitude: targetLon },
-							nearPointRadius,
-						);
-						if (isHit) {
-							hitDates.push(day.date);
-							break;
-						}
-					}
-				});
-			});
-
-			return this.getJsonResponse(200, hitDates);
+		if (event.queryStringParameters.nearPoint) {
+			const coordsNearPoint = await getCoordsNearPoint(event);
+			return this.getJsonResponse(200, coordsNearPoint.map(e => e.date));
 		}
 
 		if (idx !== null) {
@@ -109,7 +48,7 @@ class RoutesHandler extends ApiRequestHandler {
 
 		const [month] = date.match(/\d{4}-\d{2}/);
 
-		const allCoordsByMonth = await getCoordsByMonthBenched(event, month);
+		const allCoordsByMonth = await getCoordsByMonth(event, month);
 		const walksForTargetDate = allCoordsByMonth.filter(e => e.date === date);
 		if (walksForTargetDate.length === 0) {
 			return this.getJsonResponse(404, JSON.stringify({ error: `failed to find any walks for date ${date}` }));
