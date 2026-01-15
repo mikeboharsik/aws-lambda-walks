@@ -16,12 +16,11 @@ async function getWalksByMonth(event) {
 	}
 
 	const ext = didRequestCsv ? '.csv' : '.json';
-	let content = await fsPromises.readFile(`${getGeneratedPath()}/walks/${month}${ext}`);
-	content = didRequestCsv ? content.toString() : JSON.parse(content);
+	let content = await fsPromises.readFile(`${getGeneratedPath()}/walks/${month}${ext}`, { encoding: 'utf8' });
 	const contentHeader = { 'content-type': didRequestCsv ? 'text/csv' : 'application/json' };
 	return {
 		statusCode: 200,
-		body: didRequestCsv ? content : JSON.stringify(content),
+		body: content,
 		headers: contentHeader,
 	}
 }
