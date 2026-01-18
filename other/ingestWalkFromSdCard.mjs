@@ -432,8 +432,10 @@ async function deleteOriginalFiles(date, allFiles, mergedFilePath, exifOutputsBy
 	const durations = await Promise.all(filesToDelete.filter(e => e.endsWith('.MP4')).map(async file => (await getVideoDurationInSeconds(resolve(join(fullPathToFiles, file)))) * 1000));
 	const durationsSum = durations.reduce((acc, cur) => acc + cur, 0);
 
-	if (outputFileLengthMs !== durationsSum) {
-		throw new Error(`Output file length [${outputFileLengthMs}] does not match the sum of the constituent files' lengths [${durationsSum}], not deleting`);
+	const diff = Math.abs(outputFileLengthMs - durationsSum);
+	const diffToleranceMs = 1;
+	if (diff > diffToleranceMs) {
+		throw new Error(`Output file length [${outputFileLengthMs}] and sum of the constituent files' lengths [${durationsSum}] is not within configured tolerance of ${diffToleranceMs} milliseconds, not deleting`);
 	}
 
 	console.log('Deleting files', filesToDelete);
