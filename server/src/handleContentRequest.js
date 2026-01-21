@@ -45,7 +45,7 @@ async function handleContentRequest(event) {
 
 	event.log('Failed to find target:', target);
 	return {
-		statusCode: 404
+		statusCode: 403
 	}
 }
 
