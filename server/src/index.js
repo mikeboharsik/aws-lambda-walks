@@ -1,3 +1,5 @@
+const fs = require('fs');
+const fsPromises = require('fs/promises');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -12,10 +14,20 @@ const { verifyCacheValue } = require('./verifyCacheValue.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
+const GARBAGE_PATH = path.resolve(__dirname + '/../garbage.txt');
+
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
 console.log('ALLOWED_HOSTS count:', ALLOWED_HOSTS.length);
+
 const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
+try {
+	const storedIps = fs.readFileSync(GARBAGE_PATH, 'utf8').split('\n').filter(e => e.trim());
+	const uniqueStoredIps = new Set(storedIps);
+	DISALLOWED_IP_ADDRESSES.push(...uniqueStoredIps);
+	console.log(`Loaded [${storedIps.length}] disallowed IP addresses from [${GARBAGE_PATH}]`);
+} catch {}
 console.log('DISALLOWED_IP_ADDRESSES count:', DISALLOWED_IP_ADDRESSES.length);
+
 const DISALLOWED_USER_AGENTS = JSON.parse(process.env.DISALLOWED_USER_AGENTS || '[]');
 console.log('DISALLOWED_USER_AGENTS count:', DISALLOWED_USER_AGENTS.length);
 
@@ -63,6 +75,20 @@ function getPrevalidationResult(event) {
 	}
 	if (DISALLOWED_USER_AGENTS && DISALLOWED_USER_AGENTS.includes(event.headers?.['user-agent'])) {
 		event.log(event.headers?.['user-agent'], 'is not an allowed user-agent');
+		const result = { statusCode: 403 };
+		logResult(result, event);
+		return result;
+	}
+
+	if (event.rawPath.includes('.env') || event.rawPath.includes('.git') || event.rawPath.includes('.php')) {
+		const clientIpAddress = event.headers?.['cf-connecting-ip'];
+		if (clientIpAddress) {
+			DISALLOWED_IP_ADDRESSES.push(clientIpAddress);
+			fsPromises.appendFile(GARBAGE_PATH, event.headers?.['cf-connecting-ip'] + '\n')
+				.then(() => console.log(`Added ${clientIpAddress} to garbage`))
+				.catch((e) => console.log('Failed to write IP address', e));
+		}
+
 		const result = { statusCode: 403 };
 		logResult(result, event);
 		return result;

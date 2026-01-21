@@ -1,4 +1,5 @@
 .env
 build
+garbage.txt
 node_modules
 test/testResult.txt
