@@ -19,6 +19,14 @@ const GARBAGE_PATH = path.resolve(__dirname + '/../garbage.txt');
 const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
 console.log('ALLOWED_HOSTS count:', ALLOWED_HOSTS.length);
 
+const RED_FLAGS = [
+	'.env',
+	'.git',
+	'.php',
+	'wp-admin',
+	'wp-content',
+	'wp-include',
+];
 const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
 try {
 	const storedIps = fs.readFileSync(GARBAGE_PATH, 'utf8').split('\n').filter(e => e.trim());
@@ -80,7 +88,7 @@ function getPrevalidationResult(event) {
 		return result;
 	}
 
-	if (event.rawPath.includes('.env') || event.rawPath.includes('.git') || event.rawPath.includes('.php')) {
+	if (RED_FLAGS.some(rf => event.rawPath.includes(rf))) {
 		const clientIpAddress = event.headers?.['cf-connecting-ip'];
 		if (clientIpAddress) {
 			DISALLOWED_IP_ADDRESSES.push(clientIpAddress);
