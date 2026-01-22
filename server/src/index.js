@@ -40,10 +40,11 @@ const DISALLOWED_USER_AGENTS = JSON.parse(process.env.DISALLOWED_USER_AGENTS || 
 console.log('DISALLOWED_USER_AGENTS count:', DISALLOWED_USER_AGENTS.length);
 
 function logResult(result, event) {
+	const totalMs = (performance.now() - event.startMs).toFixed(3);
 	if (process.env.LOG_RESULT === 'true') {
-		event.log('Returning result', JSON.stringify(result, null, '  '));
+		event.log(`Returning result after ${totalMs}`, JSON.stringify(result, null, '  '));
 	} else {
-		event.log('Returning status code', result.statusCode);
+		event.log('Returning status code', result.statusCode, `after ${totalMs} milliseconds`);
 	}
 }
 
@@ -105,6 +106,7 @@ function getPrevalidationResult(event) {
 
 exports.handler = async (event, ignoreAuth = false) => {
 	const requestId = crypto.randomUUID();
+	event.startMs = performance.now();
 	event.log = function log(...args) {
 		console.log(`[${requestId}]`, ...args);
 	};
