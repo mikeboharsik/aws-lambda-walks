@@ -1,7 +1,4 @@
-const fs = require('fs');
-const fsPromises = require('fs/promises');
 const path = require('path');
-const crypto = require('crypto');
 
 require('./setupLoggers.js');
 require('dotenv').config({ path: [path.resolve(`${__dirname}/../.env`)], quiet: true });
@@ -14,107 +11,13 @@ const { verifyCacheValue } = require('./verifyCacheValue.js');
 const { setJsonContentType } = require('./setJsonContentType.js');
 const { verifyBodyIsString } = require('./verifyBodyIsString.js');
 
-const GARBAGE_PATH = path.resolve(__dirname + '/../garbage.txt');
-
-const ALLOWED_HOSTS = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',') : [];
-console.log('ALLOWED_HOSTS count:', ALLOWED_HOSTS.length);
-
-const RED_FLAGS = [
-	'.env',
-	'.git',
-	'.php',
-	'wp-admin',
-	'wp-content',
-	'wp-include',
-];
-const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
-try {
-	const storedIps = fs.readFileSync(GARBAGE_PATH, 'utf8').split('\n').filter(e => e.trim());
-	const uniqueStoredIps = new Set(storedIps);
-	DISALLOWED_IP_ADDRESSES.push(...uniqueStoredIps);
-	console.log(`Loaded [${storedIps.length}] disallowed IP addresses from [${GARBAGE_PATH}]`);
-} catch {}
-console.log('DISALLOWED_IP_ADDRESSES count:', DISALLOWED_IP_ADDRESSES.length);
-
-const DISALLOWED_USER_AGENTS = JSON.parse(process.env.DISALLOWED_USER_AGENTS || '[]');
-console.log('DISALLOWED_USER_AGENTS count:', DISALLOWED_USER_AGENTS.length);
-
-function logResult(result, event) {
-	const totalMs = (performance.now() - event.startMs).toFixed(3);
-	if (process.env.LOG_RESULT === 'true') {
-		event.log(`Returning result after ${totalMs}`, JSON.stringify(result, null, '  '));
-	} else {
-		event.log('Returning status code', result.statusCode, `after ${totalMs} milliseconds`);
-	}
-}
-
-function logEvent(event) {
-	const copy = JSON.parse(JSON.stringify(event));
-	if (copy.cookies) {
-		copy.cookies?.forEach?.((cookie, idx) => {
-			if (cookie.startsWith('access_token')) {
-				const [k, v] = cookie.split('=');
-				if (k === 'access_token') {
-					const newCookie = k + '=' + v.slice(0, 10) + '...' + v.slice(-10);
-					copy.cookies.splice(idx, 1, newCookie);
-				}
-			}
-		});
-		delete copy.cookiesParsed;
-		delete copy.headers?.cookie;
-		delete copy.headers?.cookies;
-		delete copy.headers?.Cookie;
-		delete copy.headers?.Cookies;
-	}
-	event.log(JSON.stringify(copy));
-}
-
-function getPrevalidationResult(event) {
-	if (ALLOWED_HOSTS.length && !ALLOWED_HOSTS.includes(event.headers?.host)) {
-		event.log(event.headers?.host, 'is not an allowed host');
-		const result = { statusCode: 404 };
-		logResult(result, event);
-		return result;
-	}
-	if (DISALLOWED_IP_ADDRESSES && DISALLOWED_IP_ADDRESSES.includes(event.headers?.['cf-connecting-ip'])) {
-		event.log(event.headers?.['cf-connecting-ip'], 'is not an allowed IP address');
-		const result = { statusCode: 403 };
-		logResult(result, event);
-		return result;
-	}
-	if (DISALLOWED_USER_AGENTS && DISALLOWED_USER_AGENTS.includes(event.headers?.['user-agent'])) {
-		event.log(event.headers?.['user-agent'], 'is not an allowed user-agent');
-		const result = { statusCode: 403 };
-		logResult(result, event);
-		return result;
-	}
-
-	if (RED_FLAGS.some(rf => event.rawPath.includes(rf))) {
-		const clientIpAddress = event.headers?.['cf-connecting-ip'];
-		if (clientIpAddress) {
-			DISALLOWED_IP_ADDRESSES.push(clientIpAddress);
-			fsPromises.appendFile(GARBAGE_PATH, event.headers?.['cf-connecting-ip'] + '\n')
-				.then(() => console.log(`Added ${clientIpAddress} to garbage`))
-				.catch((e) => console.log('Failed to write IP address', e));
-		}
-
-		const result = { statusCode: 403 };
-		logResult(result, event);
-		return result;
-	}
-}
+const getPrevalidationResult = require('./getPrevalidationResult.js');
+const logResult = require('./util/logResult.js');
+const logEvent = require('./util/logEvent.js');
+const prepareEvent = require('./util/prepareEvent.js');
 
 exports.handler = async (event, ignoreAuth = false) => {
-	const requestId = crypto.randomUUID();
-	event.startMs = performance.now();
-	event.log = function log(...args) {
-		console.log(`[${requestId}]`, ...args);
-	};
-	event.logError = function logError(...args) {
-		console.error(`[${requestId}]`, ...args);
-	};
-	event.cookies = event.cookies || event.headers?.cookie?.split(';').map(e => e.trim()) || [];
-	event.cookiesParsed = event.cookies.map(e => e.split('=')).reduce((acc, [k, v]) => { if (k) { acc[k] = v; } return acc; }, {});
+	prepareEvent(event);
 
 	try {
 		logEvent(event);
