@@ -1,4 +1,3 @@
-const getGarbagePath = require('./util/getGarbagePath.js');
 const getAllowedHosts = require('./util/getAllowedHosts.js');
 const getRedFlags = require('./util/getRedFlags.js');
 const getDisallowedIpAddresses = require('./util/getDisallowedIpAddresses.js');
@@ -7,7 +6,6 @@ const getDisallowedUserAgents = require('./util/getDisallowedUserAgents.js');
 const logResult = require('./util/logResult.js');
 
 const RED_FLAGS = getRedFlags();
-const GARBAGE_PATH = getGarbagePath();
 const ALLOWED_HOSTS = getAllowedHosts();
 const DISALLOWED_IP_ADDRESSES = getDisallowedIpAddresses();
 const DISALLOWED_USER_AGENTS = getDisallowedUserAgents();

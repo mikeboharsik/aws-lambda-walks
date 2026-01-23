@@ -1,5 +1,8 @@
 const fs = require('fs');
 
+const getGarbagePath = require('./getGarbagePath.js');
+const GARBAGE_PATH = getGarbagePath();
+
 function getDisallowedIpAddresses() {
 	const DISALLOWED_IP_ADDRESSES = process.env.DISALLOWED_IP_ADDRESSES ? process.env.DISALLOWED_IP_ADDRESSES.split(',') : [];
 	try {
