@@ -1,3 +1,5 @@
+const fsPromises = require('fs/promises');
+
 const getAllowedHosts = require('./util/getAllowedHosts.js');
 const getRedFlags = require('./util/getRedFlags.js');
 const getDisallowedIpAddresses = require('./util/getDisallowedIpAddresses.js');
