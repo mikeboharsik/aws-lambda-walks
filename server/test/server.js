@@ -14,6 +14,9 @@ const server = http.createServer(async (req, res) => {
 	const [path, query] = req.url.split('?');
 	const result = await callHandler(path, query, { ...req.headers, method: req.method }, ignoreAuth);
 	const headers = { ...result.headers };
+	if (req.headers.origin?.includes('localhost')) {
+		headers['Access-Control-Allow-Origin'] = req.headers.origin;
+	}
 	if (result.cookies) {
 		headers['set-cookie'] = result.cookies;
 	}
