@@ -1,5 +1,6 @@
 const fsPromises = require('fs/promises');
 
+const getGarbagePath = require('./util/getGarbagePath.js');
 const getAllowedHosts = require('./util/getAllowedHosts.js');
 const getRedFlags = require('./util/getRedFlags.js');
 const getDisallowedIpAddresses = require('./util/getDisallowedIpAddresses.js');
@@ -7,6 +8,7 @@ const getDisallowedUserAgents = require('./util/getDisallowedUserAgents.js');
 
 const logResult = require('./util/logResult.js');
 
+const GARBAGE_PATH = getGarbagePath();
 const RED_FLAGS = getRedFlags();
 const ALLOWED_HOSTS = getAllowedHosts();
 const DISALLOWED_IP_ADDRESSES = getDisallowedIpAddresses();
