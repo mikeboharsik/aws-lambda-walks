@@ -99,6 +99,7 @@ class EventsHandler extends ApiRequestHandler {
 					nameIncludes = null,
 					nameNotIncludes = null,
 					convertToDate = null,
+					convertToTimestamp = null,
 					select = null,
 				} = {},
 			} = event;
@@ -122,6 +123,24 @@ class EventsHandler extends ApiRequestHandler {
 
 			let hits = await getAllEvents(event);
 
+			if (after) {
+				hits = hits.filter(e => (e.timestamp && e.timestamp >= after) || (e.mark && e.mark >= after));
+			}
+
+			if (before) {
+				hits = hits.filter(e => (e.timestamp && e.timestamp <= before) || (e.mark && e.mark <= before));
+			}
+
+			if (plateOnly) {
+				hits = hits.filter(e => e.plates?.length);
+			}
+			if (nonPlateOnly) {
+				hits = hits.filter(e => e.name && !e.plates?.length);
+			}
+			if (missingYoutubeIdOnly) {
+				hits = hits.filter(e => !e.youtubeId);
+			}
+
 			if (didRequestGeoJson) {
 				hits = hits.filter(e => e.coords);
 			}
@@ -130,14 +149,6 @@ class EventsHandler extends ApiRequestHandler {
 				const validPlateCharacterPattern = /[^a-zA-Z0-9]/g;
 				hasPlate = hasPlate.replace(validPlateCharacterPattern, '');
 				hits = hits.filter(e => e.plates?.map(([state, value]) => state + value.replace(validPlateCharacterPattern, '')).includes(hasPlate));
-			}
-			
-			if (after) {
-				hits = hits.filter(e => (e.timestamp && e.timestamp >= after) || (e.mark && e.mark >= after));
-			}
-
-			if (before) {
-				hits = hits.filter(e => (e.timestamp && e.timestamp <= before) || (e.mark && e.mark <= before));
 			}
 
 			if (nameIncludes) {
@@ -169,6 +180,20 @@ class EventsHandler extends ApiRequestHandler {
 				});
 			}
 
+			if (convertToTimestamp) {
+				const targets = convertToTimestamp.split(',').map(e => e.toLowerCase());
+				targets.forEach(target => {
+					hits.forEach(event => {
+						Object.keys(event).forEach(key => {
+							if (key.toLowerCase() === target) {
+								const seconds = event[key] / 1000;
+								event[key] = seconds;
+							}
+						});
+					});
+				});
+			}
+
 			if (maxRadius) {
 				const [targetLat, targetLon] = targetPoint.split(',').map(e => parseFloat(e));
 				hits = hits.reduce((acc, event) => {
@@ -185,16 +210,6 @@ class EventsHandler extends ApiRequestHandler {
 					}
 					return acc;
 				}, []);
-			}
-
-			if (plateOnly) {
-				hits = hits.filter(e => e.plates?.length);
-			}
-			if (nonPlateOnly) {
-				hits = hits.filter(e => e.name && !e.plates?.length);
-			}
-			if (missingYoutubeIdOnly) {
-				hits = hits.filter(e => !e.youtubeId);
 			}
 
 			hits.forEach(e => {
