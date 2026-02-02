@@ -15,6 +15,7 @@ function logEvent(event) {
 		delete copy.headers?.cookies;
 		delete copy.headers?.Cookie;
 		delete copy.headers?.Cookies;
+		delete copy.startMs;
 	}
 	event.log(JSON.stringify(copy));
 }
