@@ -6,7 +6,7 @@ async function handleAuthResponseRequest(event) {
 	const secret = process.env.ACCESS_TOKEN_SECRET;
 
 	const cookies = event.cookiesParsed;
-	if (event.cookiesParsed.id_token) {
+	if (!cookies?.id_token) {
 		return {
 			statusCode: 400,
 		};
